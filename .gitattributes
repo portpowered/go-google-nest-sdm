@@ -4,3 +4,5 @@
 *.mod text eol=lf
 *.sum text eol=lf
 *.sh text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
