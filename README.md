@@ -11,7 +11,7 @@ Typed Google Nest Smart Device Management REST commands and stateless Pub/Sub ev
 [![License](https://img.shields.io/github/license/portpowered/go-google-nest-sdm)](LICENSE)
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://portpowered.github.io/go-google-nest-sdm/)
 
-Report and publication destinations are configured; their activation remains part of release acceptance. Initial provider contracts follow published Google documentation with synthetic offline examples, without live-device qualification.
+Provider contracts follow published Google documentation with synthetic offline examples, without live-device qualification.
 
 ```sh
 go get github.com/portpowered/go-google-nest-sdm
@@ -99,12 +99,6 @@ A shared client holds configuration; callers own credential storage and explicit
 
 Discover capabilities through `device.SupportsCommand(command)` and optionally preflight with `sdm.CheckCommand(sdm.CheckCommandRequest{Device: device, Command: command})`; these inspect returned traits and stream protocols without network calls. Apply partial event updates without replacing omitted values. Unknown incoming values remain preserved; invalid known payloads remain errors. Commands acknowledge acceptance and are never implicitly retried. Use `media.New(media.WithHTTPClient(myMediaHTTPDoer))` from `pkg/dependencies/media` for image/clip downloads and close returned bodies. Only supply trusted SDM HTTPS URLs and reject redirects in injected media transports. Callers own RTSP/WebRTC connections, renewal and explicit stop. For push/message integration, your application owns delivery authentication and acknowledgement after successful handling; `DecodePushEvent` is stateless. Optional pull sessions require explicit close and acknowledgements.
 
-Read the [customer guides](https://portpowered.github.io/go-google-nest-sdm/docs/guides), [generated REST reference](https://portpowered.github.io/go-google-nest-sdm/docs) and [event reference](https://portpowered.github.io/go-google-nest-sdm/docs/asyncapi/events/receiveEvents). Install the separate [CLI](https://portpowered.github.io/go-google-nest-sdm/docs/guides/cli) with `go install github.com/portpowered/go-google-nest-sdm/cmd/go-google-nest-sdm@latest` after publication.
+Read the [customer guides](https://portpowered.github.io/go-google-nest-sdm/docs/guides), [generated REST reference](https://portpowered.github.io/go-google-nest-sdm/docs) and [event reference](https://portpowered.github.io/go-google-nest-sdm/docs/asyncapi/events/receiveEvents). Install the separate [CLI](https://portpowered.github.io/go-google-nest-sdm/docs/guides/cli) with `go install github.com/portpowered/go-google-nest-sdm/cmd/go-google-nest-sdm@v0.1.0`.
 
 Contributor evidence, generation and release acceptance live in [contributor verification](docs/contributing.md), [the checklist](docs/checklist.md) and [independent review](docs/review.md).
-
-
-
-
-
-
