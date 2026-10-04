@@ -38,6 +38,11 @@ Apply these requirements when creating a library from this template:
    helper returns an unregistered fixed value or mutates a generated map, plus
    a caller-defined positive control. A per-file scan does not prove package-wide
    provenance.
+   Do not classify unresolved provenance as caller-defined input. If recursion,
+   a traversal limit, or an unresolved library helper prevents proving a schema-owned
+   wire value or key, fail the gate with a diagnostic. Test a helper chain beyond
+   the traversal limit and a recursive fixed fallback; retain proven caller-input
+   positives.
    Check all intermediate keys in indexed receiver paths and aliases, including slices,
    pointer dereferences, and type assertions. Test inferred nested composites and retain
    positive cases for explicitly caller-defined open keys.
