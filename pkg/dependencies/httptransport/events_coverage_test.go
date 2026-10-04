@@ -178,3 +178,29 @@ func TestCancellationDuringPullDoesNotDeliverPendingEvent(t *testing.T) {
 	_, err := session.Next(ctx)
 	requireEventError(t, err, sdm.ErrorCanceled)
 }
+
+func TestCloseDuringPullDoesNotDeliverPendingEvent(t *testing.T) {
+	t.Parallel()
+
+	var session sdm.EventSession
+
+	var calls atomic.Int32
+
+	session = openTestSession(t, eventDoer(func(*http.Request) (*http.Response, error) {
+		calls.Add(1)
+
+		err := session.Close()
+		if err != nil {
+			t.Error(err)
+		}
+
+		return eventPullResponse(), nil
+	}))
+
+	delivery, err := session.Next(t.Context())
+	requireEventError(t, err, sdm.ErrorCanceled)
+
+	if !errors.Is(err, context.Canceled) || delivery != nil || calls.Load() != 1 {
+		t.Fatalf("closed pull delivered or retried: delivery=%v err=%v calls=%d", delivery, err, calls.Load())
+	}
+}
