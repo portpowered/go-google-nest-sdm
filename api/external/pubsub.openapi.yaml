@@ -13,8 +13,8 @@
     "/projects/{projectId}/subscriptions/{subscriptionId}:pull": {
       "post": {
         "operationId": "Pull",
-        "summary": "Pull",
-        "description": "Use the caller authorization to Pull.",
+        "summary": "Receive messages from a Pub/Sub subscription",
+        "description": "Receive pending messages up to the requested limit. Decode each message data payload as an SDM event, then acknowledge its delivery identifier after processing.",
         "parameters": [
           {
             "name": "projectId",
@@ -40,14 +40,6 @@
         "responses": {
           "200": {
             "description": "Successful operation.",
-            "headers": {
-              "userId": {
-                "description": "Obfuscated user identity.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -85,8 +77,8 @@
     "/projects/{projectId}/subscriptions/{subscriptionId}:acknowledge": {
       "post": {
         "operationId": "Acknowledge",
-        "summary": "Acknowledge",
-        "description": "Use the caller authorization to Acknowledge.",
+        "summary": "Acknowledge processed event messages",
+        "description": "Mark the messages identified by their acknowledgement identifiers as processed so Pub/Sub can stop redelivering them to this subscription.",
         "parameters": [
           {
             "name": "projectId",
@@ -112,14 +104,6 @@
         "responses": {
           "200": {
             "description": "Successful operation.",
-            "headers": {
-              "userId": {
-                "description": "Obfuscated user identity.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -157,8 +141,8 @@
     "/projects/{projectId}/subscriptions/{subscriptionId}:modifyAckDeadline": {
       "post": {
         "operationId": "ModifyAckDeadline",
-        "summary": "ModifyAckDeadline",
-        "description": "Use the caller authorization to ModifyAckDeadline.",
+        "summary": "Change a message acknowledgement deadline",
+        "description": "Set the remaining acknowledgement deadline for the supplied delivery identifiers. Use a positive deadline while processing or zero to make messages available for immediate redelivery.",
         "parameters": [
           {
             "name": "projectId",
@@ -184,14 +168,6 @@
         "responses": {
           "200": {
             "description": "Successful operation.",
-            "headers": {
-              "userId": {
-                "description": "Obfuscated user identity.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {

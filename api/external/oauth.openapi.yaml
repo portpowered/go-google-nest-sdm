@@ -13,20 +13,12 @@
     "/token": {
       "post": {
         "operationId": "OAuthToken",
-        "summary": "OAuthToken",
-        "description": "Use the caller authorization to OAuthToken.",
+        "summary": "Exchange or refresh authorization credentials",
+        "description": "Exchange an authorization code or refresh token for current OAuth access credentials. The caller stores the returned credentials and schedules renewal using the reported lifetimes.",
         "parameters": [],
         "responses": {
           "200": {
             "description": "Successful operation.",
-            "headers": {
-              "userId": {
-                "description": "Obfuscated user identity.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {

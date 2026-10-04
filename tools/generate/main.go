@@ -68,6 +68,11 @@ func run() error {
 		return err
 	}
 
+	err = channelConstants()
+	if err != nil {
+		return err
+	}
+
 	err = command("go", "run", oapiVersion, "--config",
 		"api/client-resources.codegen.yaml", "api/client-resources.openapi.yaml")
 	if err != nil {

@@ -11,6 +11,7 @@ servers:
     description: Google Cloud Pub/Sub using a project-owned SDM topic.
 channels:
   sdmEvents:
+    x-go-name: SDMEvents
     address: projects/{project}/topics/{topic}
     description: Trait updates, camera events, and resource relation updates.
     parameters:
