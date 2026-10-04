@@ -56,7 +56,7 @@ client, err := httptransport.NewClient(
 )
 ```
 
-The same injected `HTTPDoer` handles SDM, OAuth and Pub/Sub requests. It must support concurrent requests and context cancellation. The caller owns the HTTP client and its connections. Set request deadlines using `context.WithTimeout`; choose production timeout and retry policy explicitly. Base URL options are available for controlled testing.
+The same injected `HTTPDoer` handles SDM, OAuth and Pub/Sub requests. It must support concurrent requests, context cancellation and account isolation. Concrete `*http.Client` values must have a nil cookie jar; the SDK rejects shared jars with an inspectable configuration error. Custom doers must not retain account cookies or credentials between requests. The caller owns the HTTP client and its connections. Set request deadlines using `context.WithTimeout`; choose production timeout and retry policy explicitly. Base URL options are available for controlled testing.
 
 Use `errors.As(err, &clientError)` with `var clientError *sdm.Error` and inspect `Kind`. Classes include invalid request/response, unauthorized, not found, unsupported, rate limited, server, transport, timeout and cancellation. Outgoing validation errors occur before transmission. An uncertain command transport failure does not prove the command was rejected; inspect device state before repeating it.
 

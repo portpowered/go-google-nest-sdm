@@ -1090,13 +1090,13 @@
     "schema": "api/external/oauth.openapi.yaml#/servers/0/url",
     "generator": "go run ./tools/generate",
     "uses": [
-      "pkg/dependencies/httptransport/client.go:35 @ New"
+      "pkg/dependencies/httptransport/client.go:42 @ New"
     ],
     "productionUses": [
-      "pkg/dependencies/httptransport/client.go:35 @ New"
+      "pkg/dependencies/httptransport/client.go:42 @ New"
     ],
     "wireRoots": [
-      "github.com/portpowered/go-google-nest-sdm/internal/protocol.OAuthBaseURL @ pkg/dependencies/httptransport/client.go:35 @ New"
+      "github.com/portpowered/go-google-nest-sdm/internal/protocol.OAuthBaseURL @ pkg/dependencies/httptransport/client.go:42 @ New"
     ],
     "disposition": "direct production reference",
     "typeExpression": "",
@@ -1657,13 +1657,13 @@
     "schema": "api/external/pubsub.openapi.yaml#/servers/0/url",
     "generator": "go run ./tools/generate",
     "uses": [
-      "pkg/dependencies/httptransport/client.go:34 @ New"
+      "pkg/dependencies/httptransport/client.go:41 @ New"
     ],
     "productionUses": [
-      "pkg/dependencies/httptransport/client.go:34 @ New"
+      "pkg/dependencies/httptransport/client.go:41 @ New"
     ],
     "wireRoots": [
-      "github.com/portpowered/go-google-nest-sdm/internal/protocol.PubSubBaseURL @ pkg/dependencies/httptransport/client.go:34 @ New"
+      "github.com/portpowered/go-google-nest-sdm/internal/protocol.PubSubBaseURL @ pkg/dependencies/httptransport/client.go:41 @ New"
     ],
     "disposition": "direct production reference",
     "typeExpression": "",
@@ -2005,13 +2005,13 @@
     "schema": "api/openapi.yaml#/servers/0/url",
     "generator": "go run ./tools/generate",
     "uses": [
-      "pkg/dependencies/httptransport/client.go:33 @ New"
+      "pkg/dependencies/httptransport/client.go:40 @ New"
     ],
     "productionUses": [
-      "pkg/dependencies/httptransport/client.go:33 @ New"
+      "pkg/dependencies/httptransport/client.go:40 @ New"
     ],
     "wireRoots": [
-      "github.com/portpowered/go-google-nest-sdm/internal/protocol.SDMBaseURL @ pkg/dependencies/httptransport/client.go:33 @ New"
+      "github.com/portpowered/go-google-nest-sdm/internal/protocol.SDMBaseURL @ pkg/dependencies/httptransport/client.go:40 @ New"
     ],
     "disposition": "direct production reference",
     "typeExpression": "",

@@ -2,6 +2,7 @@
 package httptransport
 
 import (
+	"errors"
 	"net/http"
 	"net/url"
 	"strings"
@@ -11,9 +12,15 @@ import (
 
 // HTTPDoer is the complete network seam used by every outbound exchange.
 // Implementations must support concurrent requests and request context cancellation.
+// They must keep account credentials isolated and must not retain or replay cookies
+// across calls. Configure cookie-free transports before sharing this client.
 type HTTPDoer interface {
 	Do(request *http.Request) (*http.Response, error)
 }
+
+// ErrCookieJarUnsupported identifies a stateful HTTP client configuration that
+// could carry cookies between account requests on a reusable SDM client.
+var ErrCookieJarUnsupported = errors.New("cookie jars are unsupported on a shared SDM client")
 
 // Client holds configuration only. Tokens are supplied separately on every call.
 // The caller owns the injected HTTP client and its connections.
@@ -59,10 +66,26 @@ func defaultHTTPClient() *http.Client {
 }
 
 // WithHTTPClient supplies an offline or production transport for every endpoint.
+// A concrete *http.Client must have no cookie jar and is copied before use so
+// later changes to its Jar cannot introduce cross-account state. Custom HTTPDoer
+// implementations must honor the same account-isolation contract.
 func WithHTTPClient(doer HTTPDoer) Option {
 	return func(client *Client) error {
 		if doer == nil {
 			return fail("New", ErrorInvalidRequest, nil)
+		}
+
+		if standard, ok := doer.(*http.Client); ok {
+			if standard == nil {
+				return fail("New", ErrorInvalidRequest, nil)
+			}
+
+			if standard.Jar != nil {
+				return fail("New", ErrorInvalidRequest, ErrCookieJarUnsupported)
+			}
+
+			copyClient := *standard
+			doer = &copyClient
 		}
 
 		client.httpClient = doer

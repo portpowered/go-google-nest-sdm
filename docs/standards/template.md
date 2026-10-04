@@ -93,6 +93,10 @@ Apply these requirements when creating a library from this template:
    `request.URL.Path` between a generated constructor and `Do` or its equivalent.
    Include URL user information, body factories, and HTTP framing fields: they can
    change authentication or the emitted body even when the method and path stay fixed.
+   Track mutable backing buffers used by request body readers through the actual send;
+   test a byte-slice mutation after request construction and retain a safe immutable-body
+   positive control. Scan every shipped production module, including standalone CLI and
+   example modules, for outbound edges; a scan limited to the SDK package is incomplete.
    Run negative controls through the exact CI or Makefile command with its default
    working directory and root arguments; an absolute-root helper test alone is insufficient.
    Require generated `QueryParam` and `Header` keys
@@ -134,6 +138,10 @@ Apply these requirements when creating a library from this template:
 7. Put the reusable public provider package under `pkg/<provider>`, generated provider wire models under `pkg/dependencymodels`, and transport behavior under `pkg/dependencies/<transport>`. Use distinct schema and generated Go files for each API responsibility, such as authentication, behaviors, devices, and feature payloads; a compatible shared Go package is allowed. Keep related request, response, and nested component definitions together rather than a monolithic model file or a second catch-all `internal/models` or `internal/wire` model bucket. Keep public semantic projections separate from provider wire contracts. Handwritten model companions may supply conversion or decoding behavior but must not redefine wire fields. Use compatibility aliases when moving existing exported types; when old field shapes differ, generate their compatibility definitions from a separate projection schema. Verify public import paths from a separate consumer module.
 8. Initialize clients through explicit functional options (for example `NewClient(WithBaseURL(...), WithHTTPClient(...))`) with sensible defaults and validation. Keep account credentials out of reusable client configuration when the client serves multiple accounts.
 9. Keep the reusable client stateless with respect to accounts and connections. Return explicit session objects for login, event streams, sockets, RTC, or other stateful lifecycles; make ownership, close, errors, and token state visible to callers.
+   Include injected transport state in this audit. A shared `http.Client.Jar` must not
+   transfer account cookies between sessions. Reject unsafe shared cookie jars with a
+   distinguishable configuration error or keep cookie state in explicit sessions. Test
+   two accounts through the same reusable client and assert complete outbound requests.
 10. Allow callers to inject the transport at every network edge the library uses, including HTTP, HTTP/2, WebSocket, MQTT, RTC signaling, and sockets opened by dependencies as applicable. A configurable concrete dialer is insufficient when it cannot substitute an offline connection; provide a connection-producing dial hook or equivalent seam and test the actual framed request and response through it without real credentials or network access.
 11. Expose token exchange and refresh as explicit operations that return the current credentials to the caller. Do not silently refresh or retain updated tokens inside a reusable client; document caller storage and renewal responsibilities.
 12. Publish all customer-facing guides as MDX files under `docs/guides/` in the GitHub Pages site. Link guides to the matching generated reference pages. Keep separate repository Markdown only for contributor and release process notes; check internal links from **all** rendered pages, including the site root and generated references, and review external destinations and release-note links after a docs migration. Check schema-supplied links such as `externalDocs` even when they are loaded at runtime and absent from static HTML anchors. Verify the destination guide exists and renders its expected content; HTTP 200 alone can be a fallback error page.
