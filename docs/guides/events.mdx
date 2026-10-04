@@ -3,8 +3,6 @@ title: Pub/Sub events
 description: Handle typed SDM events in your HTTP endpoint or message consumer.
 ---
 
-# Pub/Sub events
-
 The primary integration is stateless: your application receives a Pub/Sub message or HTTP push request, authenticates its delivery, decodes the event and runs its handler. The SDK does not own your web server, callback routing, push identity verification or acknowledgement response.
 
 For an existing Pub/Sub client, pass its decoded message data directly:
