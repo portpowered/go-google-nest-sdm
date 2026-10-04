@@ -3,6 +3,12 @@ name: Release
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Existing SDK release tag to verify and publish
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -16,10 +22,12 @@ jobs:
       GOWORK: 'off'
       GOTOOLCHAIN: auto
       PUBLIC_MODULE: github.com/portpowered/go-google-nest-sdm
+      VERSION: ${{ inputs.version || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ inputs.version || github.ref }}
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
@@ -30,12 +38,8 @@ jobs:
       - name: Complete library and every module's checks
         run: make lint check check-modules check-generated
       - name: Enforce public API release compatibility
-        env:
-          VERSION: ${{ github.ref_name }}
         run: go run ./tools/compatibility -policy release -base previous-release -version "$VERSION"
       - name: Verify the tagged public module from an independent consumer
-        env:
-          VERSION: ${{ github.ref_name }}
         shell: bash
         run: |
           check_dir="$(mktemp -d)"
@@ -52,6 +56,7 @@ jobs:
             sleep 10
           done
           test "$module_ready" = true
+          go mod tidy
           go test ./...
       - name: Verify API documentation and customer guide publishing inputs
         uses: portpowered/api-docs-website-github-action@v0.3.1
@@ -67,5 +72,4 @@ jobs:
       - name: Publish release notes
         env:
           GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ github.ref_name }}
         run: gh release create "$VERSION" --verify-tag --notes-file .github/release-notes-sdk.md
