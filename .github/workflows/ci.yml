@@ -52,7 +52,11 @@ jobs:
           if go run ./tools/contractcheck -write-inventory "$diagnostics/model-inventory.regenerated.json" > "$diagnostics/inventory.log" 2>&1; then
             git diff --no-index -- "$diagnostics/model-inventory.checked-in.json" "$diagnostics/model-inventory.regenerated.json" > "$diagnostics/inventory.patch" || test "$?" -eq 1
             wc -c "$diagnostics"/model-inventory.*.json > "$diagnostics/inventory-bytes.txt"
-            sha256sum "$diagnostics"/model-inventory.*.json > "$diagnostics/inventory-sha256.txt"
+            if command -v sha256sum >/dev/null; then
+              sha256sum "$diagnostics"/model-inventory.*.json > "$diagnostics/inventory-sha256.txt"
+            else
+              shasum -a 256 "$diagnostics"/model-inventory.*.json > "$diagnostics/inventory-sha256.txt"
+            fi
           else
             printf '%s\n' 'Inventory regeneration failed; see inventory.log.' >> "$diagnostics/inventory.log"
           fi
