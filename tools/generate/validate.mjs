@@ -17,7 +17,9 @@ async function documents(directory) {
 }
 let failed = false;
 let count = 0;
-for (const path of await documents(resolve(root, 'api'))) {
+const inputs = await documents(resolve(root, 'api'));
+inputs.push(resolve(root, 'docs/api-reference.openapi.json'));
+for (const path of inputs) {
   try {
     const source = await readFile(path, 'utf8');
     const document = parse(source);

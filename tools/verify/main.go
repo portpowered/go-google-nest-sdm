@@ -69,7 +69,8 @@ func run(ctx context.Context, mode, selectedModule string) error {
 	}
 
 	if mode == "generated" {
-		return cleanPaths(ctx, root, "generated output drift", "api", "internal", "pkg", "docs/model-inventory.json")
+		return cleanPaths(ctx, root, "generated output drift", "api", "internal", "pkg",
+			"docs/model-inventory.json", "docs/api-reference.openapi.json")
 	}
 
 	if mode == "format-check" {

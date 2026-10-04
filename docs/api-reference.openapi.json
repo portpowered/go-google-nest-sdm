@@ -1,0 +1,1520 @@
+{
+  "components": {
+    "schemas": {
+      "Media__MediaClipURL": {
+        "format": "uri",
+        "pattern": "^https://[^/?#]+/",
+        "type": "string"
+      },
+      "Media__MediaImageURL": {
+        "format": "uri",
+        "pattern": "^https://[^/?#]+/sdm_event_snapshot/[^?#]+",
+        "type": "string"
+      },
+      "OAuth__OAuthErrorCode": {
+        "description": "Open OAuth token error code.",
+        "pattern": "^[a-z][a-z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "invalid_grant",
+          "invalid_client",
+          "unauthorized_client",
+          "access_denied",
+          "invalid_request",
+          "unsupported_grant_type",
+          "invalid_scope"
+        ]
+      },
+      "OAuth__OAuthErrorResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/OAuth__OAuthErrorCode"
+          },
+          "error_description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "OAuth__OAuthGrantType": {
+        "enum": [
+          "authorization_code",
+          "refresh_token"
+        ],
+        "type": "string"
+      },
+      "OAuth__OAuthTokenRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "code_verifier": {
+            "description": "PKCE verifier matching the authorization challenge.",
+            "type": "string"
+          },
+          "grant_type": {
+            "$ref": "#/components/schemas/OAuth__OAuthGrantType"
+          },
+          "redirect_uri": {
+            "format": "uri",
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "client_secret",
+          "grant_type"
+        ],
+        "type": "object"
+      },
+      "OAuth__OAuthTokenResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "expires_in": {
+            "type": "integer"
+          },
+          "id_token": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "refresh_token_expires_in": {
+            "description": "Nonnegative remaining refresh token lifetime in seconds, returned for time-based access grants.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "access_token",
+          "expires_in",
+          "token_type"
+        ],
+        "type": "object"
+      },
+      "PubSub__AcknowledgeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "ackIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "ackIds"
+        ],
+        "type": "object"
+      },
+      "PubSub__EmptyResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {},
+        "type": "object"
+      },
+      "PubSub__ModifyAckDeadlineRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "ackDeadlineSeconds": {
+            "description": "Seconds from 0 through 600; zero makes the message available for immediate redelivery.",
+            "maximum": 600,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "ackIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "ackIds",
+          "ackDeadlineSeconds"
+        ],
+        "type": "object"
+      },
+      "PubSub__PubSubMessage": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "attributes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "data": {
+            "format": "byte",
+            "type": "string"
+          },
+          "messageId": {
+            "type": "string"
+          },
+          "orderingKey": {
+            "type": "string"
+          },
+          "publishTime": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PubSub__PullRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "maxMessages": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "returnImmediately": {
+            "deprecated": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "maxMessages"
+        ],
+        "type": "object"
+      },
+      "PubSub__PullResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "receivedMessages": {
+            "items": {
+              "$ref": "#/components/schemas/PubSub__ReceivedMessage"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "PubSub__PushEnvelope": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "deliveryAttempt": {
+            "type": "integer"
+          },
+          "message": {
+            "$ref": "#/components/schemas/PubSub__PubSubMessage"
+          },
+          "subscription": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message",
+          "subscription"
+        ],
+        "type": "object"
+      },
+      "PubSub__ReceivedMessage": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "ackId": {
+            "type": "string"
+          },
+          "deliveryAttempt": {
+            "type": "integer"
+          },
+          "message": {
+            "$ref": "#/components/schemas/PubSub__PubSubMessage"
+          }
+        },
+        "type": "object"
+      },
+      "SDK__AudioCodec": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/AudioCodec"
+      },
+      "SDK__CameraClipPreview": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/CameraClipPreview"
+      },
+      "SDK__CameraEventImage": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/CameraEventImage"
+      },
+      "SDK__CameraEventImageGenerateImageParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraEventImageGenerateImageParams"
+      },
+      "SDK__CameraEventImageGenerateImageResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraEventImageGenerateImageResults"
+      },
+      "SDK__CameraImage": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/CameraImage"
+      },
+      "SDK__CameraLiveStream": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/CameraLiveStream"
+      },
+      "SDK__CameraLiveStreamExtendRtspStreamParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendRtspStreamParams"
+      },
+      "SDK__CameraLiveStreamExtendRtspStreamResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendRtspStreamResults"
+      },
+      "SDK__CameraLiveStreamExtendWebRtcStreamParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendWebRtcStreamParams"
+      },
+      "SDK__CameraLiveStreamExtendWebRtcStreamResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendWebRtcStreamResults"
+      },
+      "SDK__CameraLiveStreamGenerateRtspStreamParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateRtspStreamParams"
+      },
+      "SDK__CameraLiveStreamGenerateRtspStreamResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateRtspStreamResults"
+      },
+      "SDK__CameraLiveStreamGenerateWebRtcStreamParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateWebRtcStreamParams"
+      },
+      "SDK__CameraLiveStreamGenerateWebRtcStreamResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateWebRtcStreamResults"
+      },
+      "SDK__CameraLiveStreamStopRtspStreamParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraLiveStreamStopRtspStreamParams"
+      },
+      "SDK__CameraLiveStreamStopRtspStreamResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraLiveStreamStopRtspStreamResults"
+      },
+      "SDK__CameraLiveStreamStopWebRtcStreamParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraLiveStreamStopWebRtcStreamParams"
+      },
+      "SDK__CameraLiveStreamStopWebRtcStreamResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CameraLiveStreamStopWebRtcStreamResults"
+      },
+      "SDK__CameraMotion": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/CameraMotion"
+      },
+      "SDK__CameraPerson": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/CameraPerson"
+      },
+      "SDK__CameraSound": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/CameraSound"
+      },
+      "SDK__CommandName": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/CommandName"
+      },
+      "SDK__Connectivity": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/Connectivity"
+      },
+      "SDK__ConnectivityStatus": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/ConnectivityStatus"
+      },
+      "SDK__DoorbellChime": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/DoorbellChime"
+      },
+      "SDK__EcoMode": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/EcoMode"
+      },
+      "SDK__EmptyResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/EmptyResults"
+      },
+      "SDK__Fan": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/Fan"
+      },
+      "SDK__FanSetTimerParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/FanSetTimerParams"
+      },
+      "SDK__FanSetTimerResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/FanSetTimerResults"
+      },
+      "SDK__FanTimerMode": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/FanTimerMode"
+      },
+      "SDK__Humidity": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/Humidity"
+      },
+      "SDK__HvacStatus": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/HvacStatus"
+      },
+      "SDK__ImageResolution": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/ImageResolution"
+      },
+      "SDK__Info": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/Info"
+      },
+      "SDK__MediaSessionID": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/MediaSessionID"
+      },
+      "SDK__RoomInfo": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/RoomInfo"
+      },
+      "SDK__RtspStreamURLs": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/RtspStreamURLs"
+      },
+      "SDK__Settings": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/Settings"
+      },
+      "SDK__StreamExtensionToken": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/StreamExtensionToken"
+      },
+      "SDK__StreamProtocol": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/StreamProtocol"
+      },
+      "SDK__StreamToken": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/StreamToken"
+      },
+      "SDK__StructureInfo": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/StructureInfo"
+      },
+      "SDK__Temperature": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/Temperature"
+      },
+      "SDK__TemperatureScale": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/TemperatureScale"
+      },
+      "SDK__ThermostatEco": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/ThermostatEco"
+      },
+      "SDK__ThermostatEcoSetModeParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/ThermostatEcoSetModeParams"
+      },
+      "SDK__ThermostatEcoSetModeResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/ThermostatEcoSetModeResults"
+      },
+      "SDK__ThermostatHvac": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/ThermostatHvac"
+      },
+      "SDK__ThermostatMode": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/ThermostatMode"
+      },
+      "SDK__ThermostatModeSetModeParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/ThermostatModeSetModeParams"
+      },
+      "SDK__ThermostatModeSetModeResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/ThermostatModeSetModeResults"
+      },
+      "SDK__ThermostatModeValue": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/ThermostatModeValue"
+      },
+      "SDK__ThermostatTemperatureSetpoint": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/ThermostatTemperatureSetpoint"
+      },
+      "SDK__ThermostatTemperatureSetpointSetCoolParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetCoolParams"
+      },
+      "SDK__ThermostatTemperatureSetpointSetCoolResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetCoolResults"
+      },
+      "SDK__ThermostatTemperatureSetpointSetHeatParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetHeatParams"
+      },
+      "SDK__ThermostatTemperatureSetpointSetHeatResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetHeatResults"
+      },
+      "SDK__ThermostatTemperatureSetpointSetRangeParams": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetRangeParams"
+      },
+      "SDK__ThermostatTemperatureSetpointSetRangeResults": {
+        "$ref": "../api/commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetRangeResults"
+      },
+      "SDK__Traits": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/Traits"
+      },
+      "SDK__VideoCodec": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/VideoCodec"
+      },
+      "SDK__VideoResolution": {
+        "$ref": "../api/traits.openapi.yaml#/components/schemas/VideoResolution"
+      },
+      "SDM__Device": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "assignee": {
+            "type": "string"
+          },
+          "name": {
+            "pattern": "^enterprises/[^/]+/devices/[^/]+$",
+            "type": "string"
+          },
+          "parentRelations": {
+            "items": {
+              "$ref": "#/components/schemas/SDM__ParentRelation"
+            },
+            "type": "array"
+          },
+          "traits": {
+            "$ref": "../api/traits.openapi.yaml#/components/schemas/Traits"
+          },
+          "type": {
+            "$ref": "#/components/schemas/SDM__DeviceType"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "SDM__DeviceType": {
+        "description": "Informational device type; use traits to infer capabilities.",
+        "pattern": "^sdm\\.devices\\.types\\.[A-Z][A-Z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "sdm.devices.types.THERMOSTAT",
+          "sdm.devices.types.CAMERA",
+          "sdm.devices.types.DOORBELL",
+          "sdm.devices.types.DISPLAY"
+        ]
+      },
+      "SDM__ExecuteCommandRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "command": {
+            "$ref": "../api/commands.openapi.yaml#/components/schemas/CommandName"
+          },
+          "params": {
+            "x-go-type": "json.RawMessage"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "type": "object"
+      },
+      "SDM__ExecuteCommandResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "results": {
+            "x-go-type": "json.RawMessage"
+          }
+        },
+        "type": "object"
+      },
+      "SDM__ListDevicesResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "devices": {
+            "items": {
+              "$ref": "#/components/schemas/SDM__Device"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "SDM__ListRoomsResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "rooms": {
+            "items": {
+              "$ref": "#/components/schemas/SDM__Room"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "SDM__ListStructuresResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "structures": {
+            "items": {
+              "$ref": "#/components/schemas/SDM__Structure"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "SDM__ParentRelation": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "displayName": {
+            "type": "string"
+          },
+          "parent": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SDM__Room": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "name": {
+            "pattern": "^enterprises/[^/]+/structures/[^/]+/rooms/[^/]+$",
+            "type": "string"
+          },
+          "traits": {
+            "$ref": "../api/traits.openapi.yaml#/components/schemas/Traits"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "SDM__Structure": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "name": {
+            "pattern": "^enterprises/[^/]+/structures/[^/]+$",
+            "type": "string"
+          },
+          "traits": {
+            "$ref": "../api/traits.openapi.yaml#/components/schemas/Traits"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "Media__eventToken": {
+        "description": "Basic followed by one space and the literal event token; not RFC 7617 user/password encoding.",
+        "in": "header",
+        "name": "Authorization",
+        "type": "apiKey"
+      },
+      "Media__oauthAccessToken": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "Generated documentation view of the checked-in SDM, OAuth, Pub/Sub, media, and public projection contracts. DO NOT EDIT; run make generate-api.",
+    "title": "Google Nest SDM API reference",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/enterprises/{enterpriseId}/devices": {
+      "get": {
+        "description": "Use the caller authorization to ListDevices.",
+        "operationId": "ListDevices",
+        "parameters": [
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "enterpriseId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Requested device filter; service-defined expression.",
+            "in": "query",
+            "name": "filter",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SDM__ListDevicesResponse"
+                }
+              }
+            },
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../api/errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            },
+            "description": "The provider rejected the operation; status and typed error describe the failure."
+          }
+        },
+        "summary": "List authorized Devices",
+        "tags": [
+          "Devices"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://smartdevicemanagement.googleapis.com/v1"
+        }
+      ]
+    },
+    "/enterprises/{enterpriseId}/devices/{deviceId}": {
+      "get": {
+        "description": "Use the caller authorization to GetDevice.",
+        "operationId": "GetDevice",
+        "parameters": [
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "enterpriseId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "deviceId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SDM__Device"
+                }
+              }
+            },
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../api/errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            },
+            "description": "The provider rejected the operation; status and typed error describe the failure."
+          }
+        },
+        "summary": "Get authorized Device",
+        "tags": [
+          "Devices"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://smartdevicemanagement.googleapis.com/v1"
+        }
+      ]
+    },
+    "/enterprises/{enterpriseId}/devices/{deviceId}:executeCommand": {
+      "post": {
+        "description": "Use the caller authorization to ExecuteCommand.",
+        "operationId": "ExecuteCommand",
+        "parameters": [
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "enterpriseId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "deviceId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SDM__ExecuteCommandRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SDM__ExecuteCommandResponse"
+                }
+              }
+            },
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../api/errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            },
+            "description": "The provider rejected the operation; status and typed error describe the failure."
+          }
+        },
+        "summary": "ExecuteCommand",
+        "tags": [
+          "Devices"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://smartdevicemanagement.googleapis.com/v1"
+        }
+      ]
+    },
+    "/enterprises/{enterpriseId}/structures": {
+      "get": {
+        "description": "Use the caller authorization to ListStructures.",
+        "operationId": "ListStructures",
+        "parameters": [
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "enterpriseId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SDM__ListStructuresResponse"
+                }
+              }
+            },
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../api/errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            },
+            "description": "The provider rejected the operation; status and typed error describe the failure."
+          }
+        },
+        "summary": "List authorized Structures",
+        "tags": [
+          "Structures"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://smartdevicemanagement.googleapis.com/v1"
+        }
+      ]
+    },
+    "/enterprises/{enterpriseId}/structures/{structureId}": {
+      "get": {
+        "description": "Use the caller authorization to GetStructure.",
+        "operationId": "GetStructure",
+        "parameters": [
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "enterpriseId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "structureId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SDM__Structure"
+                }
+              }
+            },
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../api/errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            },
+            "description": "The provider rejected the operation; status and typed error describe the failure."
+          }
+        },
+        "summary": "Get authorized Structure",
+        "tags": [
+          "Structures"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://smartdevicemanagement.googleapis.com/v1"
+        }
+      ]
+    },
+    "/enterprises/{enterpriseId}/structures/{structureId}/rooms": {
+      "get": {
+        "description": "Use the caller authorization to ListRooms.",
+        "operationId": "ListRooms",
+        "parameters": [
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "enterpriseId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "structureId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SDM__ListRoomsResponse"
+                }
+              }
+            },
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../api/errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            },
+            "description": "The provider rejected the operation; status and typed error describe the failure."
+          }
+        },
+        "summary": "List authorized Rooms",
+        "tags": [
+          "Rooms"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://smartdevicemanagement.googleapis.com/v1"
+        }
+      ]
+    },
+    "/enterprises/{enterpriseId}/structures/{structureId}/rooms/{roomId}": {
+      "get": {
+        "description": "Use the caller authorization to GetRoom.",
+        "operationId": "GetRoom",
+        "parameters": [
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "enterpriseId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "structureId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "roomId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SDM__Room"
+                }
+              }
+            },
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../api/errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            },
+            "description": "The provider rejected the operation; status and typed error describe the failure."
+          }
+        },
+        "summary": "Get authorized Room",
+        "tags": [
+          "Rooms"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://smartdevicemanagement.googleapis.com/v1"
+        }
+      ]
+    },
+    "/projects/{projectId}/subscriptions/{subscriptionId}:acknowledge": {
+      "post": {
+        "description": "Mark the messages identified by their acknowledgement identifiers as processed so Pub/Sub can stop redelivering them to this subscription.",
+        "operationId": "Acknowledge",
+        "parameters": [
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PubSub__AcknowledgeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PubSub__EmptyResponse"
+                }
+              }
+            },
+            "description": "Successful operation."
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../api/errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            },
+            "description": "Pub/Sub rejected the delivery operation."
+          }
+        },
+        "summary": "Acknowledge processed event messages",
+        "tags": [
+          "PubSub"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://pubsub.googleapis.com/v1"
+        }
+      ]
+    },
+    "/projects/{projectId}/subscriptions/{subscriptionId}:modifyAckDeadline": {
+      "post": {
+        "description": "Set the remaining acknowledgement deadline for the supplied delivery identifiers. Use a positive deadline while processing or zero to make messages available for immediate redelivery.",
+        "operationId": "ModifyAckDeadline",
+        "parameters": [
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PubSub__ModifyAckDeadlineRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PubSub__EmptyResponse"
+                }
+              }
+            },
+            "description": "Successful operation."
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../api/errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            },
+            "description": "Pub/Sub rejected the delivery operation."
+          }
+        },
+        "summary": "Change a message acknowledgement deadline",
+        "tags": [
+          "PubSub"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://pubsub.googleapis.com/v1"
+        }
+      ]
+    },
+    "/projects/{projectId}/subscriptions/{subscriptionId}:pull": {
+      "post": {
+        "description": "Receive pending messages up to the requested limit. Decode each message data payload as an SDM event, then acknowledge its delivery identifier after processing.",
+        "operationId": "Pull",
+        "parameters": [
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Authorized resource identifier.",
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "schema": {
+              "pattern": "^[^/]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PubSub__PullRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PubSub__PullResponse"
+                }
+              }
+            },
+            "description": "Successful operation."
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../api/errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            },
+            "description": "Pub/Sub rejected the delivery operation."
+          }
+        },
+        "summary": "Receive messages from a Pub/Sub subscription",
+        "tags": [
+          "PubSub"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://pubsub.googleapis.com/v1"
+        }
+      ]
+    },
+    "/sdm_event_snapshot/{imageId}": {
+      "get": {
+        "description": "Retrieve the image bytes from the GenerateImage result URL using its short-lived event token.",
+        "operationId": "DownloadImage",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "imageId",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Pixel width; takes precedence over height.",
+            "in": "query",
+            "name": "width",
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Pixel height when width is absent.",
+            "in": "query",
+            "name": "height",
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Encoded image bytes"
+          },
+          "default": {
+            "description": "Download failed; callers receive a typed status error."
+          }
+        },
+        "security": [
+          {
+            "Media__eventToken": []
+          }
+        ],
+        "summary": "Download an event image",
+        "tags": [
+          "Media"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://{mediaHost}",
+          "variables": {
+            "mediaHost": {
+              "default": "media.example.invalid",
+              "description": "Host supplied by the provider; no stable host is documented."
+            }
+          }
+        }
+      ]
+    },
+    "/token": {
+      "post": {
+        "description": "Exchange an authorization code or refresh token for current OAuth access credentials. The caller stores the returned credentials and schedules renewal using the reported lifetimes.",
+        "operationId": "OAuthToken",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuth__OAuthTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuth__OAuthTokenResponse"
+                }
+              }
+            },
+            "description": "Successful operation."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuth__OAuthErrorResponse"
+                }
+              }
+            },
+            "description": "The authorization grant or client credentials were rejected."
+          }
+        },
+        "summary": "Exchange or refresh authorization credentials",
+        "tags": [
+          "Auth"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://oauth2.googleapis.com"
+        }
+      ]
+    },
+    "/{mediaPath}": {
+      "get": {
+        "description": "Retrieve the ten-frame H264 MP4 from a trusted ClipPreview event URL. The provider chooses the opaque path and query.",
+        "operationId": "DownloadClipPreview",
+        "parameters": [
+          {
+            "description": "Opaque provider-issued path. This inventory template describes the URL; callers do not construct it.",
+            "in": "path",
+            "name": "mediaPath",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "video/mp4": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Encoded clip preview bytes"
+          },
+          "default": {
+            "description": "Download failed; callers receive a typed status error."
+          }
+        },
+        "security": [
+          {
+            "Media__oauthAccessToken": []
+          }
+        ],
+        "summary": "Download a camera clip preview",
+        "tags": [
+          "Media"
+        ]
+      },
+      "servers": [
+        {
+          "url": "https://{mediaHost}",
+          "variables": {
+            "mediaHost": {
+              "default": "media.example.invalid",
+              "description": "Host supplied by the provider; no stable host is documented."
+            }
+          }
+        }
+      ]
+    }
+  },
+  "tags": [
+    {
+      "description": "Authorized devices operations.",
+      "name": "Devices"
+    },
+    {
+      "description": "Authorized rooms operations.",
+      "name": "Rooms"
+    },
+    {
+      "description": "Authorized structures operations.",
+      "name": "Structures"
+    },
+    {
+      "description": "Authorized pubsub operations.",
+      "name": "PubSub"
+    },
+    {
+      "description": "Authorized auth operations.",
+      "name": "Auth"
+    },
+    {
+      "description": "Camera image and clip preview downloads.",
+      "name": "Media"
+    }
+  ]
+}

@@ -2,6 +2,12 @@
 
 Follow [Go](standards/go.md), [schemas](standards/schemas.md), [client API](standards/client-api.md), and [library](standards/library.md) standards. Keep the SDK independent of consumers (LIB-14), account credentials in requests (API-03), and network behavior in transport packages (LIB-01). Customer material belongs in `docs/guides/*.mdx`; this document records maintenance and evidence.
 
+## Generated documentation contract
+
+The API site uses the generated `docs/api-reference.openapi.json` documentation view (SCHEMA-10, LIB-16). `make generate-api` merges the REST resource, public model projection, OAuth, Pub/Sub, and media contracts into this single input. Component and security scheme names are namespaced by source, local references are rewritten, external references are rebased, and each route retains its source origin and authorization. Edit the canonical contracts in `api/` and regenerate this view.
+
+Using one OpenAPI input avoids concurrent navigation metadata writes in the pinned documentation action. Both CI and local action builds must use this generated input. The established schema validator resolves its complete references, regeneration checks include its output, and the rendered site checker requires Devices, Structures, Rooms, Pub/Sub, Auth, and Media navigation along with valid internal links (SCHEMA-11, LIB-17).
+
 ## Evidence classes
 
 The initial catalog is derived from Google's published Device Access REST, trait, command and event documentation. Synthetic fixtures exercise that interpretation offline. They are **not captured traffic** or proof that a live device accepts a request. The comparison is historical design input, not an authoritative contract. No authenticated live endpoint or media connection is qualified by synthetic replay.

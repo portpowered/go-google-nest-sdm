@@ -25,6 +25,10 @@ func main() {
 	flag.Parse()
 
 	err := checkSite(*root, *base)
+	if err == nil {
+		err = checkNavigation(*root)
+	}
+
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

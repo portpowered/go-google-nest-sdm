@@ -48,6 +48,7 @@ test-integration:
 generate-api:
 	npm ci --prefix tools/generate --ignore-scripts
 	$(GO) run ./tools/generate
+	$(GO) run ./tools/docsbundle
 	$(GO) run ./tools/contractcheck -write-inventory docs/model-inventory.json
 
 check-generated: generate-api
