@@ -8,6 +8,10 @@ import (
 	"time"
 )
 
+const (
+	PubsubBearerAuthScopes = "pubsubBearerAuth.Scopes"
+)
+
 // AcknowledgeRequest defines model for AcknowledgeRequest.
 type AcknowledgeRequest struct {
 	AckIds []string `json:"ackIds"`

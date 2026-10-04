@@ -615,6 +615,14 @@
           "x-go-type": "json.RawMessage"
         }
       }
+    },
+    "securitySchemes": {
+      "sdmBearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "OAuth 2.0 access token",
+        "description": "OAuth 2.0 access token for the linked Nest account with https://www.googleapis.com/auth/sdm.service scope and the device or structure permissions granted through Partner Connections Manager."
+      }
     }
   },
   "tags": [
@@ -629,6 +637,11 @@
     {
       "name": "Structures",
       "description": "Authorized structures operations."
+    }
+  ],
+  "security": [
+    {
+      "sdmBearerAuth": []
     }
   ]
 }

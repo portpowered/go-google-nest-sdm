@@ -623,11 +623,23 @@
       "Media__oauthAccessToken": {
         "scheme": "bearer",
         "type": "http"
+      },
+      "PubSub__pubsubBearerAuth": {
+        "bearerFormat": "OAuth 2.0 access token",
+        "description": "OAuth 2.0 access token for a principal with pubsub.subscriptions.consume permission on the subscription, such as the Pub/Sub Subscriber role. Authorize the token with https://www.googleapis.com/auth/pubsub or https://www.googleapis.com/auth/cloud-platform scope; SDM account authorization does not grant Pub/Sub IAM access.",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      "SDM__sdmBearerAuth": {
+        "bearerFormat": "OAuth 2.0 access token",
+        "description": "OAuth 2.0 access token for the linked Nest account with https://www.googleapis.com/auth/sdm.service scope and the device or structure permissions granted through Partner Connections Manager.",
+        "scheme": "bearer",
+        "type": "http"
       }
     }
   },
   "info": {
-    "description": "Generated documentation view of the checked-in SDM, OAuth, Pub/Sub, media, and public projection contracts. DO NOT EDIT; run make generate-api.",
+    "description": "REST resources, device commands, OAuth authorization, Pub/Sub event delivery, and camera media downloads for Google Nest Smart Device Management.",
     "title": "Google Nest SDM API reference",
     "version": "1.0.0"
   },
@@ -687,6 +699,11 @@
             "description": "The provider rejected the operation; status and typed error describe the failure."
           }
         },
+        "security": [
+          {
+            "SDM__sdmBearerAuth": []
+          }
+        ],
         "summary": "List authorized Devices",
         "tags": [
           "Devices"
@@ -754,6 +771,11 @@
             "description": "The provider rejected the operation; status and typed error describe the failure."
           }
         },
+        "security": [
+          {
+            "SDM__sdmBearerAuth": []
+          }
+        ],
         "summary": "Get authorized Device",
         "tags": [
           "Devices"
@@ -831,6 +853,11 @@
             "description": "The provider rejected the operation; status and typed error describe the failure."
           }
         },
+        "security": [
+          {
+            "SDM__sdmBearerAuth": []
+          }
+        ],
         "summary": "ExecuteCommand",
         "tags": [
           "Devices"
@@ -888,6 +915,11 @@
             "description": "The provider rejected the operation; status and typed error describe the failure."
           }
         },
+        "security": [
+          {
+            "SDM__sdmBearerAuth": []
+          }
+        ],
         "summary": "List authorized Structures",
         "tags": [
           "Structures"
@@ -955,6 +987,11 @@
             "description": "The provider rejected the operation; status and typed error describe the failure."
           }
         },
+        "security": [
+          {
+            "SDM__sdmBearerAuth": []
+          }
+        ],
         "summary": "Get authorized Structure",
         "tags": [
           "Structures"
@@ -1022,6 +1059,11 @@
             "description": "The provider rejected the operation; status and typed error describe the failure."
           }
         },
+        "security": [
+          {
+            "SDM__sdmBearerAuth": []
+          }
+        ],
         "summary": "List authorized Rooms",
         "tags": [
           "Rooms"
@@ -1099,6 +1141,11 @@
             "description": "The provider rejected the operation; status and typed error describe the failure."
           }
         },
+        "security": [
+          {
+            "SDM__sdmBearerAuth": []
+          }
+        ],
         "summary": "Get authorized Room",
         "tags": [
           "Rooms"
@@ -1168,6 +1215,11 @@
             "description": "Pub/Sub rejected the delivery operation."
           }
         },
+        "security": [
+          {
+            "PubSub__pubsubBearerAuth": []
+          }
+        ],
         "summary": "Acknowledge processed event messages",
         "tags": [
           "PubSub"
@@ -1237,6 +1289,11 @@
             "description": "Pub/Sub rejected the delivery operation."
           }
         },
+        "security": [
+          {
+            "PubSub__pubsubBearerAuth": []
+          }
+        ],
         "summary": "Change a message acknowledgement deadline",
         "tags": [
           "PubSub"
@@ -1306,6 +1363,11 @@
             "description": "Pub/Sub rejected the delivery operation."
           }
         },
+        "security": [
+          {
+            "PubSub__pubsubBearerAuth": []
+          }
+        ],
         "summary": "Receive messages from a Pub/Sub subscription",
         "tags": [
           "PubSub"

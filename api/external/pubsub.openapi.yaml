@@ -346,12 +346,25 @@
           "x-go-type": "json.RawMessage"
         }
       }
+    },
+    "securitySchemes": {
+      "pubsubBearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "OAuth 2.0 access token",
+        "description": "OAuth 2.0 access token for a principal with pubsub.subscriptions.consume permission on the subscription, such as the Pub/Sub Subscriber role. Authorize the token with https://www.googleapis.com/auth/pubsub or https://www.googleapis.com/auth/cloud-platform scope; SDM account authorization does not grant Pub/Sub IAM access."
+      }
     }
   },
   "tags": [
     {
       "name": "PubSub",
       "description": "Authorized pubsub operations."
+    }
+  ],
+  "security": [
+    {
+      "pubsubBearerAuth": []
     }
   ]
 }

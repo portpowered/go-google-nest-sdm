@@ -7,6 +7,10 @@ import (
 	"fmt"
 )
 
+const (
+	SdmBearerAuthScopes = "sdmBearerAuth.Scopes"
+)
+
 // Device defines model for Device.
 type Device struct {
 	Assignee        *string           `json:"assignee,omitempty"`

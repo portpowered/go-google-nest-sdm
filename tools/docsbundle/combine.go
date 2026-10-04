@@ -16,8 +16,8 @@ func combine(root, output string, documents []source) (object, error) {
 		"openapi": "3.0.3",
 		"info": object{
 			"title": "Google Nest SDM API reference", "version": "1.0.0",
-			"description": "Generated documentation view of the checked-in SDM, OAuth, Pub/Sub, media, " +
-				"and public projection contracts. DO NOT EDIT; run make generate-api.",
+			"description": "REST resources, device commands, OAuth authorization, Pub/Sub event delivery, " +
+				"and camera media downloads for Google Nest Smart Device Management.",
 		},
 		"paths": paths, "components": components,
 	}
