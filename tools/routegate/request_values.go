@@ -88,12 +88,5 @@ func headerRequestCall(state *exchangeAudit, call *ast.CallExpr) bool {
 		return false
 	}
 
-	header, recognized := queryUnparen(method.X).(*ast.SelectorExpr)
-	if !recognized || header.Sel.Name != requestHeaderField {
-		return false
-	}
-
-	identifier, recognized := queryUnparen(header.X).(*ast.Ident)
-
-	return recognized && identifier.Obj == state.request.Obj
+	return headerExpression(state, method.X, map[ast.Node]bool{})
 }

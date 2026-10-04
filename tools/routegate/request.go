@@ -93,13 +93,11 @@ func requestClientReceiver(function *ast.FuncDecl) bool {
 }
 
 func immediateHeaderWrite(state *exchangeAudit, header *ast.SelectorExpr) bool {
-	method, recognized := requestParent(state.parents, header).(*ast.SelectorExpr)
-	if !recognized {
-		return false
-	}
+	return safeHeaderOrigin(state, header)
+}
 
-	call, recognized := state.parents[method].(*ast.CallExpr)
-	if !recognized || call.Pos() <= state.constructor.Pos() || call.Pos() >= state.send.Pos() {
+func synchronousHeaderCall(state *exchangeAudit, call *ast.CallExpr) bool {
+	if call.Pos() <= state.constructor.Pos() || call.Pos() >= state.send.Pos() {
 		return false
 	}
 

@@ -219,21 +219,5 @@ func (state *exchangeAudit) allowedRequestUse(identifier *ast.Ident) bool {
 }
 
 func (state *exchangeAudit) allowedHeaderUse(parent *ast.SelectorExpr) bool {
-	if parent.Sel.Name != requestHeaderField {
-		return false
-	}
-
-	method, recognized := requestParent(state.parents, parent).(*ast.SelectorExpr)
-	if !recognized || (method.Sel.Name != headerSetMethod && method.Sel.Name != headerAddMethod) {
-		return false
-	}
-
-	call, recognized := state.parents[method].(*ast.CallExpr)
-	if !recognized || len(call.Args) != keyValueArguments {
-		return false
-	}
-
-	_, recognized = generated(call.Args[0], state.imports, requestHeaderField)
-
-	return recognized && safeRequestHeaderValue(state, call)
+	return parent.Sel.Name == requestHeaderField && safeHeaderOrigin(state, parent)
 }
