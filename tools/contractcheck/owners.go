@@ -11,6 +11,13 @@ import (
 
 func schemaOwner(root, path, name, kind string) (string, error) {
 	schemaPath := modelSchema(path)
+	if name == "SdmBearerAuthScopes" && schemaPath == "api/openapi.yaml" {
+		return schemaPath + "#/components/securitySchemes/sdmBearerAuth", nil
+	}
+
+	if name == "PubsubBearerAuthScopes" && schemaPath == pubsubSchemaPath {
+		return schemaPath + "#/components/securitySchemes/pubsubBearerAuth", nil
+	}
 
 	if strings.Contains(path, "internal/protocol/") {
 		return protocolOwner(name), nil
@@ -111,7 +118,7 @@ func protocolOwner(name string) string {
 
 			switch operation {
 			case "Pull", "Acknowledge", "ModifyAckDeadline":
-				schemaPath = "api/external/pubsub.openapi.yaml"
+				schemaPath = pubsubSchemaPath
 			case "OAuthToken":
 				schemaPath = oauthSchemaPath
 			case "DownloadImage", "DownloadClipPreview":

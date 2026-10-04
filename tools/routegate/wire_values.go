@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"go/ast"
-	"go/token"
-	"maps"
 )
 
 const wireModelImport = module + "/pkg/dependencymodels"
@@ -15,11 +13,12 @@ type wireBinding struct {
 }
 
 type wireReference struct {
-	name      string
-	owned     bool
-	mapping   bool
-	structure *ast.StructType
-	sequence  *ast.ArrayType
+	name        string
+	owned       bool
+	mapping     bool
+	structure   *ast.StructType
+	sequence    *ast.ArrayType
+	association *ast.MapType
 }
 
 type wireValueAudit struct {
@@ -28,13 +27,18 @@ type wireValueAudit struct {
 	models        map[string]ast.Expr
 	bindings      map[wireBinding]wireReference
 	callArguments map[wireBinding]ast.Expr
+	callers       map[wireBinding]bool
+	parents       map[ast.Node]ast.Node
 }
 
 func auditWireValues(file *ast.File, imports map[string]string, models map[string]ast.Expr) error {
 	state := wireValueAudit{
 		file: file, imports: imports, models: models,
 		bindings: map[wireBinding]wireReference{}, callArguments: map[wireBinding]ast.Expr{},
+		callers: map[wireBinding]bool{}, parents: nodeParents(file),
 	}
+	state.collectCallers()
+	state.collectProviderResults()
 	state.resolveBindings()
 
 	var failure error
@@ -46,14 +50,14 @@ func auditWireValues(file *ast.File, imports map[string]string, models map[strin
 
 		switch value := node.(type) {
 		case *ast.CompositeLit:
-			reference := state.reference(value.Type)
-			if reference.owned && reference.structure == nil && state.fixedComposite(value, map[wireBinding]bool{}) {
+			reference := state.compositeReference(value)
+			if reference.owned && reference.name != "" && state.fixedComposite(value, map[wireBinding]bool{}) {
 				failure = fmt.Errorf("%w: handwritten fixed value or key in generated wire object", errRouteInvalid)
 			}
 		case *ast.AssignStmt:
 			failure = state.auditWireAssignment(value)
 		case *ast.CallExpr:
-			failure = state.auditMapCall(value)
+			failure = state.auditWireCall(value)
 		}
 
 		return true
@@ -118,30 +122,50 @@ func (state *wireValueAudit) declarationReference(identifier *ast.Ident) wireRef
 	case *ast.AssignStmt:
 		for index, left := range declaration.Lhs {
 			name, recognized := left.(*ast.Ident)
-			if recognized && name.Obj == identifier.Obj && index < len(declaration.Rhs) {
-				return state.reference(declaration.Rhs[index])
+			if recognized && name.Obj == identifier.Obj {
+				if len(declaration.Rhs) == 1 {
+					if call, called := declaration.Rhs[0].(*ast.CallExpr); called {
+						return state.callReferenceAt(call, index)
+					}
+				}
+
+				if index < len(declaration.Rhs) {
+					return state.reference(declaration.Rhs[index])
+				}
+
+				return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil, association: nil}
 			}
 		}
 	}
 
-	return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil}
+	return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil, association: nil}
 }
 
 func (state *wireValueAudit) indexedReference(names []*ast.Ident, values []ast.Expr,
 	identifier *ast.Ident) wireReference {
 	for index, name := range names {
-		if name.Obj == identifier.Obj && index < len(values) {
-			return state.reference(values[index])
+		if name.Obj == identifier.Obj {
+			if len(values) == 1 {
+				if call, called := values[0].(*ast.CallExpr); called {
+					return state.callReferenceAt(call, index)
+				}
+			}
+
+			if index < len(values) {
+				return state.reference(values[index])
+			}
+
+			return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil, association: nil}
 		}
 	}
 
-	return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil}
+	return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil, association: nil}
 }
 
 func (state *wireValueAudit) reference(expression ast.Expr) wireReference {
 	switch value := expression.(type) {
 	case *ast.StructType:
-		return wireReference{name: "", owned: true, mapping: false, structure: value, sequence: nil}
+		return wireReference{name: "", owned: true, mapping: false, structure: value, sequence: nil, association: nil}
 	case *ast.Ident:
 		return state.bindings[bindingOf(value)]
 	case *ast.SelectorExpr:
@@ -153,7 +177,7 @@ func (state *wireValueAudit) reference(expression ast.Expr) wireReference {
 	case *ast.UnaryExpr:
 		return state.reference(value.X)
 	case *ast.CompositeLit:
-		reference := state.reference(value.Type)
+		reference := state.compositeReference(value)
 		if reference.owned {
 			return reference
 		}
@@ -170,14 +194,24 @@ func (state *wireValueAudit) reference(expression ast.Expr) wireReference {
 		}
 
 		return reference
+	case *ast.MapType:
+		element := state.reference(value.Value)
+
+		return wireReference{name: "", owned: element.owned, mapping: false,
+			structure: nil, sequence: nil, association: value}
 	case *ast.ArrayType:
 		element := state.reference(value.Elt)
 
-		return wireReference{name: "", owned: element.owned, mapping: false, structure: nil, sequence: value}
+		return wireReference{name: "", owned: element.owned,
+			mapping: false, structure: nil, sequence: value, association: nil}
 	case *ast.IndexExpr:
 		container := state.reference(value.X)
 		if container.sequence != nil {
 			return state.fieldReference(container.sequence.Elt)
+		}
+
+		if container.association != nil {
+			return state.fieldReference(container.association.Value)
 		}
 
 		return container
@@ -192,19 +226,20 @@ func (state *wireValueAudit) reference(expression ast.Expr) wireReference {
 		return state.callReference(value)
 	}
 
-	return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil}
+	return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil, association: nil}
 }
 
 func (state *wireValueAudit) selectorReference(selector *ast.SelectorExpr) wireReference {
 	owner, recognized := selector.X.(*ast.Ident)
-	if recognized && owner.Obj == nil && state.imports[owner.Name] == wireModelImport {
+	if recognized && owner.Obj == nil &&
+		(state.imports[owner.Name] == wireModelImport || state.imports[owner.Name] == module+"/pkg/sdm") {
 		_, exists := state.models[selector.Sel.Name]
 		if !exists && len(state.models) != 0 {
-			return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil}
+			return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil, association: nil}
 		}
 
 		return wireReference{name: selector.Sel.Name, owned: true, mapping: state.modelMap(selector.Sel.Name),
-			structure: nil, sequence: nil}
+			structure: nil, sequence: nil, association: nil}
 	}
 
 	reference := state.reference(selector.X)
@@ -234,7 +269,7 @@ func (state *wireValueAudit) selectorReference(selector *ast.SelectorExpr) wireR
 		}
 	}
 
-	return wireReference{name: "", owned: true, mapping: false, structure: nil, sequence: nil}
+	return wireReference{name: "", owned: true, mapping: false, structure: nil, sequence: nil, association: nil}
 }
 
 func (state *wireValueAudit) fieldReference(expression ast.Expr) wireReference {
@@ -245,18 +280,19 @@ func (state *wireValueAudit) fieldReference(expression ast.Expr) wireReference {
 			return reference
 		}
 
-		return wireReference{name: "", owned: true, mapping: false, structure: nil, sequence: nil}
+		return wireReference{name: "", owned: true, mapping: false, structure: nil, sequence: nil, association: nil}
 	case *ast.MapType:
-		return wireReference{name: "", owned: true, mapping: true, structure: nil, sequence: nil}
+		return wireReference{name: "", owned: true, mapping: true, structure: nil, sequence: nil, association: nil}
 	case *ast.Ident:
 		return wireReference{name: value.Name, owned: true, mapping: state.modelMap(value.Name),
-			structure: nil, sequence: nil}
+			structure: nil, sequence: nil, association: nil}
 	case *ast.StarExpr:
 		return state.fieldReference(value.X)
 	case *ast.ArrayType:
-		return wireReference{name: "", owned: true, mapping: false, structure: nil, sequence: value}
+		return wireReference{name: "", owned: true,
+			mapping: false, structure: nil, sequence: value, association: nil}
 	default:
-		return wireReference{name: "", owned: true, mapping: false, structure: nil, sequence: nil}
+		return wireReference{name: "", owned: true, mapping: false, structure: nil, sequence: nil, association: nil}
 	}
 }
 
@@ -271,349 +307,74 @@ func (state *wireValueAudit) modelMap(name string) bool {
 }
 
 func (state *wireValueAudit) callReference(call *ast.CallExpr) wireReference {
+	return state.callReferenceAt(call, 0)
+}
+
+func (state *wireValueAudit) callReferenceAt(call *ast.CallExpr, selected int) wireReference {
 	if selector, recognized := call.Fun.(*ast.SelectorExpr); recognized {
 		return state.selectorReference(selector)
 	}
 
-	function := localFunction(call.Fun)
-	if function == nil || function.Type.Results == nil || len(function.Type.Results.List) == 0 {
-		return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil}
+	function := localCallable(call.Fun, map[wireBinding]bool{})
+	if function.signature == nil || function.signature.Results == nil || len(function.signature.Results.List) == 0 {
+		return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil, association: nil}
 	}
 
-	return state.reference(function.Type.Results.List[0].Type)
+	field, _ := resultField(function.signature, selected)
+	if field == nil {
+		return wireReference{name: "", owned: false, mapping: false, structure: nil, sequence: nil, association: nil}
+	}
+
+	return state.reference(field.Type)
 }
 
-func localFunction(expression ast.Expr) *ast.FuncDecl {
-	identifier, recognized := expression.(*ast.Ident)
-	if !recognized || identifier.Obj == nil {
-		return nil
-	}
-
-	function, _ := identifier.Obj.Decl.(*ast.FuncDecl)
-
-	return function
+type wireCallable struct {
+	signature *ast.FuncType
+	body      *ast.BlockStmt
 }
 
-func (state *wireValueAudit) auditWireAssignment(assignment *ast.AssignStmt) error {
-	for index, target := range assignment.Lhs {
-		if index >= len(assignment.Rhs) || !state.reference(target).owned {
-			continue
-		}
-		// Definitions and aliases retain provenance; the initializer is checked at the wire boundary.
-		if _, recognized := target.(*ast.Ident); recognized && assignment.Tok == token.DEFINE {
-			continue
-		}
-
-		if state.fixedValue(assignment.Rhs[index], map[wireBinding]bool{}) {
-			return fmt.Errorf("%w: handwritten fixed value assigned to generated wire field", errRouteInvalid)
-		}
-
-		if state.fixedReceiverKey(target) {
-			return fmt.Errorf("%w: handwritten fixed key assigned to generated wire map", errRouteInvalid)
-		}
-	}
-
-	return nil
-}
-
-func (state *wireValueAudit) fixedComposite(composite *ast.CompositeLit, visited map[wireBinding]bool) bool {
-	mapping := state.reference(composite.Type).mapping
-	if _, nativeMap := composite.Type.(*ast.MapType); nativeMap {
-		mapping = true
-	}
-
-	for _, element := range composite.Elts {
-		if keyed, recognized := element.(*ast.KeyValueExpr); recognized {
-			// Struct field identifiers are generated Go fields; map keys are wire protocol values.
-			if _, fieldName := keyed.Key.(*ast.Ident); (mapping || !fieldName) && state.fixedValue(keyed.Key, visited) {
-				return true
-			}
-
-			if state.fixedValue(keyed.Value, visited) {
-				return true
-			}
-		} else if state.fixedValue(element, visited) {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (state *wireValueAudit) fixedValue(expression ast.Expr, visited map[wireBinding]bool) bool {
+func localCallable(expression ast.Expr, visited map[wireBinding]bool) wireCallable {
 	switch value := expression.(type) {
-	case *ast.BasicLit:
-		return true
-	case *ast.Ident:
-		return state.fixedIdentifier(value, visited)
-	case *ast.ParenExpr:
-		return state.fixedValue(value.X, visited)
-	case *ast.UnaryExpr:
-		return state.fixedValue(value.X, visited)
-	case *ast.StarExpr:
-		return state.fixedValue(value.X, visited)
-	case *ast.IndexExpr:
-		return state.fixedValue(value.X, visited) ||
-			state.reference(value.X).mapping && state.fixedValue(value.Index, visited)
-	case *ast.TypeAssertExpr:
-		return state.fixedValue(value.X, visited)
-	case *ast.SliceExpr:
-		return state.fixedValue(value.X, visited)
-	case *ast.BinaryExpr:
-		return state.fixedValue(value.X, visited) || state.fixedValue(value.Y, visited)
-	case *ast.CompositeLit:
-		return state.fixedComposite(value, visited)
-	case *ast.CallExpr:
-		return state.fixedCall(value, visited)
-	case *ast.SelectorExpr:
-		return state.fixedSelector(value, visited)
 	case *ast.FuncLit:
-		return state.fixedFunction(value.Type, value.Body, visited)
+		return wireCallable{signature: value.Type, body: value.Body}
+	case *ast.ParenExpr:
+		return localCallable(value.X, visited)
+	case *ast.Ident:
+		return identifierCallable(value, visited)
 	}
 
-	return false
+	return wireCallable{signature: nil, body: nil}
 }
 
-func (state *wireValueAudit) fixedIdentifier(identifier *ast.Ident, visited map[wireBinding]bool) bool {
-	if identifier.Name == "true" || identifier.Name == "false" {
-		return true
-	}
-
+func identifierCallable(identifier *ast.Ident, visited map[wireBinding]bool) wireCallable {
 	if identifier.Obj == nil {
-		return false
+		return wireCallable{signature: nil, body: nil}
 	}
 
 	key := bindingOf(identifier)
 	if visited[key] {
-		return false
+		return wireCallable{signature: nil, body: nil}
 	}
 
 	visited[key] = true
-	if argument, supplied := state.callArguments[key]; supplied {
-		return state.fixedValue(argument, visited)
-	}
 
 	switch declaration := identifier.Obj.Decl.(type) {
+	case *ast.FuncDecl:
+		return wireCallable{signature: declaration.Type, body: declaration.Body}
 	case *ast.AssignStmt:
-		return state.fixedAssignments(identifier, visited)
+		for index, left := range declaration.Lhs {
+			other, recognized := left.(*ast.Ident)
+			if recognized && other.Obj == identifier.Obj && index < len(declaration.Rhs) {
+				return localCallable(declaration.Rhs[index], visited)
+			}
+		}
 	case *ast.ValueSpec:
 		for index, name := range declaration.Names {
 			if name.Obj == identifier.Obj && index < len(declaration.Values) {
-				return state.fixedValue(declaration.Values[index], visited)
+				return localCallable(declaration.Values[index], visited)
 			}
 		}
 	}
 
-	return state.fixedAssignments(identifier, visited)
-}
-
-func (state *wireValueAudit) fixedAssignments(identifier *ast.Ident, visited map[wireBinding]bool) bool {
-	fixed := false
-
-	ast.Inspect(state.file, func(node ast.Node) bool {
-		assignment, recognized := node.(*ast.AssignStmt)
-		if !recognized {
-			return true
-		}
-
-		for index, left := range assignment.Lhs {
-			other, recognized := left.(*ast.Ident)
-			if recognized && other.Obj == identifier.Obj && index < len(assignment.Rhs) &&
-				state.fixedValue(assignment.Rhs[index], visited) {
-				fixed = true
-			}
-		}
-
-		return true
-	})
-
-	return fixed
-}
-
-func (state *wireValueAudit) fixedCall(call *ast.CallExpr, visited map[wireBinding]bool) bool {
-	if function := localFunction(call.Fun); function != nil {
-		return state.fixedHelperCall(call, function, visited)
-	}
-
-	if callback, recognized := call.Fun.(*ast.CallExpr); recognized {
-		return state.fixedCall(callback, visited)
-	}
-
-	for _, argument := range call.Args {
-		if state.fixedValue(argument, visited) {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (state *wireValueAudit) fixedHelperCall(call *ast.CallExpr, function *ast.FuncDecl,
-	visited map[wireBinding]bool) bool {
-	previous := state.callArguments
-	state.callArguments = copyArguments(previous)
-	index := 0
-
-	for _, parameter := range function.Type.Params.List {
-		for _, name := range parameter.Names {
-			if index < len(call.Args) {
-				state.callArguments[bindingOf(name)] = call.Args[index]
-			}
-
-			index++
-		}
-	}
-
-	fixed := state.fixedFunction(function.Type, function.Body, visited)
-	state.callArguments = previous
-
-	return fixed
-}
-
-func copyArguments(source map[wireBinding]ast.Expr) map[wireBinding]ast.Expr {
-	result := make(map[wireBinding]ast.Expr, len(source))
-	maps.Copy(result, source)
-
-	return result
-}
-
-func (state *wireValueAudit) fixedFunction(signature *ast.FuncType, body *ast.BlockStmt,
-	visited map[wireBinding]bool) bool {
-	fixed := false
-
-	if signature.Results != nil && len(signature.Results.List) > 0 {
-		for _, name := range signature.Results.List[0].Names {
-			fixed = fixed || state.fixedIdentifier(name, visited)
-		}
-	}
-
-	ast.Inspect(body, func(node ast.Node) bool {
-		statement, recognized := node.(*ast.ReturnStmt)
-		if !recognized || len(statement.Results) == 0 {
-			return true
-		}
-
-		if state.fixedValue(statement.Results[0], visited) {
-			fixed = true
-		}
-
-		return true
-	})
-
-	return fixed
-}
-
-func (state *wireValueAudit) auditMapCall(call *ast.CallExpr) error {
-	for index, argument := range call.Args {
-		if !state.containsWireMap(argument) {
-			continue
-		}
-
-		if state.verifiedMapCall(call, index) {
-			continue
-		}
-
-		return fmt.Errorf("%w: generated wire map escapes to an unverified helper", errRouteInvalid)
-	}
-
-	return nil
-}
-
-func (state *wireValueAudit) verifiedMapCall(call *ast.CallExpr, argumentIndex int) bool {
-	if function := localFunction(call.Fun); function != nil {
-		return state.typedMapParameter(function, argumentIndex)
-	}
-
-	selector, recognized := call.Fun.(*ast.SelectorExpr)
-	if !recognized {
-		return false
-	}
-
-	if selector.Sel.Name == exchangeHelper {
-		return true
-	}
-
-	owner, recognized := selector.X.(*ast.Ident)
-
-	return recognized && owner.Obj == nil && state.imports[owner.Name] == "encoding/json" &&
-		(selector.Sel.Name == "Marshal" || selector.Sel.Name == "Unmarshal")
-}
-
-func (state *wireValueAudit) fixedSelector(selector *ast.SelectorExpr, visited map[wireBinding]bool) bool {
-	owner, recognized := selector.X.(*ast.Ident)
-	if recognized && owner.Obj == nil {
-		imported := state.imports[owner.Name]
-		if imported == wireModelImport && len(state.models) != 0 {
-			_, generatedConstant := state.models["constant:"+selector.Sel.Name]
-
-			return !generatedConstant
-		}
-
-		return imported != wireModelImport && imported != module+"/internal/protocol" && imported != module+"/pkg/sdm"
-	}
-
-	return state.fixedValue(selector.X, visited)
-}
-
-func (state *wireValueAudit) typedMapParameter(function *ast.FuncDecl, argumentIndex int) bool {
-	index := 0
-
-	for _, parameter := range function.Type.Params.List {
-		for range parameter.Names {
-			if index == argumentIndex {
-				return state.reference(parameter.Type).owned
-			}
-
-			index++
-		}
-	}
-
-	return false
-}
-
-func (state *wireValueAudit) fixedReceiverKey(expression ast.Expr) bool {
-	fixed := false
-
-	ast.Inspect(expression, func(node ast.Node) bool {
-		indexed, recognized := node.(*ast.IndexExpr)
-		if recognized && state.reference(indexed.X).mapping && state.fixedValue(indexed.Index, map[wireBinding]bool{}) {
-			fixed = true
-		}
-
-		return true
-	})
-
-	return fixed
-}
-
-func (state *wireValueAudit) containsWireMap(expression ast.Expr) bool {
-	found := false
-
-	ast.Inspect(expression, func(node ast.Node) bool {
-		value, recognized := node.(ast.Expr)
-		if !recognized {
-			return true
-		}
-
-		reference := state.reference(value)
-		if reference.mapping {
-			found = true
-		}
-
-		if reference.sequence != nil && state.fieldReference(reference.sequence.Elt).mapping {
-			found = true
-		}
-
-		if reference.structure != nil {
-			for _, field := range reference.structure.Fields.List {
-				if state.reference(field.Type).mapping {
-					found = true
-				}
-			}
-		}
-
-		return true
-	})
-
-	return found
+	return wireCallable{signature: nil, body: nil}
 }

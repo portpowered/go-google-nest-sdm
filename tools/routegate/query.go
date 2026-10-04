@@ -103,7 +103,7 @@ func queryCall(call *ast.CallExpr, method *ast.SelectorExpr, encode *ast.CallExp
 	}
 }
 
-func nodeParents(body *ast.BlockStmt) map[ast.Node]ast.Node {
+func nodeParents(body ast.Node) map[ast.Node]ast.Node {
 	parents := map[ast.Node]ast.Node{}
 
 	var stack []ast.Node

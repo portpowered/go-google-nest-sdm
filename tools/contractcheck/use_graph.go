@@ -186,6 +186,8 @@ func traceWireRoots(entries []inventoryEntry, edges map[int]map[int]bool) {
 		entry.WireRoots = sortedUnique(entry.WireRoots)
 
 		switch {
+		case entry.Declaration == "SdmBearerAuthScopes" || entry.Declaration == "PubsubBearerAuthScopes":
+			entry.Disposition = "generated authorization scope marker; client sends schema-bound Bearer authorization"
 		case entry.Declaration == "ChannelSDMEvents" || entry.Declaration == "ChannelSDMEventsName":
 			entry.Disposition = "provider topic address; no direct topic opening; " +
 				"delivery uses subscription REST pull or HTTP push"

@@ -28,6 +28,8 @@ const sdmSchemaPath = "api/openapi.yaml"
 
 const oauthSchemaPath = "api/external/oauth.openapi.yaml"
 
+const pubsubSchemaPath = "api/external/pubsub.openapi.yaml"
+
 func verifyGeneratedFields(root string) error {
 	for _, path := range generatedPaths() {
 		schemaPath := modelSchema(path)
@@ -211,7 +213,7 @@ func modelSchema(path string) string {
 	case "provider-errors.gen.go":
 		return "api/client-errors.openapi.yaml"
 	case "pubsub.gen.go":
-		return "api/external/pubsub.openapi.yaml"
+		return pubsubSchemaPath
 	case "resources.gen.go":
 		return "api/client-resources.openapi.yaml"
 	case "media.gen.go":
