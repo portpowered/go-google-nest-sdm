@@ -24,12 +24,18 @@ func (state *wireValueAudit) auditMapCall(call *ast.CallExpr) error {
 
 func (state *wireValueAudit) verifiedMapCall(call *ast.CallExpr, argumentIndex int) bool {
 	if function := localCallable(call.Fun, map[wireBinding]bool{}); function.signature != nil {
-		return state.typedMapParameter(function, argumentIndex)
+		_, decoder := state.decoderForwarding(function, argumentIndex)
+
+		return state.typedMapParameter(function, argumentIndex) || decoder
 	}
 
 	selector, recognized := call.Fun.(*ast.SelectorExpr)
 	if !recognized {
 		return false
+	}
+
+	if selector.Sel.Name == jsonExchangeHelper {
+		return state.verifiedJSONCall(call)
 	}
 
 	if selector.Sel.Name == exchangeHelper {
@@ -226,10 +232,12 @@ func (state *wireValueAudit) auditWireCall(call *ast.CallExpr) error {
 		}
 
 		if !state.verifiedMapCall(call, index) {
-			return fmt.Errorf("%w: generated wire address escapes to an unverified helper", errRouteInvalid)
+			return fmt.Errorf("%w: generated wire address escapes to an unverified helper %s",
+				errRouteInvalid, wireCallName(call))
 		}
 
-		if state.jsonDecoder(call) && len(call.Args) > 0 && state.fixedValue(call.Args[0], map[wireBinding]bool{}) {
+		input, decoder := state.decoderInput(call, index)
+		if decoder && state.fixedValue(input, map[wireBinding]bool{}) {
 			return fmt.Errorf("%w: handwritten fixed JSON decoded into a generated wire object", errRouteInvalid)
 		}
 	}
@@ -291,12 +299,12 @@ func (state *wireValueAudit) verifiedProviderCall(call *ast.CallExpr, selector *
 func (state *wireValueAudit) collectProviderResults() {
 	ast.Inspect(state.file, func(node ast.Node) bool {
 		call, recognized := node.(*ast.CallExpr)
-		if !recognized || len(call.Args) != exchangeArguments {
+		if !recognized || (len(call.Args) != exchangeArguments && len(call.Args) != exchangeArguments-1) {
 			return true
 		}
 
 		selector, recognized := call.Fun.(*ast.SelectorExpr)
-		if !recognized || selector.Sel.Name != exchangeHelper {
+		if !recognized || (selector.Sel.Name != exchangeHelper && selector.Sel.Name != jsonExchangeHelper) {
 			return true
 		}
 
@@ -306,7 +314,12 @@ func (state *wireValueAudit) collectProviderResults() {
 				continue
 			}
 
-			if verifyRoute(function, call, state.imports) != nil {
+			valid := verifyRoute(function, call, state.imports) == nil
+			if selector.Sel.Name == jsonExchangeHelper {
+				valid = state.verifiedJSONCall(call)
+			}
+
+			if !valid {
 				return true
 			}
 
@@ -353,4 +366,30 @@ func (state *wireValueAudit) compositeMemberDomain(composite *ast.CompositeLit, 
 	}
 
 	return false
+}
+
+func (state *wireValueAudit) verifiedJSONCall(call *ast.CallExpr) bool {
+	if state.models["approved-helper:"+jsonExchangeHelper] == nil {
+		return false
+	}
+
+	for parent := state.parents[call]; parent != nil; parent = state.parents[parent] {
+		function, recognized := parent.(*ast.FuncDecl)
+		if recognized {
+			return verifyJSONRoute(function, call, state.imports) == nil
+		}
+	}
+
+	return false
+}
+
+func wireCallName(call *ast.CallExpr) string {
+	switch function := call.Fun.(type) {
+	case *ast.SelectorExpr:
+		return function.Sel.Name
+	case *ast.Ident:
+		return function.Name
+	}
+
+	return "anonymous callable"
 }

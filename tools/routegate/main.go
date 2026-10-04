@@ -4,9 +4,7 @@ package main
 import (
 	"fmt"
 	"go/ast"
-	"go/parser"
 	"go/token"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"slices"
@@ -42,52 +40,36 @@ func audit(root string) error {
 		return err
 	}
 
-	err = filepath.WalkDir(filepath.Join(root, "pkg"), func(path string, entry fs.DirEntry, walkErr error) error {
-		if walkErr != nil {
-			return walkErr
-		}
-
-		if entry.IsDir() || !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
-			return nil
-		}
-
-		file, err := parser.ParseFile(token.NewFileSet(), path, nil, 0)
-		if err != nil {
-			return fmt.Errorf("parse source: %w", err)
-		}
-
-		if strings.HasSuffix(path, ".gen.go") {
-			return nil
-		}
-
-		err = auditFile(file, filepath.ToSlash(path), models)
-		if err != nil {
-			return fmt.Errorf("%s: %w", path, err)
-		}
-
-		return nil
-	})
-	if err != nil {
-		return fmt.Errorf("walk sources: %w", err)
-	}
-
-	return nil
-}
-
-func auditFile(file *ast.File, path string, catalogs ...map[string]ast.Expr) error {
-	imports, err := auditImports(file)
+	err = auditJSONHelper(root, models)
 	if err != nil {
 		return err
 	}
 
+	return auditSourcePackages(root, models)
+}
+
+func auditFile(file *ast.File, path string, catalogs ...map[string]ast.Expr) error {
 	models := map[string]ast.Expr{}
 	if len(catalogs) != 0 {
 		models = catalogs[0]
 	}
 
-	err = auditWireValues(file, imports, models)
+	return auditFilePolicy(file, path, models, false)
+}
+
+func auditFilePolicy(file *ast.File, path string, models map[string]ast.Expr, skipWire bool) error {
+	imports, err := auditImports(file)
 	if err != nil {
 		return err
+	}
+
+	bindGeneratedConstants(imports, models)
+
+	if !skipWire {
+		err = auditWireValues(file, imports, models)
+		if err != nil {
+			return err
+		}
 	}
 
 	for _, declaration := range file.Decls {
@@ -143,9 +125,9 @@ func auditImports(file *ast.File) (map[string]string, error) {
 func verifiedHelper(function *ast.FuncDecl, path string) bool {
 	switch function.Name.Name {
 	case exchangeHelper:
-		return strings.HasSuffix(path, "pkg/dependencies/httptransport/exchange.go")
+		return path == "pkg/dependencies/httptransport/exchange.go"
 	case downloadHelper:
-		return strings.HasSuffix(path, "pkg/dependencies/media/download.go")
+		return path == "pkg/dependencies/media/download.go"
 	default:
 		return false
 	}
@@ -193,16 +175,27 @@ func auditSelector(function *ast.FuncDecl, selector *ast.SelectorExpr, imports m
 			return fmt.Errorf("%w: transport helper method value escapes", errRouteInvalid)
 		}
 
+		if function.Name.Name == jsonExchangeHelper && path == "pkg/dependencies/httptransport/exchange.go" {
+			return nil // auditJSONHelper independently proves exact parameter and serialized-body forwarding.
+		}
+
 		return verifyRoute(function, call, imports)
+	case jsonExchangeHelper:
+		call := findCall(function.Body, selector)
+		if call == nil {
+			return fmt.Errorf("%w: JSON transport helper method value escapes", errRouteInvalid)
+		}
+
+		return verifyJSONRoute(function, call, imports)
 	case downloadHelper:
 		call := findCall(function.Body, selector)
-		if !strings.HasSuffix(path, "pkg/dependencies/media/download.go") || call == nil {
+		if path != "pkg/dependencies/media/download.go" || call == nil {
 			return fmt.Errorf("%w: uninventoried media helper escape", errRouteInvalid)
 		}
 
 		return verifyMediaRoute(function, call, imports)
 	case resourceHelper:
-		if strings.HasSuffix(path, "pkg/dependencies/httptransport/sdk_resources.go") {
+		if path == "pkg/dependencies/httptransport/sdk_resources.go" {
 			return verifyResourceCall(findCall(function.Body, selector), imports)
 		}
 	case "Do", "RoundTrip":
@@ -269,6 +262,10 @@ func generated(expression ast.Expr, imports map[string]string, prefix string) (s
 		return "", false
 	}
 
+	if (prefix == "Query" || prefix == "Header") && imports[generatedBindingPrefix+selector.Sel.Name] == "" {
+		return "", false
+	}
+
 	return strings.TrimPrefix(selector.Sel.Name, prefix), true
 }
 
@@ -313,6 +310,39 @@ func verifyRoute(function *ast.FuncDecl, call *ast.CallExpr, imports map[string]
 		return fmt.Errorf("%w: unrecognized exchange signature", errRouteInvalid)
 	}
 
+	if !schemaContentType(call.Args[5], imports) {
+		return fmt.Errorf("%w: exchange content type is not schema-bound", errRouteInvalid)
+	}
+
+	return verifyRouteArguments(function, call, imports)
+}
+
+func schemaContentType(expression ast.Expr, imports map[string]string) bool {
+	if literal, empty := expression.(*ast.BasicLit); empty && literal.Kind == token.STRING && literal.Value == `""` {
+		return true
+	}
+
+	selector, recognized := expression.(*ast.SelectorExpr)
+	if !recognized || (selector.Sel.Name != "MIMEApplicationJSON" &&
+		selector.Sel.Name != "MIMEFormURLEncoded") {
+		return false
+	}
+
+	owner, recognized := selector.X.(*ast.Ident)
+
+	return recognized && owner.Obj == nil && imports[owner.Name] == module+"/internal/protocol" &&
+		imports[generatedBindingPrefix+selector.Sel.Name] != ""
+}
+
+func verifyJSONRoute(function *ast.FuncDecl, call *ast.CallExpr, imports map[string]string) error {
+	if call == nil || len(call.Args) != exchangeArguments-1 {
+		return fmt.Errorf("%w: unrecognized JSON exchange signature", errRouteInvalid)
+	}
+
+	return verifyRouteArguments(function, call, imports)
+}
+
+func verifyRouteArguments(function *ast.FuncDecl, call *ast.CallExpr, imports map[string]string) error {
 	method, recognized := routeMethod(call.Args[2], function, imports, "Method", "method")
 	if !recognized {
 		return fmt.Errorf("%w: HTTP method is not schema-generated", errRouteInvalid)
@@ -375,62 +405,15 @@ func configuredOrigin(expression ast.Expr, function *ast.FuncDecl) bool {
 
 func verifyPath(function *ast.FuncDecl, call *ast.CallExpr,
 	path *ast.Ident, method string, imports map[string]string) error {
-	assignments := 0
-	valid := true
+	state := routeFlow{function: function, send: call, path: path, operation: method, imports: imports,
+		parents: nodeParents(function.Body), found: false, safe: false}
+	state.walk(function.Body.List, false)
 
-	ast.Inspect(function.Body, func(node ast.Node) bool {
-		if assignment, recognized := node.(*ast.AssignStmt); recognized {
-			count, acceptable := pathAssignment(assignment, function, call, path, method, imports)
-			assignments += count
-			valid = valid && acceptable
-		}
-
-		if escapes(node, path, call) {
-			valid = false
-		}
-
-		return true
-	})
-
-	if assignments != 1 || !valid {
-		return fmt.Errorf("%w: path has mutations, conditional or unverified provenance", errRouteInvalid)
-	}
-
-	if !topLevelAssignment(function, path) {
-		return fmt.Errorf("%w: route assignment is conditional", errRouteInvalid)
+	if !state.found || !state.safe || !state.safeUses() {
+		return fmt.Errorf("%w: path is not proven on every control-flow path or escapes", errRouteInvalid)
 	}
 
 	return nil
-}
-
-func pathAssignment(assignment *ast.AssignStmt, function *ast.FuncDecl, call *ast.CallExpr,
-	path *ast.Ident, method string, imports map[string]string) (int, bool) {
-	count := 0
-	valid := true
-
-	for index, left := range assignment.Lhs {
-		identifier, recognized := left.(*ast.Ident)
-		if !recognized || identifier.Obj != path.Obj {
-			continue
-		}
-
-		if assignment.Tok == token.ADD_ASSIGN && index == 0 && len(assignment.Rhs) == 1 &&
-			safeQueryAppend(assignment.Rhs[0], function, imports) {
-			continue
-		}
-
-		count++
-
-		if assignment.Pos() > call.Pos() || index >= len(assignment.Rhs) {
-			valid = false
-
-			continue
-		}
-
-		valid = valid && pathConstructor(assignment.Rhs[index], function, method, imports)
-	}
-
-	return count, valid
 }
 
 func pathConstructor(expression ast.Expr, function *ast.FuncDecl, method string, imports map[string]string) bool {
@@ -459,23 +442,6 @@ func escapes(node ast.Node, identifier *ast.Ident, allowed *ast.CallExpr) bool {
 	if call, recognized := node.(*ast.CallExpr); recognized && call != allowed {
 		for _, argument := range call.Args {
 			if value, recognized := argument.(*ast.Ident); recognized && value.Obj == identifier.Obj {
-				return true
-			}
-		}
-	}
-
-	return false
-}
-
-func topLevelAssignment(function *ast.FuncDecl, identifier *ast.Ident) bool {
-	for _, statement := range function.Body.List {
-		assignment, recognized := statement.(*ast.AssignStmt)
-		if !recognized {
-			continue
-		}
-
-		for _, left := range assignment.Lhs {
-			if value, recognized := left.(*ast.Ident); recognized && value.Obj == identifier.Obj {
 				return true
 			}
 		}

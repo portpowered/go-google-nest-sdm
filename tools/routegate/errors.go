@@ -11,6 +11,7 @@ const (
 	httpImport         = "net/http"
 	requestConstructor = "NewRequestWithContext"
 	exchangeHelper     = "exchange"
+	jsonExchangeHelper = "exchangeJSON"
 	downloadHelper     = "download"
 	resourceHelper     = "resource"
 	queryEncoder       = "Encode"

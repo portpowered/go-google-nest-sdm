@@ -13,12 +13,15 @@ import (
 	"slices"
 	"sort"
 	"strings"
+	"time"
 )
 
 const (
 	lintVersion = "v2.14.0"
 	allPackages = "./..."
 	modulesMode = "modules"
+	// Compile-valid source controls build isolated SDKs; each subprocess remains bounded separately.
+	moduleTestTimeout = 10 * time.Minute
 )
 
 type verificationError struct {
@@ -148,7 +151,7 @@ func moduleArguments(mode string) []string {
 	case "build":
 		return []string{"build", allPackages}
 	case "test":
-		return []string{"test", "-race", "-timeout=180s", allPackages}
+		return []string{"test", "-race", "-timeout=" + moduleTestTimeout.String(), allPackages}
 	case "vet":
 		return []string{"vet", allPackages}
 	case "fmt":

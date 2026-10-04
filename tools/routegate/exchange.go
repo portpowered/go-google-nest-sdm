@@ -41,6 +41,7 @@ func verifyExchange(function *ast.FuncDecl, imports map[string]string) error {
 	}
 
 	ast.Inspect(function.Body, state.inspectUses)
+	state.valid = state.valid && safeRequestBoundary(&state)
 
 	if !state.valid {
 		return fmt.Errorf("%w: request, target or headers mutate or escape verified helper", errRouteInvalid)
@@ -84,7 +85,7 @@ func (state *exchangeAudit) inspectConstructor(call *ast.CallExpr) {
 	}
 
 	state.constructor = call
-	for index, name := range []string{"ctx", "method", "endpoint", "body"} {
+	for index, name := range []string{"ctx", "method", exchangeEndpointParameter, "body"} {
 		state.valid = state.valid && state.constructorArgument(call.Args[index], name)
 	}
 
@@ -107,7 +108,7 @@ func (state *exchangeAudit) inspectConstructor(call *ast.CallExpr) {
 
 func (state *exchangeAudit) constructorArgument(expression ast.Expr, name string) bool {
 	if state.function.Name.Name == downloadHelper {
-		if name == "endpoint" {
+		if name == exchangeEndpointParameter {
 			return state.endpointString(expression)
 		}
 
@@ -136,7 +137,7 @@ func (state *exchangeAudit) endpointString(expression ast.Expr) bool {
 
 	selector, recognized := call.Fun.(*ast.SelectorExpr)
 
-	return recognized && selector.Sel.Name == "String" && state.parameter(selector.X, "endpoint")
+	return recognized && selector.Sel.Name == "String" && state.parameter(selector.X, exchangeEndpointParameter)
 }
 
 func (state *exchangeAudit) inspectUses(node ast.Node) bool {
@@ -149,8 +150,14 @@ func (state *exchangeAudit) inspectUses(node ast.Node) bool {
 		return true
 	}
 
-	if state.parameter(identifier, "method") || state.parameter(identifier, "endpoint") {
+	if state.parameter(identifier, "method") || state.parameter(identifier, exchangeEndpointParameter) ||
+		state.parameter(identifier, "body") {
 		state.valid = state.valid && state.allowedParameterUse(identifier)
+	}
+
+	if state.parameter(identifier, "token") || state.parameter(identifier, "contentType") ||
+		state.parameter(identifier, "authorization") {
+		state.valid = state.valid && safeHeaderParameterUse(state, identifier)
 	}
 
 	if identifier.Obj == state.request.Obj {
@@ -168,7 +175,7 @@ func (state *exchangeAudit) inspectAssignment(assignment *ast.AssignStmt) {
 	for _, left := range assignment.Lhs {
 		ast.Inspect(left, func(child ast.Node) bool {
 			identifier, recognized := child.(*ast.Ident)
-			if recognized && (state.parameter(identifier, "method") || state.parameter(identifier, "endpoint") ||
+			if recognized && (state.parameter(identifier, "method") || state.parameter(identifier, exchangeEndpointParameter) ||
 				identifier.Obj == state.request.Obj) {
 				state.valid = false
 			}
@@ -180,7 +187,7 @@ func (state *exchangeAudit) inspectAssignment(assignment *ast.AssignStmt) {
 
 func (state *exchangeAudit) allowedParameterUse(identifier *ast.Ident) bool {
 	parent := state.parents[identifier]
-	if state.function.Name.Name == downloadHelper && state.parameter(identifier, "endpoint") {
+	if state.function.Name.Name == downloadHelper && state.parameter(identifier, exchangeEndpointParameter) {
 		if selector, recognized := parent.(*ast.SelectorExpr); recognized && selector.Sel.Name == "String" {
 			call, recognized := state.parents[selector].(*ast.CallExpr)
 			if recognized && state.parents[call] == state.constructor {
@@ -199,7 +206,7 @@ func (state *exchangeAudit) allowedParameterUse(identifier *ast.Ident) bool {
 }
 
 func (state *exchangeAudit) allowedRequestUse(identifier *ast.Ident) bool {
-	switch parent := state.parents[identifier].(type) {
+	switch parent := requestParent(state.parents, identifier).(type) {
 	case *ast.AssignStmt:
 		return parent == state.parents[state.constructor]
 	case *ast.CallExpr:
@@ -212,12 +219,12 @@ func (state *exchangeAudit) allowedRequestUse(identifier *ast.Ident) bool {
 }
 
 func (state *exchangeAudit) allowedHeaderUse(parent *ast.SelectorExpr) bool {
-	if parent.Sel.Name != "Header" {
+	if parent.Sel.Name != requestHeaderField {
 		return false
 	}
 
-	method, recognized := state.parents[parent].(*ast.SelectorExpr)
-	if !recognized || (method.Sel.Name != "Set" && method.Sel.Name != "Add") {
+	method, recognized := requestParent(state.parents, parent).(*ast.SelectorExpr)
+	if !recognized || (method.Sel.Name != headerSetMethod && method.Sel.Name != headerAddMethod) {
 		return false
 	}
 
@@ -226,7 +233,7 @@ func (state *exchangeAudit) allowedHeaderUse(parent *ast.SelectorExpr) bool {
 		return false
 	}
 
-	_, recognized = generated(call.Args[0], state.imports, "Header")
+	_, recognized = generated(call.Args[0], state.imports, requestHeaderField)
 
-	return recognized
+	return recognized && safeRequestHeaderValue(state, call)
 }
