@@ -40,6 +40,29 @@ jobs:
         run: make check-modules
       - name: Regenerate schemas and models and detect tracked or untracked drift
         run: make check-generated
+      - name: Capture verification failure diagnostics
+        if: failure()
+        shell: bash
+        run: |
+          diagnostics="$RUNNER_TEMP/verification-diagnostics"
+          mkdir -p "$diagnostics"
+          git status --porcelain=v1 --untracked-files=all > "$diagnostics/status.txt"
+          git diff --no-ext-diff --binary HEAD -- api internal pkg docs/model-inventory.json docs/api-reference.openapi.json go.mod go.sum cmd/go-google-nest-sdm/go.mod cmd/go-google-nest-sdm/go.sum tests/consumer/go.mod tests/consumer/go.sum > "$diagnostics/generated-and-module.patch"
+          cp docs/model-inventory.json "$diagnostics/model-inventory.checked-in.json"
+          if go run ./tools/contractcheck -write-inventory "$diagnostics/model-inventory.regenerated.json" > "$diagnostics/inventory.log" 2>&1; then
+            git diff --no-index -- "$diagnostics/model-inventory.checked-in.json" "$diagnostics/model-inventory.regenerated.json" > "$diagnostics/inventory.patch" || test "$?" -eq 1
+            wc -c "$diagnostics"/model-inventory.*.json > "$diagnostics/inventory-bytes.txt"
+            sha256sum "$diagnostics"/model-inventory.*.json > "$diagnostics/inventory-sha256.txt"
+          else
+            printf '%s\n' 'Inventory regeneration failed; see inventory.log.' >> "$diagnostics/inventory.log"
+          fi
+      - name: Upload verification failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-failure-${{ matrix.os }}-${{ matrix.go }}
+          path: ${{ runner.temp }}/verification-diagnostics
+          if-no-files-found: error
       - name: Upload separate unit, replay, and combined coverage profiles
         uses: actions/upload-artifact@v4
         with:
