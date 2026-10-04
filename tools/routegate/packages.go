@@ -91,6 +91,10 @@ func auditSourcePackages(root string, models map[string]ast.Expr) error {
 }
 
 func excludedSourceTree(relative string) bool {
+	if relative == cliRoot {
+		return true
+	}
+
 	first, _, _ := strings.Cut(relative, "/")
 	if strings.HasPrefix(first, ".") && first != "." {
 		return true
@@ -98,7 +102,7 @@ func excludedSourceTree(relative string) bool {
 	// CLI production is independently inventoried by auditCLI. Verification,
 	// fixtures and documentation tooling are not shipped provider modules.
 	switch first {
-	case "cmd", "tools", "tests", "docs", "node_modules", "vendor":
+	case "tools", "tests", "docs", "node_modules", "vendor":
 		return true
 	default:
 		return false

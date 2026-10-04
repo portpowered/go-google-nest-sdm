@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -33,13 +34,53 @@ func TestBodyBackingDefaultCommand(t *testing.T) {
 	requestCommand(t, root, true, "test", "./pkg/dependencies/httptransport", "-run", "^$")
 	requestCommand(t, root, true, "run", "./tools/routegate")
 
+	// A named reader of the exact generated JSON body remains accepted. The
+	// only change in the next probe is a write to that reader's backing slice.
+	named := strings.Replace(baseline, "return client.exchange(ctx, operation, method, endpoint, token,",
+		"reader := bytes.NewReader(body)\nreturn client.exchange(ctx, operation, method, endpoint, token,", 1)
+	named = strings.Replace(named, "bytes.NewReader(body), result)", "reader, result)", 1)
+	requestWrite(t, path, named)
+	requestCommand(t, root, true, "test", "./pkg/dependencies/httptransport", "-run", "^$")
+	requestCommand(t, root, true, "run", "./tools/routegate")
+
+	mutated := strings.Replace(named, "reader := bytes.NewReader(body)",
+		"reader := bytes.NewReader(body)\nbody[0] = 'X'", 1)
+	requestWrite(t, path, mutated)
+	requestCommand(t, root, true, "test", "./pkg/dependencies/httptransport", "-run", "^$")
+	requestCommand(t, root, false, "run", "./tools/routegate")
+
+	// Unapproved local reader sources are fail-closed independently of whether
+	// their storage mutates. This is a policy control, not mutation evidence.
 	probe := strings.Replace(baseline, "request, err := http.NewRequestWithContext(ctx, method, endpoint, body)",
 		"backing := []byte(token); reader := bytes.NewReader(backing)\n"+
 			"request, err := http.NewRequestWithContext(ctx, method, endpoint, reader)", 1)
+	requestWrite(t, path, probe)
+	requestCommand(t, root, true, "test", "./pkg/dependencies/httptransport", "-run", "^$")
+	requestCommand(t, root, false, "run", "./tools/routegate")
+
 	probe = strings.Replace(probe, "response, err := client.httpClient.Do(request)",
 		"backing[0] = 'X'\nresponse, err := client.httpClient.Do(request)", 1)
 	requestWrite(t, path, probe)
 	requestCommand(t, root, true, "test", "./pkg/dependencies/httptransport", "-run", "^$")
+	requestCommand(t, root, false, "run", "./tools/routegate")
+}
+
+func TestAdditionalCommandModuleDefaultGate(t *testing.T) {
+	t.Parallel()
+	root := testRootCopy(t)
+	directory := filepath.Join(root, "cmd/unregistered-command")
+
+	err := os.MkdirAll(directory, 0o700)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	requestWrite(t, filepath.Join(directory, "go.mod"), "module example.invalid/unregistered-command\n\ngo 1.24.0\n")
+	requestWrite(t, filepath.Join(directory, "main.go"), "package main\nfunc main(){}\n")
+	requestCommand(t, root, true, "run", "./tools/routegate")
+	requestWrite(t, filepath.Join(directory, "main.go"),
+		"package main\nimport \"net/http\"\nfunc main(){_,_=http.Get(\"https://example.invalid\")}\n")
+	requestCommand(t, root, true, "-C", "cmd/unregistered-command", "test", "-run", "^$", ".")
 	requestCommand(t, root, false, "run", "./tools/routegate")
 }
 

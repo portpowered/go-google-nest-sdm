@@ -15,6 +15,7 @@ type jsonExchangeAudit struct {
 	parents    map[ast.Node]ast.Node
 	marshal    *ast.CallExpr
 	reader     *ast.CallExpr
+	readerName *ast.Ident
 	send       *ast.CallExpr
 	body       *ast.Ident
 }
@@ -63,7 +64,7 @@ func auditJSONHelper(root string, models map[string]ast.Expr) error {
 
 func verifyJSONHelper(function *ast.FuncDecl, imports map[string]string) error {
 	state := jsonExchangeAudit{function: function, imports: imports, parameters: map[string]*ast.Ident{},
-		parents: nodeParents(function.Body), marshal: nil, reader: nil, send: nil, body: nil}
+		parents: nodeParents(function.Body), marshal: nil, reader: nil, readerName: nil, send: nil, body: nil}
 
 	for _, field := range function.Type.Params.List {
 		for _, name := range field.Names {
@@ -166,7 +167,7 @@ func (state *jsonExchangeAudit) readerBody() *ast.Ident {
 }
 
 func (state *jsonExchangeAudit) forwardedCall() bool {
-	if len(state.send.Args) != exchangeArguments || state.send.Args[6] != state.reader ||
+	if len(state.send.Args) != exchangeArguments || !state.forwardedReader(state.send.Args[6]) ||
 		!state.parameter(state.send.Args[7], "result") {
 		return false
 	}
@@ -194,6 +195,28 @@ func (state *jsonExchangeAudit) forwardedCall() bool {
 		state.parents[statement] == state.function.Body
 }
 
+func (state *jsonExchangeAudit) forwardedReader(expression ast.Expr) bool {
+	if expression == state.reader {
+		return true
+	}
+
+	identifier, recognized := expression.(*ast.Ident)
+	if !recognized || identifier.Obj == nil {
+		return false
+	}
+
+	assignment, recognized := identifier.Obj.Decl.(*ast.AssignStmt)
+	if !recognized || assignment.Tok != token.DEFINE || len(assignment.Lhs) != 1 || len(assignment.Rhs) != 1 ||
+		assignment.Rhs[0] != state.reader || state.parents[assignment] != state.function.Body ||
+		assignment.Pos() <= state.marshal.Pos() || assignment.End() >= state.send.Pos() {
+		return false
+	}
+
+	state.readerName = identifier
+
+	return true
+}
+
 func (state *jsonExchangeAudit) safeUses() bool {
 	valid := true
 
@@ -204,6 +227,8 @@ func (state *jsonExchangeAudit) safeUses() bool {
 		}
 
 		parent := state.parents[identifier]
+		valid = valid && state.safeReaderName(identifier, parent)
+
 		if actual := receiver(state.function); actual != nil && identifier.Obj == actual.Obj {
 			selector, isSelector := parent.(*ast.SelectorExpr)
 			valid = valid && isSelector && state.send.Fun == selector
@@ -236,6 +261,14 @@ func (state *jsonExchangeAudit) safeUses() bool {
 	})
 
 	return valid
+}
+
+func (state *jsonExchangeAudit) safeReaderName(identifier *ast.Ident, parent ast.Node) bool {
+	if state.readerName == nil || identifier.Obj != state.readerName.Obj {
+		return true
+	}
+
+	return parent == state.parents[state.reader] || parent == state.send
 }
 
 func (state *jsonExchangeAudit) immutableConversion(node ast.Node) bool {
