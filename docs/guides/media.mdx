@@ -14,7 +14,22 @@ image, err := client.GenerateImage(ctx, sdm.GenerateImageRequest{
 })
 ```
 
-On success, `image.Results` contains a URL and token. Your application retrieves the media using Google's documented authorization requirements; avoid logging the URL or token. The SDK does not download images or retain those credentials.
+On success, `image.Results` contains a URL and token. Use the separate stateless `pkg/dependencies/media` client to retrieve an image with its event token. Avoid logging the URL or token; neither client retains the credentials.
+
+```go
+// import "github.com/portpowered/go-google-nest-sdm/pkg/dependencies/media"
+mediaClient, err := media.New(media.WithHTTPClient(myMediaHTTPDoer))
+// Check err before use. Do not follow redirects in the injected doer.
+download, err := mediaClient.DownloadImage(ctx, sdm.DownloadImageRequest{
+    Auth: sdm.ImageAuthContext{EventToken: image.Results.Token},
+    URL: image.Results.Url,
+})
+// After checking err, read download.Body and always close it.
+```
+
+`Width` and `Height` are optional image-size parameters; follow the provider's sizing precedence when supplying both. Event-image URLs expire quickly (documented lifetime: 30 seconds), so retrieve the image promptly after generation. `DownloadClipPreview` takes the trusted event preview URL and the account's SDM `AuthContext`; it returns the same streaming body ownership. Image retrieval sends the event token through Basic authorization; clip preview uses the account's Bearer token. Only HTTPS URLs from trusted SDM responses/events are appropriate. The default transport rejects redirects; injected transports must also reject them to keep credentials bound to the intended destination.
+
+The caller owns and closes each returned `io.ReadCloser`. Keep the context alive while reading. `ContentType` and `ContentLength` describe the response; the library does not decode images or transcode clips. Download errors remain typed SDK errors.
 
 For RTSP, call `GenerateRtspStream` with empty parameters, consume `Results.StreamUrls.RtspUrl`, and retain the returned extension token. `ExtendRtspStream` requires `StreamExtensionToken` and returns renewed stream credentials and expiry. `StopRtspStream` takes the current extension token. Use the latest returned values rather than keeping the initial token forever.
 
@@ -33,4 +48,11 @@ The application owns the RTSP player or WebRTC connection, media credentials, re
 
 The SDK exposes typed generation, extension and stop results instead of a shared optional-field bag. Command replay verifies the SDM exchange; it does not establish live playback, ICE connectivity or peer-connection cleanup.
 
-See the [generated command reference](/docs/openapi) and [Google camera live-stream trait](https://developers.google.com/nest/device-access/traits/device/camera-live-stream).
+Image and clip contracts follow the official [event-image](https://developers.google.com/nest/device-access/traits/device/camera-event-image) and [clip-preview](https://developers.google.com/nest/device-access/traits/device/camera-clip-preview) documentation.
+
+See the generated [image-download](/docs/openapi/media/DownloadImage), [clip-download](/docs/openapi/media/DownloadClipPreview) and [command](/docs/openapi/devices/ExecuteCommand) references and [Google camera live-stream trait](https://developers.google.com/nest/device-access/traits/device/camera-live-stream).
+
+
+
+
+

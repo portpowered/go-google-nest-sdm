@@ -29,6 +29,10 @@ Handle the first error before sending the second command. Mode controls whether 
 
 Temperatures are Celsius. A range requires heat below cool. Fan duration uses an SDM seconds string such as `"3600s"`; when supplied, it must be from 1 to 43200 seconds. The documented default is 900 seconds; omitting the pointer delegates that default to the service. Schema defaults do not populate your Go object.
 
+For optional snapshot preflight, call `sdm.CheckCommand(sdm.CheckCommandRequest{Device: snapshot, Command: sdm.SdmDevicesCommandsThermostatTemperatureSetpointSetHeat})`. `snapshot.SupportsCommand(command)` checks capability alone; `CheckCommand` also checks known mode/Eco preconditions when supplied. Neither performs a hidden device read.
+
 Outgoing enum values and known payload shapes are validated. Do not add fields to a command through an unknown-payload fallback. No command is automatically retried: a connection failure can leave acceptance uncertain. Re-read state before deciding what to send next.
 
-See the [command reference](/docs/openapi) and [Google trait documentation](https://developers.google.com/nest/device-access/traits).
+See the [command reference](/docs/openapi/devices/ExecuteCommand) and [Google trait documentation](https://developers.google.com/nest/device-access/traits).
+
+

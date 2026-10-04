@@ -111,6 +111,9 @@
       "Info": {
         "$ref": "./traits.openapi.yaml#/components/schemas/Info"
       },
+      "MediaSessionID": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/MediaSessionID"
+      },
       "RoomInfo": {
         "$ref": "./traits.openapi.yaml#/components/schemas/RoomInfo"
       },
@@ -120,8 +123,14 @@
       "Settings": {
         "$ref": "./traits.openapi.yaml#/components/schemas/Settings"
       },
+      "StreamExtensionToken": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/StreamExtensionToken"
+      },
       "StreamProtocol": {
         "$ref": "./traits.openapi.yaml#/components/schemas/StreamProtocol"
+      },
+      "StreamToken": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/StreamToken"
       },
       "StructureInfo": {
         "$ref": "./traits.openapi.yaml#/components/schemas/StructureInfo"

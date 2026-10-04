@@ -2,7 +2,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { GoGenerator } from '@asyncapi/modelina';
+import { GoGenerator, ConstrainedStringModel, RenderOutput } from '@asyncapi/modelina';
 import { parse } from 'yaml';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
@@ -23,6 +23,9 @@ function project(value) {
   if (result.$ref?.startsWith('#/components/schemas/')) result.$ref = result.$ref.replace('#/components/schemas/', '#/definitions/');
   if (result.$ref?.startsWith('./traits.openapi.yaml#')) result.$ref = '#/definitions/Traits';
   if (result['x-known-values']) result.enum = result['x-known-values'];
+  // Requirement-only alternatives constrain object presence, not its Go shape.
+  // The canonical schemas and generated codecs retain these constraints.
+  if (result.anyOf?.every(branch => Object.keys(branch).length === 1 && Array.isArray(branch.required))) delete result.anyOf;
   return result;
 }
 const definitions = Object.fromEntries(Object.entries(schemas).map(([name, schema]) => [name, project(schema)]));
@@ -35,6 +38,7 @@ const fieldName = field => {
 function fieldType(field) {
   const property = field.property;
   let type = field.unconstrainedPropertyName === 'traits' ? 'Traits' : property.type.replace(/^\*/, '');
+  if (scalarNames.includes(property.originalInput?.title)) type = property.originalInput.title;
   if (property.originalInput?.format === 'date-time') type = 'time.Time';
   return field.required ? type : `*${type}`;
 }
@@ -44,6 +48,9 @@ function codecs(model, fields) {
   const required = fields.filter(field => field.required).map(field => JSON.stringify(field.unconstrainedPropertyName));
   const requireChecks = required.map(key => `if value, present := properties[${key}]; !present || string(value) == "null" { return fmt.Errorf("${name}: required field %s is missing or null", ${key}) }`).join('\n');
   const nullChecks = known.map(key => `if value, present := properties[${key}]; present && string(value) == "null" { return fmt.Errorf("${name}: field %s cannot be null", ${key}) }`).join('\n');
+  const alternatives = schemas[name]?.anyOf;
+  const alternativeCheck = alternatives?.every(branch => Object.keys(branch).length === 1 && Array.isArray(branch.required))
+    ? `if !(${alternatives.map(branch => '(' + branch.required.map(key => `len(properties[${JSON.stringify(key)}]) != 0`).join(' && ') + ')').join(' || ')}) { return fmt.Errorf("${name}: missing required update variant") }` : '';
   const deletes = known.map(key => `delete(properties, ${key})`).join('\n');
   // Required keys must win even if users insert a conflicting extension key.
   const marshalDeletes = known.map(key => `delete(properties, ${key})`).join('\n');
@@ -55,6 +62,7 @@ func (value *${name}) UnmarshalJSON(data []byte) error {
   if properties == nil { return fmt.Errorf("${name}: expected an object") }
   ${requireChecks}
   ${nullChecks}
+  ${alternativeCheck}
   type known ${name}
   var decoded known
   if err := json.Unmarshal(data, &decoded); err != nil { return err }
@@ -96,9 +104,26 @@ const preset = {
     },
   },
 };
-const generator = new GoGenerator({ presets: [preset] });
+// Modelina's default Go renderer only names objects and enums. Extend its
+// primitive renderer so semantic identifiers retain distinct Go types.
+const scalarNames = Object.entries(schemas).filter(([, schema]) => schema.type === 'string' && !schema['x-known-values']).map(([name]) => name);
+class EventGenerator extends GoGenerator {
+  async render(args) {
+    const model = args.constrainedModel;
+    const name = model.originalInput?.title;
+    if (model instanceof ConstrainedStringModel && scalarNames.includes(name)) {
+      return RenderOutput.toRenderOutput({
+        result: `// ${name} ${model.originalInput.description}\ntype ${name} string`,
+        renderedName: name, dependencies: [],
+      });
+    }
+    return super.render(args);
+  }
+}
+const generator = new EventGenerator({ presets: [preset] });
+const primitives = (await Promise.all(scalarNames.map(name => generator.generate(definitions[name])))).flat();
 const generated = await generator.generate({ $schema: 'http://json-schema.org/draft-07/schema#', ...definitions.EventEnvelope, definitions });
-const results = generated.filter(model => Object.hasOwn(schemas, model.modelName)).sort((a, b) => a.modelName.localeCompare(b.modelName)).map(model => model.result);
+const results = [...primitives, ...generated].filter(model => Object.hasOwn(schemas, model.modelName)).sort((a, b) => a.modelName.localeCompare(b.modelName)).map(model => model.result);
 for (const packageName of ['dependencymodels', 'sdm']) {
   const directory = resolve(root, 'pkg', packageName);
   await mkdir(directory, { recursive: true });

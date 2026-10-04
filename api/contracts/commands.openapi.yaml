@@ -8,8 +8,7 @@
         "description": "Inputs for CameraEventImage.GenerateImage.",
         "properties": {
           "eventId": {
-            "minLength": 1,
-            "type": "string"
+            "$ref": "./events.openapi.yaml#/components/schemas/CameraEventID"
           }
         },
         "required": [
@@ -43,8 +42,7 @@
         "description": "Inputs for CameraLiveStream.ExtendRtspStream.",
         "properties": {
           "streamExtensionToken": {
-            "minLength": 1,
-            "type": "string"
+            "$ref": "#/components/schemas/StreamExtensionToken"
           }
         },
         "required": [
@@ -63,10 +61,10 @@
             "type": "string"
           },
           "streamExtensionToken": {
-            "type": "string"
+            "$ref": "#/components/schemas/StreamExtensionToken"
           },
           "streamToken": {
-            "type": "string"
+            "$ref": "#/components/schemas/StreamToken"
           }
         },
         "required": [
@@ -81,8 +79,7 @@
         "description": "Inputs for CameraLiveStream.ExtendWebRtcStream.",
         "properties": {
           "mediaSessionId": {
-            "minLength": 1,
-            "type": "string"
+            "$ref": "#/components/schemas/MediaSessionID"
           }
         },
         "required": [
@@ -101,7 +98,7 @@
             "type": "string"
           },
           "mediaSessionId": {
-            "type": "string"
+            "$ref": "#/components/schemas/MediaSessionID"
           }
         },
         "required": [
@@ -129,10 +126,10 @@
             "type": "string"
           },
           "streamExtensionToken": {
-            "type": "string"
+            "$ref": "#/components/schemas/StreamExtensionToken"
           },
           "streamToken": {
-            "type": "string"
+            "$ref": "#/components/schemas/StreamToken"
           },
           "streamUrls": {
             "$ref": "#/components/schemas/RtspStreamURLs"
@@ -174,7 +171,7 @@
             "type": "string"
           },
           "mediaSessionId": {
-            "type": "string"
+            "$ref": "#/components/schemas/MediaSessionID"
           }
         },
         "required": [
@@ -189,8 +186,7 @@
         "description": "Inputs for CameraLiveStream.StopRtspStream.",
         "properties": {
           "streamExtensionToken": {
-            "minLength": 1,
-            "type": "string"
+            "$ref": "#/components/schemas/StreamExtensionToken"
           }
         },
         "required": [
@@ -211,8 +207,7 @@
         "description": "Inputs for CameraLiveStream.StopWebRtcStream.",
         "properties": {
           "mediaSessionId": {
-            "minLength": 1,
-            "type": "string"
+            "$ref": "#/components/schemas/MediaSessionID"
           }
         },
         "required": [
@@ -292,6 +287,11 @@
         "properties": {},
         "type": "object"
       },
+      "MediaSessionID": {
+        "description": "Identifier of a WebRTC media session.",
+        "minLength": 1,
+        "type": "string"
+      },
       "RtspStreamURLs": {
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
@@ -306,6 +306,16 @@
           "rtspUrl"
         ],
         "type": "object"
+      },
+      "StreamExtensionToken": {
+        "description": "Token used to extend or terminate an RTSP stream.",
+        "minLength": 1,
+        "type": "string"
+      },
+      "StreamToken": {
+        "description": "Token used to access an RTSP stream.",
+        "minLength": 1,
+        "type": "string"
       },
       "ThermostatEcoSetModeParams": {
         "additionalProperties": false,

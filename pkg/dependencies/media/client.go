@@ -18,6 +18,8 @@ type Client struct {
 	httpClient HTTPDoer
 }
 
+var _ sdm.MediaClient = (*Client)(nil)
+
 // Option configures a client before concurrent use.
 type Option func(*Client) error
 
@@ -31,7 +33,6 @@ func New(options ...Option) (*Client, error) {
 		}
 
 		err := option(client)
-
 		if err != nil {
 			return nil, err
 		}

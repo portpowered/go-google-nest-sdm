@@ -18,9 +18,9 @@ import (
 )
 
 // client is the configured sdm.Client; see the authentication guide.
-auth := sdm.AuthContext{AccessToken: os.Getenv("SDM_ACCESS_TOKEN")}
+auth := sdm.AuthContext{AccessToken: os.Getenv("NEST_ACCESS_TOKEN")}
 result, err := client.ListDevices(context.Background(), sdm.ListDevicesRequest{
-    Auth: auth, Parent: "enterprises/" + os.Getenv("SDM_PROJECT_ID"),
+    Auth: auth, Parent: "enterprises/" + os.Getenv("NEST_ENTERPRISE_ID"),
 })
 ```
 
@@ -28,4 +28,6 @@ Check `err` before using `result.Devices`. Names returned by discovery are the i
 
 The initial contracts follow published Google documentation and the examples are synthetic. Authenticated device behavior and media playback require separate live qualification.
 
-Continue with [authentication](./authentication), [devices and traits](./devices), [controls](./controls), [camera media](./media), [events](./events), or the [CLI](./cli). The [generated API reference](/docs/openapi) describes HTTP requests and the [event reference](/docs/asyncapi) describes event delivery.
+Continue with [authentication](./authentication), [devices and traits](./devices), [controls](./controls), [camera media](./media), [events](./events), or the [CLI](./cli). The [generated API reference](/docs/openapi/devices/ListDevices) describes HTTP requests and the [event reference](/docs/asyncapi/events/receiveEvents) describes event delivery.
+
+

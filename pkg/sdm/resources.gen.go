@@ -70,11 +70,11 @@ type Device struct {
 
 // DeviceState defines model for DeviceState.
 type DeviceState struct {
-	Deleted        bool      `json:"deleted"`
-	Device         Device    `json:"device"`
-	RecentEventIds []string  `json:"recentEventIds"`
-	UpdatedAt      time.Time `json:"updatedAt"`
-	UserId         *string   `json:"userId,omitempty"`
+	Deleted        bool              `json:"deleted"`
+	Device         Device            `json:"device"`
+	RecentEventIds []EnvelopeEventID `json:"recentEventIds"`
+	UpdatedAt      time.Time         `json:"updatedAt"`
+	UserId         *string           `json:"userId,omitempty"`
 }
 
 // DeviceType Open device category; capabilities come from returned traits.

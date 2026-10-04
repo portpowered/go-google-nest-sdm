@@ -6,48 +6,50 @@ import "context"
 // Client serves multiple accounts using the credentials supplied with each request.
 // Commands acknowledge acceptance; they do not prove the physical action completed.
 // The client never refreshes credentials or retries commands implicitly.
+//
+//nolint:interfacebloat // API-01 groups the complete provider operation surface for tracing.
 type Client interface {
 	AuthClient
 	EventClient
-	ListDevices(context.Context, ListDevicesRequest) (ListDevicesResult, error)
-	GetDevice(context.Context, GetDeviceRequest) (GetDeviceResult, error)
-	ListStructures(context.Context, ListStructuresRequest) (ListStructuresResult, error)
-	GetStructure(context.Context, GetStructureRequest) (GetStructureResult, error)
-	ListRooms(context.Context, ListRoomsRequest) (ListRoomsResult, error)
-	GetRoom(context.Context, GetRoomRequest) (GetRoomResult, error)
-	SetFanTimer(context.Context, SetFanTimerRequest) (SetFanTimerResult, error)
-	SetThermostatEcoMode(context.Context, SetThermostatEcoModeRequest) (SetThermostatEcoModeResult, error)
-	SetThermostatMode(context.Context, SetThermostatModeRequest) (SetThermostatModeResult, error)
-	SetHeat(context.Context, SetHeatRequest) (SetHeatResult, error)
-	SetCool(context.Context, SetCoolRequest) (SetCoolResult, error)
-	SetRange(context.Context, SetRangeRequest) (SetRangeResult, error)
-	GenerateImage(context.Context, GenerateImageRequest) (GenerateImageResult, error)
-	GenerateRtspStream(context.Context, GenerateRtspStreamRequest) (GenerateRtspStreamResult, error)
-	ExtendRtspStream(context.Context, ExtendRtspStreamRequest) (ExtendRtspStreamResult, error)
-	StopRtspStream(context.Context, StopRtspStreamRequest) (StopRtspStreamResult, error)
-	GenerateWebRtcStream(context.Context, GenerateWebRtcStreamRequest) (GenerateWebRtcStreamResult, error)
-	ExtendWebRtcStream(context.Context, ExtendWebRtcStreamRequest) (ExtendWebRtcStreamResult, error)
-	StopWebRtcStream(context.Context, StopWebRtcStreamRequest) (StopWebRtcStreamResult, error)
+	ListDevices(ctx context.Context, request ListDevicesRequest) (ListDevicesResult, error)
+	GetDevice(ctx context.Context, request GetDeviceRequest) (GetDeviceResult, error)
+	ListStructures(ctx context.Context, request ListStructuresRequest) (ListStructuresResult, error)
+	GetStructure(ctx context.Context, request GetStructureRequest) (GetStructureResult, error)
+	ListRooms(ctx context.Context, request ListRoomsRequest) (ListRoomsResult, error)
+	GetRoom(ctx context.Context, request GetRoomRequest) (GetRoomResult, error)
+	SetFanTimer(ctx context.Context, request SetFanTimerRequest) (SetFanTimerResult, error)
+	SetThermostatEcoMode(ctx context.Context, request SetThermostatEcoModeRequest) (SetThermostatEcoModeResult, error)
+	SetThermostatMode(ctx context.Context, request SetThermostatModeRequest) (SetThermostatModeResult, error)
+	SetHeat(ctx context.Context, request SetHeatRequest) (SetHeatResult, error)
+	SetCool(ctx context.Context, request SetCoolRequest) (SetCoolResult, error)
+	SetRange(ctx context.Context, request SetRangeRequest) (SetRangeResult, error)
+	GenerateImage(ctx context.Context, request GenerateImageRequest) (GenerateImageResult, error)
+	GenerateRtspStream(ctx context.Context, request GenerateRtspStreamRequest) (GenerateRtspStreamResult, error)
+	ExtendRtspStream(ctx context.Context, request ExtendRtspStreamRequest) (ExtendRtspStreamResult, error)
+	StopRtspStream(ctx context.Context, request StopRtspStreamRequest) (StopRtspStreamResult, error)
+	GenerateWebRtcStream(ctx context.Context, request GenerateWebRtcStreamRequest) (GenerateWebRtcStreamResult, error)
+	ExtendWebRtcStream(ctx context.Context, request ExtendWebRtcStreamRequest) (ExtendWebRtcStreamResult, error)
+	StopWebRtcStream(ctx context.Context, request StopWebRtcStreamRequest) (StopWebRtcStreamResult, error)
 }
 
 // AuthClient explicitly returns OAuth credentials for callers to store and renew.
 type AuthClient interface {
-	ExchangeToken(context.Context, ExchangeTokenRequest) (ExchangeTokenResult, error)
-	RefreshToken(context.Context, RefreshTokenRequest) (RefreshTokenResult, error)
+	ExchangeToken(ctx context.Context, request ExchangeTokenRequest) (ExchangeTokenResult, error)
+	RefreshToken(ctx context.Context, request RefreshTokenRequest) (RefreshTokenResult, error)
 }
 
 // EventClient opens an account-bound Pub/Sub pull session.
 type EventClient interface {
-	OpenEventSession(context.Context, OpenEventSessionRequest) (EventSession, error)
+	OpenEventSession(ctx context.Context, request OpenEventSessionRequest) (EventSession, error)
 	// DecodePushEvent decodes data only. The HTTP handler verifies push identity
 	// and audience, then acknowledges processing using its HTTP response status.
-	DecodePushEvent(context.Context, DecodePushEventRequest) (DecodePushEventResult, error)
+	DecodePushEvent(ctx context.Context, request DecodePushEventRequest) (DecodePushEventResult, error)
 }
 
 // EventSession owns its pull lifecycle. The caller closes it; repeated Close is safe.
 // Delivery acknowledgements are explicit so decoding or handling failures can be retried.
 type EventSession interface {
-	Next(context.Context) (EventDelivery, error)
+	Next(ctx context.Context) (EventDelivery, error)
 	Close() error
 }
 
@@ -55,13 +57,13 @@ type EventSession interface {
 // Acknowledge only after successfully processing the event.
 type EventDelivery interface {
 	Event() EventEnvelope
-	Acknowledge(context.Context) error
-	ModifyAckDeadline(context.Context, AckDeadlineRequest) error
+	Acknowledge(ctx context.Context) error
+	ModifyAckDeadline(ctx context.Context, request AckDeadlineRequest) error
 }
 
 // MediaClient retrieves images and clip previews from returned media URLs.
 // The caller owns and closes each result body.
 type MediaClient interface {
-	DownloadImage(context.Context, DownloadImageRequest) (DownloadImageResult, error)
-	DownloadClipPreview(context.Context, DownloadClipPreviewRequest) (DownloadClipPreviewResult, error)
+	DownloadImage(ctx context.Context, request DownloadImageRequest) (DownloadImageResult, error)
+	DownloadClipPreview(ctx context.Context, request DownloadClipPreviewRequest) (DownloadClipPreviewResult, error)
 }

@@ -8,29 +8,60 @@ import (
 )
 
 // DecodeDevice validates a snapshot and preserves unknown resource and trait fields.
-func DecodeDevice(data []byte) (Device, error) { return decode[Device](data) }
+func DecodeDevice(data []byte) (Device, error) {
+	var result Device
+
+	err := decode(data, &result)
+
+	return result, err
+}
 
 // DecodeStructure validates a structure snapshot without discarding unknown fields.
-func DecodeStructure(data []byte) (Structure, error) { return decode[Structure](data) }
+func DecodeStructure(data []byte) (Structure, error) {
+	var result Structure
+
+	err := decode(data, &result)
+
+	return result, err
+}
 
 // DecodeRoom validates a room snapshot without discarding unknown fields.
-func DecodeRoom(data []byte) (Room, error) { return decode[Room](data) }
+func DecodeRoom(data []byte) (Room, error) {
+	var result Room
+
+	err := decode(data, &result)
+
+	return result, err
+}
 
 // DecodeEvent validates the SDM event, including each known trait and camera event.
 // Unknown event and trait names remain available in generated AdditionalProperties.
-func DecodeEvent(data []byte) (EventEnvelope, error) { return decode[EventEnvelope](data) }
+func DecodeEvent(data []byte) (EventEnvelope, error) {
+	var result EventEnvelope
 
-func decode[T any](data []byte) (T, error) {
-	var result T
+	err := decode(data, &result)
+
+	return result, err
+}
+
+func decode(data []byte, result any) error {
+	model := reflect.TypeOf(result).Elem()
+
 	document := "client-resources.openapi.yaml"
-	if reflect.TypeFor[T]().Name() == "EventEnvelope" {
+
+	if model.Name() == "EventEnvelope" {
 		document = "events.openapi.yaml"
 	}
-	if err := contracts.Validate(document, reflect.TypeFor[T]().Name(), data); err != nil {
-		return result, invalidResponse("decode", err)
+
+	err := contracts.Validate(document, model.Name(), data)
+	if err != nil {
+		return invalidResponse("decode", err)
 	}
-	if err := json.Unmarshal(data, &result); err != nil {
-		return result, invalidResponse("decode", err)
+
+	err = json.Unmarshal(data, result)
+	if err != nil {
+		return invalidResponse("decode", err)
 	}
-	return result, nil
+
+	return nil
 }

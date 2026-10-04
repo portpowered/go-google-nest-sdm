@@ -1,12 +1,12 @@
 GO ?= go
 PUBLIC_MODULE ?= github.com/portpowered/go-google-nest-sdm
-PUBLIC_PACKAGES ?= pkg/sdm,pkg/dependencies/httptransport,pkg/dependencies/media
+PUBLIC_PACKAGES ?= pkg/sdm,pkg/dependencies/httptransport,pkg/dependencies/media,pkg/dependencymodels
 export GOWORK := off
 
 .DEFAULT_GOAL := check
-.PHONY: check build test test-race test-cover test-integration vet lint fmt test-contracts routegate generate-api check-generated check-modules api-compatibility
+.PHONY: check build test test-race test-cover test-integration vet lint fmt test-contracts routegate generate-api check-generated check-modules check-format api-compatibility
 
-check: lint build test-contracts routegate test vet test-cover check-modules check-generated
+check: lint build test-contracts routegate test vet test-cover check-format check-modules check-generated
 
 build:
 	$(GO) run ./tools/verify -mode build
@@ -26,6 +26,8 @@ fmt:
 	$(GO) run ./tools/verify -mode fmt
 
 test-contracts:
+	npm ci --prefix tools/generate --ignore-scripts
+	node tools/generate/validate.mjs
 	$(GO) run ./tools/contractcheck
 
 routegate:
@@ -52,6 +54,9 @@ check-generated: generate-api
 
 check-modules:
 	$(GO) run ./tools/verify -mode modules
+
+check-format:
+	$(GO) run ./tools/verify -mode format-check
 
 api-compatibility:
 	$(GO) run ./tools/compatibility -policy report -base previous-release -module "$(PUBLIC_MODULE)" -packages "$(PUBLIC_PACKAGES)"

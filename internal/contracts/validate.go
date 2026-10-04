@@ -38,14 +38,22 @@ type registry struct {
 
 // Compilation is serialized because the compiler owns mutable reference caches.
 // Compiled schemas are immutable and validation runs without a lock.
+//
+//nolint:gochecknoglobals // A synchronized process-wide cache avoids recompiling immutable schemas for each event.
 var runtimeRegistry = newRegistry()
+
+var (
+	errInvalidReference = errors.New("invalid contract reference")
+	errOutsideInventory = errors.New("contract reference outside embedded inventory")
+)
 
 func newRegistry() *registry {
 	compiler := jsonschema.NewCompiler()
 	compiler.DefaultDraft(jsonschema.Draft7)
 	compiler.AssertFormat()
 	compiler.UseLoader(offlineLoader{})
-	return &registry{compiler: compiler, schemas: make(map[string]*jsonschema.Schema)}
+
+	return &registry{mutex: sync.Mutex{}, compiler: compiler, schemas: make(map[string]*jsonschema.Schema)}
 }
 
 // Validate rejects malformed known fields while allowing future fields and enum
@@ -55,32 +63,41 @@ func Validate(document, component string, data []byte) error {
 	schema, err := runtimeRegistry.compile(document, component)
 	if err == nil {
 		var value any
+
 		value, err = jsonschema.UnmarshalJSON(bytes.NewReader(data))
 		if err == nil {
 			err = schema.Validate(value)
 		}
 	}
+
 	if err != nil {
 		return &Error{Document: document, Component: component, Cause: err}
 	}
+
 	return nil
 }
 
 func (r *registry) compile(document, component string) (*jsonschema.Schema, error) {
 	if strings.ContainsAny(document, "/\\#?") || strings.ContainsAny(component, "/~#?") || component == "" {
-		return nil, errors.New("invalid contract reference")
+		return nil, errInvalidReference
 	}
+
 	location := schemaOrigin + document + "#/components/schemas/" + component
+
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
+
 	if schema, exists := r.schemas[location]; exists {
 		return schema, nil
 	}
+
 	schema, err := r.compiler.Compile(location)
 	if err != nil {
 		return nil, fmt.Errorf("compile schema: %w", err)
 	}
+
 	r.schemas[location] = schema
+
 	return schema, nil
 }
 
@@ -91,16 +108,21 @@ func (offlineLoader) Load(location string) (any, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parse contract URL: %w", err)
 	}
-	if parsed.Scheme != "https" || parsed.Host != "sdm.local" || parsed.RawQuery != "" || !strings.HasPrefix(parsed.Path, "/contracts/") {
-		return nil, errors.New("contract reference outside embedded inventory")
+
+	if parsed.Scheme != "https" || parsed.Host != "sdm.local" || parsed.RawQuery != "" ||
+		!strings.HasPrefix(parsed.Path, "/contracts/") {
+		return nil, errOutsideInventory
 	}
+
 	data, err := api.RuntimeSchemas.ReadFile(strings.TrimPrefix(parsed.Path, "/"))
 	if err != nil {
 		return nil, fmt.Errorf("read embedded contract: %w", err)
 	}
+
 	value, err := jsonschema.UnmarshalJSON(bytes.NewReader(data))
 	if err != nil {
 		return nil, fmt.Errorf("decode embedded contract: %w", err)
 	}
+
 	return value, nil
 }

@@ -48,7 +48,8 @@ const (
 
 // CameraEventImageGenerateImageParams Inputs for CameraEventImage.GenerateImage.
 type CameraEventImageGenerateImageParams struct {
-	EventId string `json:"eventId"`
+	// EventId Camera image event identifier accepted by GenerateImage; distinct from the outer SDM event identifier.
+	EventId CameraEventID `json:"eventId"`
 }
 
 // CameraEventImageGenerateImageResults Acknowledgement result for CameraEventImage.GenerateImage; physical action may complete later.
@@ -60,26 +61,34 @@ type CameraEventImageGenerateImageResults struct {
 
 // CameraLiveStreamExtendRtspStreamParams Inputs for CameraLiveStream.ExtendRtspStream.
 type CameraLiveStreamExtendRtspStreamParams struct {
-	StreamExtensionToken string `json:"streamExtensionToken"`
+	// StreamExtensionToken Token used to extend or terminate an RTSP stream.
+	StreamExtensionToken StreamExtensionToken `json:"streamExtensionToken"`
 }
 
 // CameraLiveStreamExtendRtspStreamResults Acknowledgement result for CameraLiveStream.ExtendRtspStream; physical action may complete later.
 type CameraLiveStreamExtendRtspStreamResults struct {
-	ExpiresAt            time.Time                  `json:"expiresAt"`
-	StreamExtensionToken string                     `json:"streamExtensionToken"`
-	StreamToken          string                     `json:"streamToken"`
+	ExpiresAt time.Time `json:"expiresAt"`
+
+	// StreamExtensionToken Token used to extend or terminate an RTSP stream.
+	StreamExtensionToken StreamExtensionToken `json:"streamExtensionToken"`
+
+	// StreamToken Token used to access an RTSP stream.
+	StreamToken          StreamToken                `json:"streamToken"`
 	AdditionalProperties map[string]json.RawMessage `json:"-"`
 }
 
 // CameraLiveStreamExtendWebRtcStreamParams Inputs for CameraLiveStream.ExtendWebRtcStream.
 type CameraLiveStreamExtendWebRtcStreamParams struct {
-	MediaSessionId string `json:"mediaSessionId"`
+	// MediaSessionId Identifier of a WebRTC media session.
+	MediaSessionId MediaSessionID `json:"mediaSessionId"`
 }
 
 // CameraLiveStreamExtendWebRtcStreamResults Acknowledgement result for CameraLiveStream.ExtendWebRtcStream; physical action may complete later.
 type CameraLiveStreamExtendWebRtcStreamResults struct {
-	ExpiresAt            time.Time                  `json:"expiresAt"`
-	MediaSessionId       string                     `json:"mediaSessionId"`
+	ExpiresAt time.Time `json:"expiresAt"`
+
+	// MediaSessionId Identifier of a WebRTC media session.
+	MediaSessionId       MediaSessionID             `json:"mediaSessionId"`
 	AdditionalProperties map[string]json.RawMessage `json:"-"`
 }
 
@@ -88,9 +97,13 @@ type CameraLiveStreamGenerateRtspStreamParams = struct{}
 
 // CameraLiveStreamGenerateRtspStreamResults Acknowledgement result for CameraLiveStream.GenerateRtspStream; physical action may complete later.
 type CameraLiveStreamGenerateRtspStreamResults struct {
-	ExpiresAt            time.Time                  `json:"expiresAt"`
-	StreamExtensionToken string                     `json:"streamExtensionToken"`
-	StreamToken          string                     `json:"streamToken"`
+	ExpiresAt time.Time `json:"expiresAt"`
+
+	// StreamExtensionToken Token used to extend or terminate an RTSP stream.
+	StreamExtensionToken StreamExtensionToken `json:"streamExtensionToken"`
+
+	// StreamToken Token used to access an RTSP stream.
+	StreamToken          StreamToken                `json:"streamToken"`
 	StreamUrls           RtspStreamURLs             `json:"streamUrls"`
 	AdditionalProperties map[string]json.RawMessage `json:"-"`
 }
@@ -102,15 +115,18 @@ type CameraLiveStreamGenerateWebRtcStreamParams struct {
 
 // CameraLiveStreamGenerateWebRtcStreamResults Acknowledgement result for CameraLiveStream.GenerateWebRtcStream; physical action may complete later.
 type CameraLiveStreamGenerateWebRtcStreamResults struct {
-	AnswerSdp            string                     `json:"answerSdp"`
-	ExpiresAt            time.Time                  `json:"expiresAt"`
-	MediaSessionId       string                     `json:"mediaSessionId"`
+	AnswerSdp string    `json:"answerSdp"`
+	ExpiresAt time.Time `json:"expiresAt"`
+
+	// MediaSessionId Identifier of a WebRTC media session.
+	MediaSessionId       MediaSessionID             `json:"mediaSessionId"`
 	AdditionalProperties map[string]json.RawMessage `json:"-"`
 }
 
 // CameraLiveStreamStopRtspStreamParams Inputs for CameraLiveStream.StopRtspStream.
 type CameraLiveStreamStopRtspStreamParams struct {
-	StreamExtensionToken string `json:"streamExtensionToken"`
+	// StreamExtensionToken Token used to extend or terminate an RTSP stream.
+	StreamExtensionToken StreamExtensionToken `json:"streamExtensionToken"`
 }
 
 // CameraLiveStreamStopRtspStreamResults Acknowledgement result for CameraLiveStream.StopRtspStream; physical action may complete later.
@@ -118,7 +134,8 @@ type CameraLiveStreamStopRtspStreamResults map[string]json.RawMessage
 
 // CameraLiveStreamStopWebRtcStreamParams Inputs for CameraLiveStream.StopWebRtcStream.
 type CameraLiveStreamStopWebRtcStreamParams struct {
-	MediaSessionId string `json:"mediaSessionId"`
+	// MediaSessionId Identifier of a WebRTC media session.
+	MediaSessionId MediaSessionID `json:"mediaSessionId"`
 }
 
 // CameraLiveStreamStopWebRtcStreamResults Acknowledgement result for CameraLiveStream.StopWebRtcStream; physical action may complete later.
@@ -143,11 +160,20 @@ type FanSetTimerParamsTimerMode string
 // FanSetTimerResults Acknowledgement result for Fan.SetTimer; physical action may complete later.
 type FanSetTimerResults map[string]json.RawMessage
 
+// MediaSessionID Identifier of a WebRTC media session.
+type MediaSessionID string
+
 // RtspStreamURLs defines model for RtspStreamURLs.
 type RtspStreamURLs struct {
 	RtspUrl              string                     `json:"rtspUrl"`
 	AdditionalProperties map[string]json.RawMessage `json:"-"`
 }
+
+// StreamExtensionToken Token used to extend or terminate an RTSP stream.
+type StreamExtensionToken string
+
+// StreamToken Token used to access an RTSP stream.
+type StreamToken string
 
 // ThermostatEcoSetModeParams Inputs for ThermostatEco.SetMode.
 type ThermostatEcoSetModeParams struct {

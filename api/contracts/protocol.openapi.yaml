@@ -240,9 +240,33 @@
             ],
             "type": "string"
           },
+          "SDPDirectionSendReceiveLine": {
+            "enum": [
+              "a=sendrecv"
+            ],
+            "type": "string"
+          },
+          "SDPInactiveLine": {
+            "enum": [
+              "a=inactive"
+            ],
+            "type": "string"
+          },
           "SDPLineSeparator": {
             "enum": [
               "\n"
+            ],
+            "type": "string"
+          },
+          "SDPMediaPrefix": {
+            "enum": [
+              "m="
+            ],
+            "type": "string"
+          },
+          "SDPMidPrefix": {
+            "enum": [
+              "a=mid:"
             ],
             "type": "string"
           },
@@ -255,6 +279,18 @@
           "SDPReceiveOnlyLine": {
             "enum": [
               "a=recvonly"
+            ],
+            "type": "string"
+          },
+          "SDPRtpMapPrefix": {
+            "enum": [
+              "a=rtpmap:"
+            ],
+            "type": "string"
+          },
+          "SDPSendOnlyLine": {
+            "enum": [
+              "a=sendonly"
             ],
             "type": "string"
           },

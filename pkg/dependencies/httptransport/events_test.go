@@ -17,7 +17,10 @@ import (
 	"github.com/portpowered/go-google-nest-sdm/pkg/sdm"
 )
 
-const testEvent = `{"eventId":"event","timestamp":"2026-01-01T00:00:00Z","userId":"user"}`
+// testEvent is a synthetic resource-change notification used by transport tests.
+const testEvent = `{"eventId":"event","timestamp":"2026-01-01T00:00:00Z","userId":"user",` +
+	`"resourceUpdate":{"name":"enterprises/project/devices/device",` +
+	`"traits":{"sdm.devices.traits.Connectivity":{"status":"ONLINE"}}}}`
 
 type eventDoer func(*http.Request) (*http.Response, error)
 
@@ -111,6 +114,11 @@ func TestEventDeliveryExplicitAcknowledgement(t *testing.T) {
 
 	if delivery.Event().EventId != "event" || calls.Load() != 1 {
 		t.Fatal("event or implicit acknowledgement")
+	}
+
+	if delivery.Event().ResourceUpdate == nil ||
+		delivery.Event().ResourceUpdate.Name != "enterprises/project/devices/device" {
+		t.Fatal("resource update was lost")
 	}
 
 	err = delivery.ModifyAckDeadline(context.Background(), sdm.AckDeadlineRequest{Seconds: 0})

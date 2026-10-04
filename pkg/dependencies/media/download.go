@@ -16,8 +16,8 @@ import (
 )
 
 var (
-	imageURL = regexp.MustCompile(protocol.MediaImageURLPattern)
-	clipURL  = regexp.MustCompile(protocol.MediaClipURLPattern)
+	imageURL      = regexp.MustCompile(protocol.MediaImageURLPattern)
+	clipURL       = regexp.MustCompile(protocol.MediaClipURLPattern)
 	errInvalidURL = errors.New("invalid provider-issued media URL")
 )
 
@@ -34,19 +34,27 @@ func (client *Client) DownloadImage(
 		return sdm.DownloadImageResult{}, failure(operation, sdm.ErrorInvalidRequest, err)
 	}
 
-	query := endpoint.Query()
-	if input.Width != nil {
-		query.Set(protocol.QueryWidth, strconv.Itoa(*input.Width))
-	}
+	if input.Width != nil || input.Height != nil {
+		query, parseErr := url.ParseQuery(endpoint.RawQuery)
+		if parseErr != nil {
+			return sdm.DownloadImageResult{}, failure(operation, sdm.ErrorInvalidRequest, parseErr)
+		}
 
-	if input.Height != nil {
-		query.Set(protocol.QueryHeight, strconv.Itoa(*input.Height))
-	}
+		if input.Width != nil {
+			query.Set(protocol.QueryWidth, strconv.Itoa(*input.Width))
+		}
 
-	endpoint.RawQuery = query.Encode()
+		if input.Height != nil {
+			query.Set(protocol.QueryHeight, strconv.Itoa(*input.Height))
+		}
+
+		endpoint.RawQuery = query.Encode()
+	}
 
 	//nolint:bodyclose // Successful download transfers body ownership to the caller (GO-09).
-	response, err := client.download(ctx, operation, protocol.MethodDownloadImage, endpoint, protocol.BasicPrefix+input.Auth.EventToken)
+	response, err := client.download(
+		ctx, operation, protocol.MethodDownloadImage, endpoint, protocol.BasicPrefix+input.Auth.EventToken,
+	)
 	if err != nil {
 		return sdm.DownloadImageResult{}, err
 	}
@@ -70,7 +78,9 @@ func (client *Client) DownloadClipPreview(
 	}
 
 	//nolint:bodyclose // Successful download transfers body ownership to the caller (GO-09).
-	response, err := client.download(ctx, operation, protocol.MethodDownloadClipPreview, endpoint, protocol.BearerPrefix+input.Auth.AccessToken)
+	response, err := client.download(
+		ctx, operation, protocol.MethodDownloadClipPreview, endpoint, protocol.BearerPrefix+input.Auth.AccessToken,
+	)
 	if err != nil {
 		return sdm.DownloadClipPreviewResult{}, err
 	}

@@ -1,10 +1,10 @@
 # go-google-nest-sdm
 
-Typed Google Nest Smart Device Management REST commands and Pub/Sub event consumption for Go. Known traits, command inputs/results and event variants have schema-generated models; incoming unknown fields and names remain available for compatibility.
+Typed Google Nest Smart Device Management REST commands and stateless Pub/Sub event handling for Go, with an optional REST pull adapter. Known traits, command inputs/results and event variants have schema-generated models; incoming unknown fields and names remain available for compatibility.
 
 [![Go](https://img.shields.io/github/go-mod/go-version/portpowered/go-google-nest-sdm)](go.mod)
 [![CI](https://github.com/portpowered/go-google-nest-sdm/actions/workflows/ci.yml/badge.svg)](https://github.com/portpowered/go-google-nest-sdm/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fportpowered.github.io%2Fgo-google-nest-sdm%2Fcoverage.json)](https://portpowered.github.io/go-google-nest-sdm/coverage.html)
+[![Replay coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fportpowered.github.io%2Fgo-google-nest-sdm%2Fcoverage-replay.json)](https://portpowered.github.io/go-google-nest-sdm/coverage-replay.html)
 [![Release](https://img.shields.io/github/v/release/portpowered/go-google-nest-sdm)](https://github.com/portpowered/go-google-nest-sdm/releases/latest)
 [![Go Reference](https://pkg.go.dev/badge/github.com/portpowered/go-google-nest-sdm.svg)](https://pkg.go.dev/github.com/portpowered/go-google-nest-sdm/pkg/sdm)
 [![License](https://img.shields.io/github/license/portpowered/go-google-nest-sdm)](LICENSE)
@@ -37,8 +37,8 @@ func main() {
     ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
     defer cancel()
     result, err := client.ListDevices(ctx, sdm.ListDevicesRequest{
-        Auth: sdm.AuthContext{AccessToken: os.Getenv("SDM_ACCESS_TOKEN")},
-        Parent: "enterprises/" + os.Getenv("SDM_PROJECT_ID"),
+        Auth: sdm.AuthContext{AccessToken: os.Getenv("NEST_ACCESS_TOKEN")},
+        Parent: "enterprises/" + os.Getenv("NEST_ENTERPRISE_ID"),
     })
     if err != nil { log.Fatal(err) }
     for _, device := range result.Devices { log.Print(device.Name) }
@@ -49,8 +49,8 @@ The following fragments use `ctx`, `auth`, `name` (a returned device name), `ent
 
 | Authentication | Inline example |
 | --- | --- |
-| Exchange authorization code | `client.(sdm.AuthClient).ExchangeToken(ctx, sdm.ExchangeTokenRequest{ClientId: id, ClientSecret: secret, Code: code, RedirectUri: redirectURI})` |
-| Refresh credentials | `client.(sdm.AuthClient).RefreshToken(ctx, sdm.RefreshTokenRequest{ClientId: id, ClientSecret: secret, RefreshToken: refreshToken})` |
+| Exchange authorization code | `client.ExchangeToken(ctx, sdm.ExchangeTokenRequest{ClientId: id, ClientSecret: secret, Code: code, RedirectUri: redirectURI})` |
+| Refresh credentials | `client.RefreshToken(ctx, sdm.RefreshTokenRequest{ClientId: id, ClientSecret: secret, RefreshToken: refreshToken})` |
 
 | Discovery | Inline example |
 | --- | --- |
@@ -73,6 +73,8 @@ The following fragments use `ctx`, `auth`, `name` (a returned device name), `ent
 | Camera | Inline example |
 | --- | --- |
 | Event image credentials | `client.GenerateImage(ctx, sdm.GenerateImageRequest{Auth: auth, DeviceName: name, Params: sdm.CameraEventImageGenerateImageParams{EventId: cameraEventID}})` |
+| Download generated image | `mediaClient.DownloadImage(ctx, sdm.DownloadImageRequest{Auth: sdm.ImageAuthContext{EventToken: imageToken}, URL: imageURL})` |
+| Download event clip preview | `mediaClient.DownloadClipPreview(ctx, sdm.DownloadClipPreviewRequest{Auth: auth, URL: previewURL})` |
 | Start RTSP | `client.GenerateRtspStream(ctx, sdm.GenerateRtspStreamRequest{Auth: auth, DeviceName: name, Params: sdm.CameraLiveStreamGenerateRtspStreamParams{}})` |
 | Extend RTSP | `client.ExtendRtspStream(ctx, sdm.ExtendRtspStreamRequest{Auth: auth, DeviceName: name, Params: sdm.CameraLiveStreamExtendRtspStreamParams{StreamExtensionToken: extensionToken}})` |
 | Stop RTSP | `client.StopRtspStream(ctx, sdm.StopRtspStreamRequest{Auth: auth, DeviceName: name, Params: sdm.CameraLiveStreamStopRtspStreamParams{StreamExtensionToken: extensionToken}})` |
@@ -82,7 +84,10 @@ The following fragments use `ctx`, `auth`, `name` (a returned device name), `ent
 
 | Events | Inline example |
 | --- | --- |
-| Open account-bound pull session | `client.(sdm.EventClient).OpenEventSession(ctx, sdm.OpenEventSessionRequest{Auth: pubSubAuth, Subscription: subscriptionName})` |
+| Decode push/message data | `client.DecodePushEvent(ctx, sdm.DecodePushEventRequest{Body: pushBody})` |
+| Handle Pub/Sub message data | `sdm.HandleEvent(ctx, sdm.HandleEventRequest{Data: message.Data}, myEventHandler)` |
+| Reconcile caller-owned state | `sdm.Reconcile(sdm.ReconcileRequest{State: state, Event: event})` |
+| Open optional account-bound pull session | `client.OpenEventSession(ctx, sdm.OpenEventSessionRequest{Auth: pubSubAuth, Subscription: subscriptionName})` |
 | Receive next delivery | `session.Next(ctx)` |
 | Read typed event | `delivery.Event()` |
 | Acknowledge processed delivery | `delivery.Acknowledge(ctx)` |
@@ -91,8 +96,14 @@ The following fragments use `ctx`, `auth`, `name` (a returned device name), `ent
 
 A shared client holds configuration; callers own credential storage and explicit renewal. Pub/Sub uses a separate Cloud bearer with subscription permissions. Inject `httptransport.WithHTTPClient(myHTTPDoer)` for every HTTP edge; base URL options support offline testing. Set context deadlines and inspect typed `*sdm.Error` failures with `errors.As`.
 
-Discover capabilities through returned traits and stream protocols. Apply partial event updates without replacing omitted values. Unknown incoming values remain preserved; invalid known payloads remain errors. Commands acknowledge acceptance and are never implicitly retried. Callers own image retrieval, RTSP/WebRTC connections, renewal and explicit stop. Event sessions require explicit close and acknowledgements after successful handling.
+Discover capabilities through `device.SupportsCommand(command)` and optionally preflight with `sdm.CheckCommand(sdm.CheckCommandRequest{Device: device, Command: command})`; these inspect returned traits and stream protocols without network calls. Apply partial event updates without replacing omitted values. Unknown incoming values remain preserved; invalid known payloads remain errors. Commands acknowledge acceptance and are never implicitly retried. Use `media.New(media.WithHTTPClient(myMediaHTTPDoer))` from `pkg/dependencies/media` for image/clip downloads and close returned bodies. Only supply trusted SDM HTTPS URLs and reject redirects in injected media transports. Callers own RTSP/WebRTC connections, renewal and explicit stop. For push/message integration, your application owns delivery authentication and acknowledgement after successful handling; `DecodePushEvent` is stateless. Optional pull sessions require explicit close and acknowledgements.
 
-Read the [customer guides](https://portpowered.github.io/go-google-nest-sdm/docs/guides), [generated REST reference](https://portpowered.github.io/go-google-nest-sdm/docs/openapi) and [event reference](https://portpowered.github.io/go-google-nest-sdm/docs/asyncapi). Install the separate [CLI](docs/guides/cli.mdx) with `go install github.com/portpowered/go-google-nest-sdm/cmd/go-google-nest-sdm@latest` after publication.
+Read the [customer guides](https://portpowered.github.io/go-google-nest-sdm/docs/guides), [generated REST reference](https://portpowered.github.io/go-google-nest-sdm/docs) and [event reference](https://portpowered.github.io/go-google-nest-sdm/docs/asyncapi/events/receiveEvents). Install the separate [CLI](https://portpowered.github.io/go-google-nest-sdm/docs/guides/cli) with `go install github.com/portpowered/go-google-nest-sdm/cmd/go-google-nest-sdm@latest` after publication.
 
 Contributor evidence, generation and release acceptance live in [contributor verification](docs/contributing.md), [the checklist](docs/checklist.md) and [independent review](docs/review.md).
+
+
+
+
+
+

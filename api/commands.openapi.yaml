@@ -229,8 +229,7 @@
         "type": "object",
         "properties": {
           "eventId": {
-            "type": "string",
-            "minLength": 1
+            "$ref": "./events.openapi.yaml#/components/schemas/CameraEventID"
           }
         },
         "additionalProperties": false,
@@ -272,10 +271,10 @@
         "type": "object",
         "properties": {
           "streamExtensionToken": {
-            "type": "string"
+            "$ref": "#/components/schemas/StreamExtensionToken"
           },
           "streamToken": {
-            "type": "string"
+            "$ref": "#/components/schemas/StreamToken"
           },
           "expiresAt": {
             "type": "string",
@@ -300,8 +299,7 @@
         "type": "object",
         "properties": {
           "streamExtensionToken": {
-            "type": "string",
-            "minLength": 1
+            "$ref": "#/components/schemas/StreamExtensionToken"
           }
         },
         "additionalProperties": false,
@@ -314,10 +312,10 @@
         "type": "object",
         "properties": {
           "streamExtensionToken": {
-            "type": "string"
+            "$ref": "#/components/schemas/StreamExtensionToken"
           },
           "streamToken": {
-            "type": "string"
+            "$ref": "#/components/schemas/StreamToken"
           },
           "expiresAt": {
             "type": "string",
@@ -338,8 +336,7 @@
         "type": "object",
         "properties": {
           "streamExtensionToken": {
-            "type": "string",
-            "minLength": 1
+            "$ref": "#/components/schemas/StreamExtensionToken"
           }
         },
         "additionalProperties": false,
@@ -378,7 +375,7 @@
             "format": "date-time"
           },
           "mediaSessionId": {
-            "type": "string"
+            "$ref": "#/components/schemas/MediaSessionID"
           },
           "answerSdp": {
             "type": "string"
@@ -398,8 +395,7 @@
         "type": "object",
         "properties": {
           "mediaSessionId": {
-            "type": "string",
-            "minLength": 1
+            "$ref": "#/components/schemas/MediaSessionID"
           }
         },
         "additionalProperties": false,
@@ -416,7 +412,7 @@
             "format": "date-time"
           },
           "mediaSessionId": {
-            "type": "string"
+            "$ref": "#/components/schemas/MediaSessionID"
           }
         },
         "additionalProperties": {
@@ -432,8 +428,7 @@
         "type": "object",
         "properties": {
           "mediaSessionId": {
-            "type": "string",
-            "minLength": 1
+            "$ref": "#/components/schemas/MediaSessionID"
           }
         },
         "additionalProperties": false,
@@ -449,6 +444,21 @@
           "x-go-type": "json.RawMessage"
         },
         "description": "Acknowledgement result for CameraLiveStream.StopWebRtcStream; physical action may complete later."
+      },
+      "StreamToken": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Token used to access an RTSP stream."
+      },
+      "StreamExtensionToken": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Token used to extend or terminate an RTSP stream."
+      },
+      "MediaSessionID": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Identifier of a WebRTC media session."
       }
     }
   }

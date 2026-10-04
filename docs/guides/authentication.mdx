@@ -8,10 +8,10 @@ description: Exchange and refresh credentials explicitly, then supply account to
 Complete Google's [Device Access authorization](https://developers.google.com/nest/device-access/authorize) in your application. The application owns the browser redirect, OAuth state binding, user consent and any PKCE verifier. An authorization-code exchange alone does not validate a callback's state.
 
 ```go
+// import "github.com/portpowered/go-google-nest-sdm/pkg/dependencies/httptransport"
 client, err := httptransport.NewClient()
 // Check err before using client.
-authClient := client.(sdm.AuthClient)
-exchanged, err := authClient.ExchangeToken(ctx, sdm.ExchangeTokenRequest{
+exchanged, err := client.ExchangeToken(ctx, sdm.ExchangeTokenRequest{
     ClientId: clientID, ClientSecret: clientSecret,
     Code: authorizationCode, RedirectUri: redirectURI,
 })
@@ -20,7 +20,7 @@ exchanged, err := authClient.ExchangeToken(ctx, sdm.ExchangeTokenRequest{
 Persist `exchanged.Credentials` securely after checking the error. If the consent flow uses PKCE, set `CodeVerifier` to the verifier bound to that flow. For renewal:
 
 ```go
-renewed, err := authClient.RefreshToken(ctx, sdm.RefreshTokenRequest{
+renewed, err := client.RefreshToken(ctx, sdm.RefreshTokenRequest{
     ClientId: clientID, ClientSecret: clientSecret, RefreshToken: storedRefreshToken,
 })
 ```
@@ -41,4 +41,7 @@ The same injected `HTTPDoer` handles SDM, OAuth and Pub/Sub requests. It must su
 
 Use `errors.As(err, &clientError)` with `var clientError *sdm.Error` and inspect `Kind`. Classes include invalid request/response, unauthorized, not found, unsupported, rate limited, server, transport, timeout and cancellation. Outgoing validation errors occur before transmission. An uncertain command transport failure does not prove the command was rejected; inspect device state before repeating it.
 
-See the [generated authentication reference](/docs/openapi) and [event guide](./events).
+See the [generated authentication reference](/docs/openapi/auth/OAuthToken) and [event guide](./events).
+
+
+

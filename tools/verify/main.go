@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -68,13 +69,18 @@ func run(ctx context.Context, mode string) error {
 		return checkFormatting(ctx, root)
 	}
 
+	environment, err := repositoryEnvironment(os.Environ(), root)
+	if err != nil {
+		return err
+	}
+
 	for _, module := range modules {
 		args := moduleArguments(mode)
 		if len(args) == 0 {
 			return verificationError{operation: "unknown verification mode: " + mode, cause: nil}
 		}
 
-		err = command(ctx, filepath.Join(root, module), nil, "go", args...)
+		err = runModule(ctx, root, module, environment, "go", args, mode == "modules")
 		if err != nil {
 			return err
 		}
@@ -147,6 +153,11 @@ func moduleArguments(mode string) []string {
 }
 
 func lintModules(ctx context.Context, root string, modules []string) error {
+	environment, err := repositoryEnvironment(os.Environ(), root)
+	if err != nil {
+		return err
+	}
+
 	bin := filepath.Join(root, "tools", "bin", lintVersion)
 
 	linter := filepath.Join(bin, "golangci-lint")
@@ -154,13 +165,14 @@ func lintModules(ctx context.Context, root string, modules []string) error {
 		linter += ".exe"
 	}
 
-	_, err := os.Stat(linter)
+	_, err = os.Stat(linter)
 	if err != nil {
 		if !os.IsNotExist(err) {
 			return verificationError{operation: "inspect pinned linter", cause: err}
 		}
 
-		env := append(os.Environ(), "GOBIN="+bin, "GOTOOLCHAIN=auto", "GOWORK=off")
+		env := slices.Clone(environment)
+		env = append(env, "GOBIN="+bin, "GOTOOLCHAIN=auto", "GOWORK=off")
 		tool := "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@" + lintVersion
 
 		err = command(ctx, root, env, "go", "install", tool)
@@ -172,7 +184,8 @@ func lintModules(ctx context.Context, root string, modules []string) error {
 	for _, module := range modules {
 		configuration := filepath.Join(root, ".golangci.yml")
 
-		err := command(ctx, filepath.Join(root, module), nil, linter, "run", "--config", configuration, allPackages)
+		args := []string{"run", "--config", configuration, allPackages}
+		err := runModule(ctx, root, module, environment, linter, args, false)
 		if err != nil {
 			return err
 		}

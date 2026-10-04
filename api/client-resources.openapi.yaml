@@ -907,7 +907,7 @@
           "recentEventIds": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "./events.openapi.yaml#/components/schemas/EnvelopeEventID"
             }
           },
           "userId": {

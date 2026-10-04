@@ -34,6 +34,7 @@ func TestLiveListDevices(t *testing.T) {
 	_, err = client.ListDevices(ctx, sdm.ListDevicesRequest{
 		Auth:   sdm.AuthContext{AccessToken: accessToken},
 		Parent: "enterprises/" + enterpriseID,
+		Filter: nil,
 	})
 	if err != nil {
 		// Do not include account/device payloads in test output.

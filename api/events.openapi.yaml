@@ -7,6 +7,30 @@
   "paths": {},
   "components": {
     "schemas": {
+      "EnvelopeEventID": {
+        "title": "EnvelopeEventID",
+        "type": "string",
+        "minLength": 1,
+        "description": "Unique outer SDM event identifier, distinct from camera image event identifiers."
+      },
+      "CameraEventID": {
+        "title": "CameraEventID",
+        "type": "string",
+        "minLength": 1,
+        "description": "Camera image event identifier accepted by GenerateImage; distinct from the outer SDM event identifier."
+      },
+      "EventSessionID": {
+        "title": "EventSessionID",
+        "type": "string",
+        "minLength": 1,
+        "description": "Identifier connecting related camera events and their clip previews."
+      },
+      "EventThreadID": {
+        "title": "EventThreadID",
+        "type": "string",
+        "minLength": 1,
+        "description": "Identifier connecting updateable notifications, distinct from an event session."
+      },
       "EventEnvelope": {
         "title": "EventEnvelope",
         "type": "object",
@@ -16,11 +40,21 @@
           "timestamp",
           "userId"
         ],
+        "anyOf": [
+          {
+            "required": [
+              "resourceUpdate"
+            ]
+          },
+          {
+            "required": [
+              "relationUpdate"
+            ]
+          }
+        ],
         "properties": {
           "eventId": {
-            "type": "string",
-            "minLength": 1,
-            "description": "Unique outer SDM event identifier."
+            "$ref": "#/components/schemas/EnvelopeEventID"
           },
           "timestamp": {
             "type": "string",
@@ -39,8 +73,7 @@
             "$ref": "#/components/schemas/ResourceRelation"
           },
           "eventThreadId": {
-            "type": "string",
-            "description": "Identifier linking updateable notifications, distinct from the event session."
+            "$ref": "#/components/schemas/EventThreadID"
           },
           "eventThreadState": {
             "$ref": "#/components/schemas/EventThreadState"
@@ -150,10 +183,10 @@
         "description": "Motion detected. Event session and image event identifiers depend on the device family.",
         "properties": {
           "eventId": {
-            "type": "string"
+            "$ref": "#/components/schemas/CameraEventID"
           },
           "eventSessionId": {
-            "type": "string"
+            "$ref": "#/components/schemas/EventSessionID"
           }
         },
         "additionalProperties": true
@@ -164,10 +197,10 @@
         "description": "Person detected. Event session and image event identifiers depend on the device family.",
         "properties": {
           "eventId": {
-            "type": "string"
+            "$ref": "#/components/schemas/CameraEventID"
           },
           "eventSessionId": {
-            "type": "string"
+            "$ref": "#/components/schemas/EventSessionID"
           }
         },
         "additionalProperties": true
@@ -178,10 +211,10 @@
         "description": "Sound detected by the camera.",
         "properties": {
           "eventId": {
-            "type": "string"
+            "$ref": "#/components/schemas/CameraEventID"
           },
           "eventSessionId": {
-            "type": "string"
+            "$ref": "#/components/schemas/EventSessionID"
           }
         },
         "additionalProperties": true
@@ -192,10 +225,10 @@
         "description": "Doorbell pressed. Session and image identifiers depend on the device family.",
         "properties": {
           "eventId": {
-            "type": "string"
+            "$ref": "#/components/schemas/CameraEventID"
           },
           "eventSessionId": {
-            "type": "string"
+            "$ref": "#/components/schemas/EventSessionID"
           }
         },
         "additionalProperties": true
@@ -210,8 +243,7 @@
         ],
         "properties": {
           "eventSessionId": {
-            "type": "string",
-            "minLength": 1
+            "$ref": "#/components/schemas/EventSessionID"
           },
           "previewUrl": {
             "type": "string",

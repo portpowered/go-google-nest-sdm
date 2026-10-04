@@ -1,34 +1,62 @@
 ---
 title: Pub/Sub events
-description: Consume typed SDM event deliveries and acknowledge them explicitly.
+description: Handle typed SDM events in your HTTP endpoint or message consumer.
 ---
 
 # Pub/Sub events
 
-Configure Device Access event publishing and a Google Cloud subscription using Google's [current event setup](https://developers.google.com/nest/device-access/api/events). Follow its self-hosted topic guidance rather than copying an old shared-topic identifier. The SDK consumes an existing subscription through REST pull; provisioning topics, subscriptions and IAM belongs to your cloud configuration.
+The primary integration is stateless: your application receives a Pub/Sub message or HTTP push request, authenticates its delivery, decodes the event and runs its handler. The SDK does not own your web server, callback routing, push identity verification or acknowledgement response.
 
-After creating the subscription, make an SDM `ListDevices` call once to initiate event publishing. Use a Google Cloud Pub/Sub access token with subscription-consumption permissions. Keep it separate from the Device Access token used for SDM REST requests.
+For an existing Pub/Sub client, pass its decoded message data directly:
 
 ```go
-eventClient := client.(sdm.EventClient)
-session, err := eventClient.OpenEventSession(ctx, sdm.OpenEventSessionRequest{
+result, err := sdm.HandleEvent(ctx, sdm.HandleEventRequest{Data: message.Data},
+    sdm.EventHandler(func(ctx context.Context, event sdm.EventEnvelope) error {
+        return handleEvent(ctx, event)
+    }),
+)
+```
+
+`HandleEvent` decodes and invokes your callback synchronously; it starts no goroutines and stores no state. Acknowledge through your Pub/Sub client only after it succeeds. For wrapped HTTP push JSON, decode the wrapper first:
+
+```go
+result, err := client.DecodePushEvent(ctx, sdm.DecodePushEventRequest{
+    Body: requestBody, // Wrapped Pub/Sub push JSON, including base64 message.data.
+})
+if err != nil {
+    // Report failure through your application's HTTP response or consumer policy.
+    return err
+}
+err = handleEvent(ctx, result.Event)
+```
+
+`handleEvent` is your application callback. Verify the push identity and expected audience before decoding; return a successful HTTP acknowledgement only after processing succeeds. Handler or decode failures must not be acknowledged as success. Set `Unwrapped: true` when `Body` is raw SDM event JSON, including an unwrapped push body or already-decoded Pub/Sub message data. The decoder performs no network calls and keeps no account state.
+
+Configure Device Access event publishing and a Google Cloud subscription using Google's [current event setup](https://developers.google.com/nest/device-access/api/events). Follow its self-hosted topic guidance rather than copying an old shared-topic identifier. After creating the subscription, make an SDM `ListDevices` call once to initiate publishing. Your application owns subscription/IAM provisioning and the push endpoint's authentication.
+
+Treat deliveries as potentially duplicated and make your handler idempotent. Delivery order can differ from event order; use event timestamps when reconciling cached state. Envelope event IDs, camera event IDs, event-session IDs, event-thread IDs and Pub/Sub message IDs have different purposes. Keep the envelope metadata, namespaced event keys and unknown values when forwarding events.
+
+To maintain a caller-owned cache, use `sdm.Reconcile(sdm.ReconcileRequest{State: state, Event: result.Event})` and persist its returned `State`. It copies the input, binds the first event's user, and reports `Applied`, `Duplicate`, `Stale`, `Unrelated` or `Unsupported` through typed disposition constants. It retains 256 recent event IDs for duplicate detection; older duplicates need your own persistence policy. Strictly older timestamps are ignored; equal timestamps follow delivery order. Relation updates can reassign the parent or mark a deleted device. These are local reconciliation policies, not delivery guarantees.
+
+Resource trait updates are partial patches. Missing fields leave cached values intact; an empty capability trait is still meaningful. Known motion, person, sound, chime and clip-preview events have separate shapes. Clip preview uses `eventSessionId` and `previewUrl`; it does not require the camera event ID used by image generation. Relation updates are separate from resource updates and may contain an empty subject. Unknown event names/fields remain preserved; malformed known payloads remain errors.
+
+An optional pull adapter consumes an existing subscription through REST:
+
+```go
+session, err := client.OpenEventSession(ctx, sdm.OpenEventSessionRequest{
     Auth: sdm.AuthContext{AccessToken: pubSubToken},
     Subscription: "projects/CLOUD_PROJECT/subscriptions/SUBSCRIPTION",
 })
 // Check err before using session.
 defer session.Close()
 delivery, err := session.Next(ctx)
-// Process delivery.Event() only after checking err.
+// Check err, then successfully process delivery.Event() before acknowledging.
 err = delivery.Acknowledge(ctx)
 ```
 
-Acknowledge only after successful handling. `ModifyAckDeadline(ctx, sdm.AckDeadlineRequest{Seconds: 60})` extends the delivery deadline while handling; zero releases it for redelivery. Closing the session cancels its work and is safe to repeat. It does not acknowledge unprocessed deliveries. Use context cancellation to stop waiting for messages. The SDK does not silently renew Pub/Sub credentials; reopen a session with renewed credentials when necessary.
+Pull requires a separate Cloud credential with subscription-consumption permission. `ModifyAckDeadline(ctx, sdm.AckDeadlineRequest{Seconds: 60})` extends a delivery deadline; zero releases it for redelivery. Closing the session cancels its work, is safe to repeat and leaves unprocessed deliveries unacknowledged. Context cancellation stops waiting. Renew credentials explicitly and reopen with the new token when needed.
 
-Treat deliveries as potentially duplicated and make your handler idempotent. Delivery order can differ from event order; use event timestamps when reconciling cached state. The envelope event ID, inner camera event ID, event-session ID, event-thread ID and Pub/Sub message ID have different purposes. Store the envelope metadata, namespaced event keys and raw unknown values when forwarding events.
+See the [generated event reference](/docs/asyncapi/events/receiveEvents) and Pub/Sub [pull](/docs/openapi/pubsub/Pull), [acknowledge](/docs/openapi/pubsub/Acknowledge) and [modify deadline](/docs/openapi/pubsub/ModifyAckDeadline) references. The optional adapter uses pull, acknowledge and modify-ack-deadline; it does not open streaming gRPC connections. The initial documented contracts are tested with synthetic fixtures, without live endpoint evidence.
 
-Resource trait updates are partial patches. Missing fields leave cached values intact; a present empty capability trait is still meaningful. Known motion, person, sound, chime and clip-preview payloads have their own shapes. Clip preview uses `eventSessionId` and `previewUrl`; it does not require the camera event ID used by image generation. Relation updates are separate from resource updates and can contain an empty subject.
 
-Unknown event names and fields are preserved for forward compatibility. A malformed known payload is an error, not an unknown event. Handler or decode failures must not be acknowledged as success. Decide explicitly when to retry, release or route a poison message to operational handling.
-
-See the [generated event reference](/docs/asyncapi) and [Pub/Sub HTTP reference](/docs/openapi). This transport uses pull, acknowledge and modify-ack-deadline; it does not open streaming gRPC connections.
 

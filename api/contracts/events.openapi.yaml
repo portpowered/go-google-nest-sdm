@@ -8,8 +8,7 @@
         "description": "Clip preview URL associated with related events by eventSessionId. No inner eventId is required.",
         "properties": {
           "eventSessionId": {
-            "minLength": 1,
-            "type": "string"
+            "$ref": "#/components/schemas/EventSessionID"
           },
           "previewUrl": {
             "format": "uri",
@@ -23,6 +22,12 @@
         ],
         "title": "CameraClipPreviewEvent",
         "type": "object"
+      },
+      "CameraEventID": {
+        "description": "Camera image event identifier accepted by GenerateImage; distinct from the outer SDM event identifier.",
+        "minLength": 1,
+        "title": "CameraEventID",
+        "type": "string"
       },
       "CameraEvents": {
         "additionalProperties": true,
@@ -52,10 +57,10 @@
         "description": "Motion detected. Event session and image event identifiers depend on the device family.",
         "properties": {
           "eventId": {
-            "type": "string"
+            "$ref": "#/components/schemas/CameraEventID"
           },
           "eventSessionId": {
-            "type": "string"
+            "$ref": "#/components/schemas/EventSessionID"
           }
         },
         "title": "CameraMotionEvent",
@@ -66,10 +71,10 @@
         "description": "Person detected. Event session and image event identifiers depend on the device family.",
         "properties": {
           "eventId": {
-            "type": "string"
+            "$ref": "#/components/schemas/CameraEventID"
           },
           "eventSessionId": {
-            "type": "string"
+            "$ref": "#/components/schemas/EventSessionID"
           }
         },
         "title": "CameraPersonEvent",
@@ -80,10 +85,10 @@
         "description": "Sound detected by the camera.",
         "properties": {
           "eventId": {
-            "type": "string"
+            "$ref": "#/components/schemas/CameraEventID"
           },
           "eventSessionId": {
-            "type": "string"
+            "$ref": "#/components/schemas/EventSessionID"
           }
         },
         "title": "CameraSoundEvent",
@@ -94,27 +99,42 @@
         "description": "Doorbell pressed. Session and image identifiers depend on the device family.",
         "properties": {
           "eventId": {
-            "type": "string"
+            "$ref": "#/components/schemas/CameraEventID"
           },
           "eventSessionId": {
-            "type": "string"
+            "$ref": "#/components/schemas/EventSessionID"
           }
         },
         "title": "DoorbellChimeEvent",
         "type": "object"
       },
+      "EnvelopeEventID": {
+        "description": "Unique outer SDM event identifier, distinct from camera image event identifiers.",
+        "minLength": 1,
+        "title": "EnvelopeEventID",
+        "type": "string"
+      },
       "EventEnvelope": {
         "additionalProperties": true,
+        "anyOf": [
+          {
+            "required": [
+              "resourceUpdate"
+            ]
+          },
+          {
+            "required": [
+              "relationUpdate"
+            ]
+          }
+        ],
         "description": "SDM payload after decoding Pub/Sub message data. Outer event IDs differ from camera image event IDs.",
         "properties": {
           "eventId": {
-            "description": "Unique outer SDM event identifier.",
-            "minLength": 1,
-            "type": "string"
+            "$ref": "#/components/schemas/EnvelopeEventID"
           },
           "eventThreadId": {
-            "description": "Identifier linking updateable notifications, distinct from the event session.",
-            "type": "string"
+            "$ref": "#/components/schemas/EventThreadID"
           },
           "eventThreadState": {
             "$ref": "#/components/schemas/EventThreadState"
@@ -150,6 +170,18 @@
         ],
         "title": "EventEnvelope",
         "type": "object"
+      },
+      "EventSessionID": {
+        "description": "Identifier connecting related camera events and their clip previews.",
+        "minLength": 1,
+        "title": "EventSessionID",
+        "type": "string"
+      },
+      "EventThreadID": {
+        "description": "Identifier connecting updateable notifications, distinct from an event session.",
+        "minLength": 1,
+        "title": "EventThreadID",
+        "type": "string"
       },
       "EventThreadState": {
         "description": "Extensible thread state; known values are STARTED, UPDATED, ENDED.",

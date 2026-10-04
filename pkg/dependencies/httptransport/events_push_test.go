@@ -47,6 +47,10 @@ func TestPushDecodingWrappedAndUnwrapped(t *testing.T) {
 		if result.Event.EventId != "event" {
 			t.Fatal("wrong event")
 		}
+
+		if result.Event.ResourceUpdate == nil || result.Event.ResourceUpdate.Name != "enterprises/project/devices/device" {
+			t.Fatal("resource update was lost")
+		}
 	}
 }
 

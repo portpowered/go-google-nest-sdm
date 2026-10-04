@@ -16,7 +16,7 @@ import (
 
 const (
 	defaultModulePath        = "github.com/portpowered/go-google-nest-sdm"
-	defaultPublicPackages    = "pkg/sdm,pkg/dependencies/httptransport,pkg/dependencies/media"
+	defaultPublicPackages    = "pkg/sdm,pkg/dependencies/httptransport,pkg/dependencies/media,pkg/dependencymodels"
 	apiDiffTool              = "golang.org/x/exp/cmd/apidiff@v0.0.0-20260908205506-85c1c2202aba"
 	previousRelease          = "previous-release"
 	policyReport             = "report"
@@ -265,14 +265,23 @@ func comparePackage(
 	oldData := filepath.Join(tempDir, exportFilename(packageName, "base"))
 	newData := filepath.Join(tempDir, exportFilename(packageName, "current"))
 
-	err := writeExportData(ctx, tool, baseDir, packagePath, oldData)
-	if err != nil {
-		return "", newGateError("read baseline API for "+packagePath, err)
-	}
-
-	err = writeExportData(ctx, tool, root, packagePath, newData)
+	err := writeExportData(ctx, tool, root, packagePath, newData)
 	if err != nil {
 		return "", newGateError("read current API for "+packagePath, err)
+	}
+
+	exists, err := baselineHasPackage(baseDir, packageName)
+	if err != nil {
+		return "", err
+	}
+
+	if !exists {
+		return "", nil
+	}
+
+	err = writeExportData(ctx, tool, baseDir, packagePath, oldData)
+	if err != nil {
+		return "", newGateError("read baseline API for "+packagePath, err)
 	}
 
 	packageChanges, err := compareAPIs(ctx, tool, oldData, newData)
@@ -281,6 +290,25 @@ func comparePackage(
 	}
 
 	return packageChanges, nil
+}
+
+func baselineHasPackage(root, packageName string) (bool, error) {
+	entries, err := os.ReadDir(filepath.Join(root, packageName))
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+
+	if err != nil {
+		return false, newGateError("inspect baseline package "+packageName, err)
+	}
+
+	for _, entry := range entries {
+		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".go") && !strings.HasSuffix(entry.Name(), "_test.go") {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }
 
 func exportFilename(packageName, variant string) string {

@@ -8,3 +8,4 @@ output-options:
 import-mapping:
   ./traits.openapi.yaml: '-'
 
+  ./events.openapi.yaml: '-'

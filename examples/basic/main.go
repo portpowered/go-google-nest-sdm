@@ -15,9 +15,16 @@ import (
 const requestTimeout = 30 * time.Second
 
 func main() {
-	client, err := httptransport.NewClient()
+	err := run()
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func run() error {
+	client, err := httptransport.NewClient()
+	if err != nil {
+		return fmt.Errorf("create client: %w", err)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
@@ -26,12 +33,18 @@ func main() {
 	result, err := client.ListDevices(ctx, sdm.ListDevicesRequest{
 		Auth:   sdm.AuthContext{AccessToken: os.Getenv("NEST_ACCESS_TOKEN")},
 		Parent: "enterprises/" + os.Getenv("NEST_ENTERPRISE_ID"),
+		Filter: nil,
 	})
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("list devices: %w", err)
 	}
 
 	for _, device := range result.Devices {
-		fmt.Println(device.Name)
+		_, err = fmt.Fprintln(os.Stdout, device.Name)
+		if err != nil {
+			return fmt.Errorf("write device name: %w", err)
+		}
 	}
+
+	return nil
 }

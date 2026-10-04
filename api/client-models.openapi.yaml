@@ -189,6 +189,15 @@
       },
       "CameraLiveStreamStopWebRtcStreamResults": {
         "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopWebRtcStreamResults"
+      },
+      "StreamToken": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/StreamToken"
+      },
+      "StreamExtensionToken": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/StreamExtensionToken"
+      },
+      "MediaSessionID": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/MediaSessionID"
       }
     }
   }

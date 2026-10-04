@@ -10,8 +10,8 @@ import (
 
 // CameraClipPreviewEvent Clip preview URL associated with related events by eventSessionId. No inner eventId is required.
 type CameraClipPreviewEvent struct {
-	// EventSessionId The eventSessionId value.
-	EventSessionId string `json:"eventSessionId"`
+	// EventSessionId Identifier connecting related camera events and their clip previews.
+	EventSessionId EventSessionID `json:"eventSessionId"`
 	// PreviewUrl The previewUrl value.
 	PreviewUrl string `json:"previewUrl"`
 	// AdditionalProperties retains unrecognized JSON fields.
@@ -39,6 +39,7 @@ func (value *CameraClipPreviewEvent) UnmarshalJSON(data []byte) error {
 	if value, present := properties["previewUrl"]; present && string(value) == "null" {
 		return fmt.Errorf("CameraClipPreviewEvent: field %s cannot be null", "previewUrl")
 	}
+
 	type known CameraClipPreviewEvent
 	var decoded known
 	if err := json.Unmarshal(data, &decoded); err != nil {
@@ -73,6 +74,9 @@ func (value CameraClipPreviewEvent) MarshalJSON() ([]byte, error) {
 	}
 	return json.Marshal(properties)
 }
+
+// CameraEventID Camera image event identifier accepted by GenerateImage; distinct from the outer SDM event identifier.
+type CameraEventID string
 
 // CameraEvents Fully qualified event keys; future event payloads are retained.
 type CameraEvents struct {
@@ -115,6 +119,7 @@ func (value *CameraEvents) UnmarshalJSON(data []byte) error {
 	if value, present := properties["sdm.devices.events.DoorbellChime.Chime"]; present && string(value) == "null" {
 		return fmt.Errorf("CameraEvents: field %s cannot be null", "sdm.devices.events.DoorbellChime.Chime")
 	}
+
 	type known CameraEvents
 	var decoded known
 	if err := json.Unmarshal(data, &decoded); err != nil {
@@ -158,10 +163,10 @@ func (value CameraEvents) MarshalJSON() ([]byte, error) {
 
 // CameraMotionEvent Motion detected. Event session and image event identifiers depend on the device family.
 type CameraMotionEvent struct {
-	// EventId The eventId value.
-	EventId *string `json:"eventId,omitempty"`
-	// EventSessionId The eventSessionId value.
-	EventSessionId *string `json:"eventSessionId,omitempty"`
+	// EventId Camera image event identifier accepted by GenerateImage; distinct from the outer SDM event identifier.
+	EventId *CameraEventID `json:"eventId,omitempty"`
+	// EventSessionId Identifier connecting related camera events and their clip previews.
+	EventSessionId *EventSessionID `json:"eventSessionId,omitempty"`
 	// AdditionalProperties retains unrecognized JSON fields.
 	AdditionalProperties map[string]json.RawMessage `json:"-"`
 }
@@ -182,6 +187,7 @@ func (value *CameraMotionEvent) UnmarshalJSON(data []byte) error {
 	if value, present := properties["eventSessionId"]; present && string(value) == "null" {
 		return fmt.Errorf("CameraMotionEvent: field %s cannot be null", "eventSessionId")
 	}
+
 	type known CameraMotionEvent
 	var decoded known
 	if err := json.Unmarshal(data, &decoded); err != nil {
@@ -219,10 +225,10 @@ func (value CameraMotionEvent) MarshalJSON() ([]byte, error) {
 
 // CameraPersonEvent Person detected. Event session and image event identifiers depend on the device family.
 type CameraPersonEvent struct {
-	// EventId The eventId value.
-	EventId *string `json:"eventId,omitempty"`
-	// EventSessionId The eventSessionId value.
-	EventSessionId *string `json:"eventSessionId,omitempty"`
+	// EventId Camera image event identifier accepted by GenerateImage; distinct from the outer SDM event identifier.
+	EventId *CameraEventID `json:"eventId,omitempty"`
+	// EventSessionId Identifier connecting related camera events and their clip previews.
+	EventSessionId *EventSessionID `json:"eventSessionId,omitempty"`
 	// AdditionalProperties retains unrecognized JSON fields.
 	AdditionalProperties map[string]json.RawMessage `json:"-"`
 }
@@ -243,6 +249,7 @@ func (value *CameraPersonEvent) UnmarshalJSON(data []byte) error {
 	if value, present := properties["eventSessionId"]; present && string(value) == "null" {
 		return fmt.Errorf("CameraPersonEvent: field %s cannot be null", "eventSessionId")
 	}
+
 	type known CameraPersonEvent
 	var decoded known
 	if err := json.Unmarshal(data, &decoded); err != nil {
@@ -280,10 +287,10 @@ func (value CameraPersonEvent) MarshalJSON() ([]byte, error) {
 
 // CameraSoundEvent Sound detected by the camera.
 type CameraSoundEvent struct {
-	// EventId The eventId value.
-	EventId *string `json:"eventId,omitempty"`
-	// EventSessionId The eventSessionId value.
-	EventSessionId *string `json:"eventSessionId,omitempty"`
+	// EventId Camera image event identifier accepted by GenerateImage; distinct from the outer SDM event identifier.
+	EventId *CameraEventID `json:"eventId,omitempty"`
+	// EventSessionId Identifier connecting related camera events and their clip previews.
+	EventSessionId *EventSessionID `json:"eventSessionId,omitempty"`
 	// AdditionalProperties retains unrecognized JSON fields.
 	AdditionalProperties map[string]json.RawMessage `json:"-"`
 }
@@ -304,6 +311,7 @@ func (value *CameraSoundEvent) UnmarshalJSON(data []byte) error {
 	if value, present := properties["eventSessionId"]; present && string(value) == "null" {
 		return fmt.Errorf("CameraSoundEvent: field %s cannot be null", "eventSessionId")
 	}
+
 	type known CameraSoundEvent
 	var decoded known
 	if err := json.Unmarshal(data, &decoded); err != nil {
@@ -341,10 +349,10 @@ func (value CameraSoundEvent) MarshalJSON() ([]byte, error) {
 
 // DoorbellChimeEvent Doorbell pressed. Session and image identifiers depend on the device family.
 type DoorbellChimeEvent struct {
-	// EventId The eventId value.
-	EventId *string `json:"eventId,omitempty"`
-	// EventSessionId The eventSessionId value.
-	EventSessionId *string `json:"eventSessionId,omitempty"`
+	// EventId Camera image event identifier accepted by GenerateImage; distinct from the outer SDM event identifier.
+	EventId *CameraEventID `json:"eventId,omitempty"`
+	// EventSessionId Identifier connecting related camera events and their clip previews.
+	EventSessionId *EventSessionID `json:"eventSessionId,omitempty"`
 	// AdditionalProperties retains unrecognized JSON fields.
 	AdditionalProperties map[string]json.RawMessage `json:"-"`
 }
@@ -365,6 +373,7 @@ func (value *DoorbellChimeEvent) UnmarshalJSON(data []byte) error {
 	if value, present := properties["eventSessionId"]; present && string(value) == "null" {
 		return fmt.Errorf("DoorbellChimeEvent: field %s cannot be null", "eventSessionId")
 	}
+
 	type known DoorbellChimeEvent
 	var decoded known
 	if err := json.Unmarshal(data, &decoded); err != nil {
@@ -400,10 +409,13 @@ func (value DoorbellChimeEvent) MarshalJSON() ([]byte, error) {
 	return json.Marshal(properties)
 }
 
+// EnvelopeEventID Unique outer SDM event identifier, distinct from camera image event identifiers.
+type EnvelopeEventID string
+
 // EventEnvelope SDM payload after decoding Pub/Sub message data. Outer event IDs differ from camera image event IDs.
 type EventEnvelope struct {
-	// EventId Unique outer SDM event identifier.
-	EventId string `json:"eventId"`
+	// EventId Unique outer SDM event identifier, distinct from camera image event identifiers.
+	EventId EnvelopeEventID `json:"eventId"`
 	// Timestamp Event occurrence time; receipt order may differ.
 	Timestamp time.Time `json:"timestamp"`
 	// UserId Obfuscated user identifier.
@@ -412,8 +424,8 @@ type EventEnvelope struct {
 	ResourceUpdate *ResourceUpdate `json:"resourceUpdate,omitempty"`
 	// RelationUpdate A relation change. Subject may be empty when structure access is unavailable.
 	RelationUpdate *ResourceRelation `json:"relationUpdate,omitempty"`
-	// EventThreadId Identifier linking updateable notifications, distinct from the event session.
-	EventThreadId *string `json:"eventThreadId,omitempty"`
+	// EventThreadId Identifier connecting updateable notifications, distinct from an event session.
+	EventThreadId *EventThreadID `json:"eventThreadId,omitempty"`
 	// EventThreadState Extensible thread state; known values are STARTED, UPDATED, ENDED.
 	EventThreadState *EventThreadState `json:"eventThreadState,omitempty"`
 	// ResourceGroup Resource names that may have related updates.
@@ -464,6 +476,9 @@ func (value *EventEnvelope) UnmarshalJSON(data []byte) error {
 	if value, present := properties["resourceGroup"]; present && string(value) == "null" {
 		return fmt.Errorf("EventEnvelope: field %s cannot be null", "resourceGroup")
 	}
+	if !((len(properties["resourceUpdate"]) != 0) || (len(properties["relationUpdate"]) != 0)) {
+		return fmt.Errorf("EventEnvelope: missing required update variant")
+	}
 	type known EventEnvelope
 	var decoded known
 	if err := json.Unmarshal(data, &decoded); err != nil {
@@ -510,6 +525,12 @@ func (value EventEnvelope) MarshalJSON() ([]byte, error) {
 	}
 	return json.Marshal(properties)
 }
+
+// EventSessionID Identifier connecting related camera events and their clip previews.
+type EventSessionID string
+
+// EventThreadID Identifier connecting updateable notifications, distinct from an event session.
+type EventThreadID string
 
 // EventThreadState is an extensible protocol string.
 type EventThreadState string
@@ -574,6 +595,7 @@ func (value *ResourceRelation) UnmarshalJSON(data []byte) error {
 	if value, present := properties["object"]; present && string(value) == "null" {
 		return fmt.Errorf("ResourceRelation: field %s cannot be null", "object")
 	}
+
 	type known ResourceRelation
 	var decoded known
 	if err := json.Unmarshal(data, &decoded); err != nil {
@@ -644,6 +666,7 @@ func (value *ResourceUpdate) UnmarshalJSON(data []byte) error {
 	if value, present := properties["events"]; present && string(value) == "null" {
 		return fmt.Errorf("ResourceUpdate: field %s cannot be null", "events")
 	}
+
 	type known ResourceUpdate
 	var decoded known
 	if err := json.Unmarshal(data, &decoded); err != nil {

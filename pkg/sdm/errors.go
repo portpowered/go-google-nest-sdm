@@ -49,5 +49,5 @@ func (e *Error) Error() string {
 func (e *Error) Unwrap() error { return e.Cause }
 
 func invalidResponse(operation string, cause error) error {
-	return &Error{Kind: ErrorInvalidResponse, Operation: operation, Cause: cause}
+	return &Error{Kind: ErrorInvalidResponse, Operation: operation, Cause: cause, StatusCode: 0}
 }

@@ -42,6 +42,11 @@ linters:
               skip-blank-lines: true
   exclusions:
     generated: strict
+    rules:
+      # These development modules import the unpublished SDK from this checkout.
+      # Remove the CLI replacement when publishing matching SDK and CLI tags.
+      - path: '^(cmd/go-google-nest-sdm|tests/consumer)/go\.mod$'
+        linters: [gomoddirectives]
 
 formatters:
   enable:

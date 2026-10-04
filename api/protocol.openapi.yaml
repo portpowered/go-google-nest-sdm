@@ -273,6 +273,42 @@
             "enum": [
               "^https://[^/?#]+/"
             ]
+          },
+          "SDPMediaPrefix": {
+            "type": "string",
+            "enum": [
+              "m="
+            ]
+          },
+          "SDPMidPrefix": {
+            "type": "string",
+            "enum": [
+              "a=mid:"
+            ]
+          },
+          "SDPRtpMapPrefix": {
+            "type": "string",
+            "enum": [
+              "a=rtpmap:"
+            ]
+          },
+          "SDPDirectionSendReceiveLine": {
+            "type": "string",
+            "enum": [
+              "a=sendrecv"
+            ]
+          },
+          "SDPSendOnlyLine": {
+            "type": "string",
+            "enum": [
+              "a=sendonly"
+            ]
+          },
+          "SDPInactiveLine": {
+            "type": "string",
+            "enum": [
+              "a=inactive"
+            ]
           }
         },
         "additionalProperties": false

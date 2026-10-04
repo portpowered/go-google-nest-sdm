@@ -33,11 +33,13 @@ jobs:
         uses: portpowered/api-docs-website-github-action@v0.3.1
         with:
           title: Google Nest SDM API Reference
-          openapi: api/openapi.yaml,api/client-models.openapi.yaml,api/external/pubsub.openapi.yaml
+          openapi: api/openapi.yaml,api/client-models.openapi.yaml,api/external/pubsub.openapi.yaml,api/external/oauth.openapi.yaml,api/external/media.openapi.yaml
           asyncapi: api/asyncapi.yaml
           discover: false
           guides-directory: docs/guides
           output: site
+      - name: Verify generated customer guides, reference pages, and internal navigation
+        run: go run ./tools/docs -site site -base /${{ github.event.repository.name }}
       - name: Publish separate coverage reports and replay badge data
         shell: bash
         run: |
