@@ -15,8 +15,9 @@ import (
 )
 
 const (
-	defaultModulePath        = "github.com/portpowered/go-google-nest-sdm"
-	defaultPublicPackages    = "pkg/sdm,pkg/dependencies/authorization,pkg/dependencies/httptransport,pkg/dependencies/media,pkg/dependencymodels"
+	defaultModulePath     = "github.com/portpowered/go-google-nest-sdm"
+	defaultPublicPackages = "pkg/sdm,pkg/dependencies/authorization," +
+		"pkg/dependencies/httptransport,pkg/dependencies/media,pkg/dependencymodels"
 	apiDiffTool              = "golang.org/x/exp/cmd/apidiff@v0.0.0-20260908205506-85c1c2202aba"
 	previousRelease          = "previous-release"
 	policyReport             = "report"
