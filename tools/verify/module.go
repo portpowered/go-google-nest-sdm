@@ -71,7 +71,6 @@ func prepareModule(ctx context.Context, root, module string, environment []strin
 	check.temporaryDirectory = directory
 
 	check.temporaryDirectory, err = canonicalDirectory(directory)
-
 	if err != nil {
 		check.temporaryDirectory = directory
 
