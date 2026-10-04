@@ -1,0 +1,6 @@
+/site/
+coverage*.out
+*.exe
+/tools/bin/
+node_modules/
+.DS_Store
