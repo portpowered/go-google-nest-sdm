@@ -277,14 +277,21 @@ func checkFormatting(ctx context.Context, root string) error {
 }
 
 func command(ctx context.Context, directory string, environment []string, program string, args ...string) error {
+	canonical, err := canonicalDirectory(directory)
+	if err != nil {
+		return err
+	}
+
 	// #nosec G204 -- fixed repository check executables and argument lists; no shell is invoked.
 	cmd := exec.CommandContext(ctx, program, args...)
-	cmd.Dir = directory
-	cmd.Env = environment
+	// Go workspace membership uses lexical paths. Resolve aliases at the
+	// subprocess boundary, including PWD used by Unix child processes.
+	cmd.Dir = canonical
+	cmd.Env = append(slices.Clone(environment), "PWD="+canonical)
 
 	cmd.Stdout, cmd.Stderr = os.Stdout, os.Stderr
 
-	err := cmd.Run()
+	err = cmd.Run()
 	if err != nil {
 		return verificationError{operation: program + " " + strings.Join(args, " "), cause: err}
 	}
