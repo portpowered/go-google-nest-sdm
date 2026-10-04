@@ -49,7 +49,7 @@ func TestModuleArgumentsFailClosed(t *testing.T) {
 		t.Fatalf("unknown mode accepted: %q", got)
 	}
 
-	want := []string{"test", "-race", "-timeout=180s", "./..."}
+	want := []string{"test", "-race", "-timeout=10m0s", "./..."}
 	if got := moduleArguments("test"); !reflect.DeepEqual(got, want) {
 		t.Fatalf("test args = %q", got)
 	}
