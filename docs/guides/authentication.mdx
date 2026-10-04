@@ -1,0 +1,44 @@
+---
+title: Authentication and errors
+description: Exchange and refresh credentials explicitly, then supply account tokens per call.
+---
+
+# Authentication and errors
+
+Complete Google's [Device Access authorization](https://developers.google.com/nest/device-access/authorize) in your application. The application owns the browser redirect, OAuth state binding, user consent and any PKCE verifier. An authorization-code exchange alone does not validate a callback's state.
+
+```go
+client, err := httptransport.NewClient()
+// Check err before using client.
+authClient := client.(sdm.AuthClient)
+exchanged, err := authClient.ExchangeToken(ctx, sdm.ExchangeTokenRequest{
+    ClientId: clientID, ClientSecret: clientSecret,
+    Code: authorizationCode, RedirectUri: redirectURI,
+})
+```
+
+Persist `exchanged.Credentials` securely after checking the error. If the consent flow uses PKCE, set `CodeVerifier` to the verifier bound to that flow. For renewal:
+
+```go
+renewed, err := authClient.RefreshToken(ctx, sdm.RefreshTokenRequest{
+    ClientId: clientID, ClientSecret: clientSecret, RefreshToken: storedRefreshToken,
+})
+```
+
+The client neither retains credentials nor refreshes them silently. Track `ExpiresIn`, replace the access token after successful renewal, and retain a previously stored refresh token when the response omits a new one. Use the same OAuth application's credentials and redirect URI as the authorization request. Keep client secrets, refresh tokens and media tokens out of logs.
+
+Supply `sdm.AuthContext{AccessToken: accessToken}` with each device request. Pub/Sub requires a separate Google Cloud credential with permission to consume your subscription; a Device Access bearer does not automatically supply that permission.
+
+Configure all HTTP exchanges through functional options:
+
+```go
+client, err := httptransport.NewClient(
+    httptransport.WithHTTPClient(myHTTPDoer),
+)
+```
+
+The same injected `HTTPDoer` handles SDM, OAuth and Pub/Sub requests. It must support concurrent requests and context cancellation. The caller owns the HTTP client and its connections. Set request deadlines using `context.WithTimeout`; choose production timeout and retry policy explicitly. Base URL options are available for controlled testing.
+
+Use `errors.As(err, &clientError)` with `var clientError *sdm.Error` and inspect `Kind`. Classes include invalid request/response, unauthorized, not found, unsupported, rate limited, server, transport, timeout and cancellation. Outgoing validation errors occur before transmission. An uncertain command transport failure does not prove the command was rejected; inspect device state before repeating it.
+
+See the [generated authentication reference](/docs/openapi) and [event guide](./events).

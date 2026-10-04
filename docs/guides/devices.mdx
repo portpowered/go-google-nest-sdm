@@ -1,0 +1,27 @@
+---
+title: Devices, structures and rooms
+description: Discover resources and read presence-aware traits.
+---
+
+# Devices, structures and rooms
+
+Supply the same account's `AuthContext` on each request. Device and structure discovery use `enterprises/PROJECT_ID`; room discovery uses a structure name returned by `ListStructures`.
+
+```go
+devices, err := client.ListDevices(ctx, sdm.ListDevicesRequest{Auth: auth, Parent: enterprise})
+device, err := client.GetDevice(ctx, sdm.GetDeviceRequest{Auth: auth, Name: deviceName})
+structures, err := client.ListStructures(ctx, sdm.ListStructuresRequest{Auth: auth, Parent: enterprise})
+structure, err := client.GetStructure(ctx, sdm.GetStructureRequest{Auth: auth, Name: structureName})
+rooms, err := client.ListRooms(ctx, sdm.ListRoomsRequest{Auth: auth, Parent: structureName})
+room, err := client.GetRoom(ctx, sdm.GetRoomRequest{Auth: auth, Name: roomName})
+```
+
+These independent call fragments illustrate inputs; handle each error before making a dependent call. Lists return `Devices`, `Structures`, or `Rooms`; get calls return `Device`, `Structure`, or `Room`. Resource names are service-returned names, not friendly room labels.
+
+Known trait bodies decode into typed values. Preserve unknown trait names, unknown fields and future incoming enum values when storing or relaying resources. A malformed known trait remains an error; it must not silently become an unknown trait.
+
+Omission is distinct from a present zero, false, empty string or empty capability object. A cooling setpoint omitted in heat mode is not zero degrees. A CameraClipPreview trait with an empty body still advertises a capability. Treat incoming event trait updates as patches: omitted fields leave cached state unchanged. Do not replace a complete snapshot with a partial event body. Explicit null remains distinguishable through the preserved payload where applicable.
+
+Use returned traits for capability checks; a thermostat device category alone does not guarantee fan support. Commands may become unsupported between reading a snapshot and execution, so preflight validation does not guarantee acceptance.
+
+See the [generated REST reference](/docs/openapi) and [Google resource reference](https://developers.google.com/nest/device-access/reference/rest).

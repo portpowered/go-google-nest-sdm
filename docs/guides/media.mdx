@@ -1,0 +1,36 @@
+---
+title: Camera images and streams
+description: Obtain image credentials and manage RTSP or WebRTC command lifecycles.
+---
+
+# Camera images and streams
+
+Check the camera's traits and `supportedProtocols` before choosing RTSP or WebRTC. Image generation uses the camera event identifier from the event body, not the envelope event ID or event-session ID.
+
+```go
+image, err := client.GenerateImage(ctx, sdm.GenerateImageRequest{
+    Auth: auth, DeviceName: name,
+    Params: sdm.CameraEventImageGenerateImageParams{EventId: cameraEventID},
+})
+```
+
+On success, `image.Results` contains a URL and token. Your application retrieves the media using Google's documented authorization requirements; avoid logging the URL or token. The SDK does not download images or retain those credentials.
+
+For RTSP, call `GenerateRtspStream` with empty parameters, consume `Results.StreamUrls.RtspUrl`, and retain the returned extension token. `ExtendRtspStream` requires `StreamExtensionToken` and returns renewed stream credentials and expiry. `StopRtspStream` takes the current extension token. Use the latest returned values rather than keeping the initial token forever.
+
+For WebRTC, create a peer connection and SDP offer in your application, then call:
+
+```go
+stream, err := client.GenerateWebRtcStream(ctx, sdm.GenerateWebRtcStreamRequest{
+    Auth: auth, DeviceName: name,
+    Params: sdm.CameraLiveStreamGenerateWebRtcStreamParams{OfferSdp: offerSDP},
+})
+```
+
+Apply `stream.Results.AnswerSdp` to that peer connection. Keep `Results.MediaSessionId` for `ExtendWebRtcStream` and `StopWebRtcStream`; track the returned expiry. The offer must follow Google's supported SDP/media requirements. SDM does not expose a separate trickle-ICE command through this SDK: your WebRTC stack owns offer construction and peer-connection negotiation.
+
+The application owns the RTSP player or WebRTC connection, media credentials, renewal scheduling and teardown. Canceling a request or closing a local peer connection does not send an SDM stop command. Stop the remote stream explicitly when finished and close local resources even when stop fails. Use a bounded cleanup context if the original context is already canceled. Renew before expiry while the stream is still needed; handle renewal failure as a lifecycle failure.
+
+The SDK exposes typed generation, extension and stop results instead of a shared optional-field bag. Command replay verifies the SDM exchange; it does not establish live playback, ICE connectivity or peer-connection cleanup.
+
+See the [generated command reference](/docs/openapi) and [Google camera live-stream trait](https://developers.google.com/nest/device-access/traits/device/camera-live-stream).

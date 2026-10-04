@@ -1,0 +1,35 @@
+---
+title: Standalone CLI
+description: Exercise authentication, discovery, controls, media commands and events.
+---
+
+# Standalone CLI
+
+Install the separate command module:
+
+```sh
+go install github.com/portpowered/go-google-nest-sdm/cmd/go-google-nest-sdm@latest
+go-google-nest-sdm --help
+```
+
+Supply credentials through `SDM_ACCESS_TOKEN`, `SDM_CLIENT_ID`, `SDM_CLIENT_SECRET`, `SDM_REFRESH_TOKEN`, `SDM_AUTHORIZATION_CODE` and `SDM_REDIRECT_URI`, or an explicit credentials JSON file using `--credentials FILE`. Use `--credentials -` to read JSON from stdin. Keep secrets out of command arguments and shell history. Consult command help for the expected file fields.
+
+```sh
+go-google-nest-sdm auth exchange
+go-google-nest-sdm auth refresh
+go-google-nest-sdm devices list --resource enterprises/PROJECT_ID
+go-google-nest-sdm devices get --resource enterprises/PROJECT_ID/devices/DEVICE_ID
+go-google-nest-sdm structures list --resource enterprises/PROJECT_ID
+go-google-nest-sdm rooms list --resource enterprises/PROJECT_ID/structures/STRUCTURE_ID
+```
+
+Ordinary authentication output contains redacted metadata. Credential export is an explicit action through `auth export` or `--export`; send that output only to secure storage. Commands return machine-readable JSON and nonzero exit status on failure. Camera commands redact media access secrets unless you explicitly pass `--export`. Use `--timeout` to bound an operation (default 30 seconds); Ctrl+C cancels it.
+
+Use explicit control commands such as `thermostat mode`, `thermostat eco`, `thermostat heat`, `thermostat cool`, `thermostat range` and `fan timer`. They change the selected device. Supply its full name through `--resource` and typed parameter JSON through `--params FILE` or `--params -` (stdin). For example, `thermostat mode --resource enterprises/PROJECT/devices/DEVICE --params -` reads `{"mode":"HEAT"}` from stdin. Inspect command help before running it.
+
+Camera commands are `image`, `rtsp-start`, `rtsp-extend`, `rtsp-stop`, `webrtc-start`, `webrtc-extend` and `webrtc-stop` under `camera`. They execute SDM commands and return their results; your application owns media retrieval and playback. Save session identifiers securely and stop streams explicitly when finished.
+
+`events pull` consumes an existing subscription with a Pub/Sub credential; `events decode` reads an event payload locally. Cancellation stops the command and closes its event session. Consult help for acknowledgement and input options. See [event ownership](./events) before enabling acknowledgement in an application.
+
+The CLI calls the same public SDK as Go consumers. SDK and CLI releases require matching module tags; installation from `@latest` depends on publication. See the [authentication guide](./authentication) for credential ownership and [generated REST reference](/docs/openapi) for requests.
+

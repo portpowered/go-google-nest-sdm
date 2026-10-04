@@ -1,0 +1,34 @@
+---
+title: Thermostat and fan controls
+description: Send explicit typed thermostat and fan commands.
+---
+
+# Thermostat and fan controls
+
+Commands take an account, a device resource name, and typed parameters. Supply only the values you intend to change. An accepted command is an acknowledgement; observe later trait state to confirm the physical action.
+
+```go
+_, err := client.SetThermostatMode(ctx, sdm.SetThermostatModeRequest{
+    Auth: auth, DeviceName: name, Params: sdm.ThermostatModeSetModeParams{Mode: "HEAT"},
+})
+_, err = client.SetHeat(ctx, sdm.SetHeatRequest{
+    Auth: auth, DeviceName: name, Params: sdm.ThermostatTemperatureSetpointSetHeatParams{HeatCelsius: 20},
+})
+```
+
+Handle the first error before sending the second command. Mode controls whether heat, cool or range is appropriate; Eco state can prevent setpoint changes. Check the current traits and handle the service response if state changed after your read.
+
+| Method | Parameters | Example |
+| --- | --- | --- |
+| `SetThermostatMode` | `ThermostatModeSetModeParams` | `{Mode: "HEAT"}` |
+| `SetThermostatEcoMode` | `ThermostatEcoSetModeParams` | `{Mode: "OFF"}` |
+| `SetHeat` | `ThermostatTemperatureSetpointSetHeatParams` | `{HeatCelsius: 20}` |
+| `SetCool` | `ThermostatTemperatureSetpointSetCoolParams` | `{CoolCelsius: 25}` |
+| `SetRange` | `ThermostatTemperatureSetpointSetRangeParams` | `{HeatCelsius: 20, CoolCelsius: 25}` |
+| `SetFanTimer` | `FanSetTimerParams` | `{TimerMode: "OFF"}` |
+
+Temperatures are Celsius. A range requires heat below cool. Fan duration uses an SDM seconds string such as `"3600s"`; when supplied, it must be from 1 to 43200 seconds. The documented default is 900 seconds; omitting the pointer delegates that default to the service. Schema defaults do not populate your Go object.
+
+Outgoing enum values and known payload shapes are validated. Do not add fields to a command through an unknown-payload fallback. No command is automatically retried: a connection failure can leave acceptance uncertain. Re-read state before deciding what to send next.
+
+See the [command reference](/docs/openapi) and [Google trait documentation](https://developers.google.com/nest/device-access/traits).
