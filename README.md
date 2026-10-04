@@ -4,6 +4,7 @@ Typed Google Nest Smart Device Management REST commands and stateless Pub/Sub ev
 
 [![Go](https://img.shields.io/github/go-mod/go-version/portpowered/go-google-nest-sdm)](go.mod)
 [![CI](https://github.com/portpowered/go-google-nest-sdm/actions/workflows/ci.yml/badge.svg)](https://github.com/portpowered/go-google-nest-sdm/actions/workflows/ci.yml)
+[![Combined coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fportpowered.github.io%2Fgo-google-nest-sdm%2Fcoverage-combined.json)](https://portpowered.github.io/go-google-nest-sdm/coverage-combined.html)
 [![Replay coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fportpowered.github.io%2Fgo-google-nest-sdm%2Fcoverage-replay.json)](https://portpowered.github.io/go-google-nest-sdm/coverage-replay.html)
 [![Release](https://img.shields.io/github/v/release/portpowered/go-google-nest-sdm)](https://github.com/portpowered/go-google-nest-sdm/releases/latest)
 [![Go Reference](https://pkg.go.dev/badge/github.com/portpowered/go-google-nest-sdm.svg)](https://pkg.go.dev/github.com/portpowered/go-google-nest-sdm/pkg/sdm)

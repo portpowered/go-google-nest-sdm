@@ -50,12 +50,34 @@ func prepareModule(ctx context.Context, root, module string, environment []strin
 		return check, nil
 	}
 
+	// Workspace membership compares paths lexically. On macOS the system temp
+	// directory may use /var while Getwd returns /private/var. Resolve aliases
+	// before writing the workspace and its SDK replacement.
+	canonicalRoot, err := canonicalDirectory(root)
+	if err != nil {
+		return check, err
+	}
+
+	check.directory, err = canonicalDirectory(check.directory)
+	if err != nil {
+		return check, err
+	}
+
 	directory, err := os.MkdirTemp("", "sdm-cli-verify-")
 	if err != nil {
 		return check, verificationError{operation: "create CLI verification modfile directory", cause: err}
 	}
 
 	check.temporaryDirectory = directory
+
+	check.temporaryDirectory, err = canonicalDirectory(directory)
+	if err != nil {
+		check.temporaryDirectory = directory
+
+		return check, errors.Join(err, check.close())
+	}
+
+	directory = check.temporaryDirectory
 	check.temporaryModfile = filepath.Join(directory, moduleFilename)
 
 	err = copyMetadata(check.directory, directory)
@@ -70,7 +92,8 @@ func prepareModule(ctx context.Context, root, module string, environment []strin
 
 	check.environment = append(slices.Clone(environment), "GOFLAGS="+flags, "GOWORK=off")
 
-	err = command(ctx, check.directory, check.environment, "go", "mod", "edit", "-replace="+publicModule+"="+root)
+	err = command(ctx, check.directory, check.environment,
+		"go", "mod", "edit", "-replace="+publicModule+"="+canonicalRoot)
 	if err != nil {
 		return check, errors.Join(err, check.close())
 	}
@@ -154,10 +177,15 @@ func runModule(
 func (check moduleCheck) workspaceEnvironment(
 	ctx context.Context, root string, environment []string,
 ) ([]string, error) {
+	canonicalRoot, err := canonicalDirectory(root)
+	if err != nil {
+		return nil, err
+	}
+
 	workspaceEnvironment := slices.Clone(environment)
 	workspaceEnvironment = append(workspaceEnvironment, "GOWORK=off")
 
-	err := command(ctx, check.temporaryDirectory, workspaceEnvironment,
+	err = command(ctx, check.temporaryDirectory, workspaceEnvironment,
 		"go", "work", "init", check.directory)
 	if err != nil {
 		return nil, err
@@ -166,12 +194,26 @@ func (check moduleCheck) workspaceEnvironment(
 	workspaceEnvironment = append(workspaceEnvironment, "GOWORK="+filepath.Join(check.temporaryDirectory, "go.work"))
 
 	err = command(ctx, check.temporaryDirectory, workspaceEnvironment,
-		"go", "work", "edit", "-replace="+publicModule+"="+root)
+		"go", "work", "edit", "-replace="+publicModule+"="+canonicalRoot)
 	if err != nil {
 		return nil, err
 	}
 
 	return workspaceEnvironment, nil
+}
+
+func canonicalDirectory(directory string) (string, error) {
+	absolute, err := filepath.Abs(directory)
+	if err != nil {
+		return "", verificationError{operation: "resolve verification directory", cause: err}
+	}
+
+	canonical, err := filepath.EvalSymlinks(absolute)
+	if err != nil {
+		return "", verificationError{operation: "resolve verification directory aliases", cause: err}
+	}
+
+	return canonical, nil
 }
 
 func (check moduleCheck) tidyMatches(ctx context.Context) error {

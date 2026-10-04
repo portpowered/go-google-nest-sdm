@@ -39,7 +39,7 @@ test-cover:
 	$(GO) test -race -coverpkg=./pkg/... -coverprofile=coverage-combined.out ./pkg/... ./tests/replay/...
 	$(GO) run ./tools/coverage -profile coverage-unit.out -min 0 -filtered-profile coverage-unit-filtered.out
 	$(GO) run ./tools/coverage -profile coverage-replay.out -min 0 -filtered-profile coverage-replay-filtered.out
-	$(GO) run ./tools/coverage -profile coverage-combined.out -min 80 -filtered-profile coverage-combined-filtered.out
+	$(GO) run ./tools/coverage -profile coverage-combined.out -min 100 -filtered-profile coverage-combined-filtered.out
 
 test-integration:
 	$(GO) test -tags integration -race -coverpkg=./pkg/... -coverprofile=coverage-integration.out ./tests/integration/... -timeout=5m

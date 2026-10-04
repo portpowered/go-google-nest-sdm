@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go/ast"
+	"go/token"
 )
 
 func verifyMediaRoute(function *ast.FuncDecl, call *ast.CallExpr, imports map[string]string) error {
@@ -16,6 +17,10 @@ func verifyMediaRoute(function *ast.FuncDecl, call *ast.CallExpr, imports map[st
 
 	if !recognized || operation != function.Name.Name || !mediaOperation {
 		return fmt.Errorf("%w: media method is not bound to its schema operation", errRouteInvalid)
+	}
+
+	if !mediaAuthorization(call.Args[4], operation, function, imports) {
+		return fmt.Errorf("%w: media authorization is not schema-bound", errRouteInvalid)
 	}
 
 	if selector, recognized := call.Fun.(*ast.SelectorExpr); !recognized || !sameReceiver(selector.X, function) {
@@ -49,6 +54,47 @@ func verifyMediaRoute(function *ast.FuncDecl, call *ast.CallExpr, imports map[st
 	}
 
 	return nil
+}
+
+func mediaAuthorization(expression ast.Expr, operation string,
+	function *ast.FuncDecl, imports map[string]string) bool {
+	value, recognized := expression.(*ast.BinaryExpr)
+	if !recognized || value.Op != token.ADD {
+		return false
+	}
+
+	prefix := "BasicPrefix"
+	field := "EventToken"
+
+	if operation == clipOperation {
+		prefix = "BearerPrefix"
+		field = "AccessToken"
+	}
+
+	constant, recognized := value.X.(*ast.SelectorExpr)
+	if !recognized || constant.Sel.Name != prefix {
+		return false
+	}
+
+	owner, recognized := constant.X.(*ast.Ident)
+	if !recognized || owner.Obj != nil || imports[owner.Name] != module+"/internal/protocol" ||
+		imports[generatedBindingPrefix+prefix] == "" {
+		return false
+	}
+
+	tokenField, recognized := value.Y.(*ast.SelectorExpr)
+	if !recognized || tokenField.Sel.Name != field {
+		return false
+	}
+
+	auth, recognized := tokenField.X.(*ast.SelectorExpr)
+	if !recognized || auth.Sel.Name != "Auth" {
+		return false
+	}
+
+	input, recognized := auth.X.(*ast.Ident)
+
+	return recognized && isParameter(function, input)
 }
 
 func mediaAssignment(assignment *ast.AssignStmt, endpoint *ast.Ident, operation string) (int, bool) {

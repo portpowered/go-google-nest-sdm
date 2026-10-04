@@ -1,6 +1,7 @@
 package sdm
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -119,45 +120,29 @@ func mergeTraits(device *Device, update *Traits) error {
 		return nil
 	}
 
-	prior, err := json.Marshal(device.Traits)
+	existing, err := traitObject(device.Traits)
 	if err != nil {
-		return fmt.Errorf("encode prior traits: %w", err)
+		return fmt.Errorf("read prior traits: %w", err)
 	}
 
-	changes, err := json.Marshal(update)
+	incoming, err := traitObject(update)
 	if err != nil {
-		return fmt.Errorf("encode changed traits: %w", err)
-	}
-
-	var existing map[string]json.RawMessage
-
-	err = json.Unmarshal(prior, &existing)
-	if err != nil {
-		return fmt.Errorf("decode prior traits: %w", err)
-	}
-
-	var incoming map[string]json.RawMessage
-
-	err = json.Unmarshal(changes, &incoming)
-	if err != nil {
-		return fmt.Errorf("decode changed traits: %w", err)
-	}
-
-	merged, err := mergeObjects(existing, incoming)
-	if err != nil {
-		return err
+		return fmt.Errorf("read changed traits: %w", err)
 	}
 
 	var traits Traits
 
-	err = contracts.Validate("traits.openapi.yaml", "Traits", merged)
-	if err != nil {
-		return fmt.Errorf("validate merged traits: %w", err)
+	merged, err := json.Marshal(mergeObjects(existing, incoming))
+	if err == nil {
+		err = contracts.Validate("traits.openapi.yaml", "Traits", merged)
 	}
 
-	err = json.Unmarshal(merged, &traits)
+	if err == nil {
+		err = json.Unmarshal(merged, &traits)
+	}
+
 	if err != nil {
-		return fmt.Errorf("decode merged traits: %w", err)
+		return fmt.Errorf("merge traits: %w", err)
 	}
 
 	device.Traits = &traits
@@ -165,36 +150,41 @@ func mergeTraits(device *Device, update *Traits) error {
 	return nil
 }
 
-func mergeObjects(existing, incoming map[string]json.RawMessage) ([]byte, error) {
-	if existing == nil {
-		existing = make(map[string]json.RawMessage)
+// traitObject retains opaque numbers exactly while exposing objects for partial merging.
+func traitObject(traits *Traits) (map[string]any, error) {
+	var object map[string]any
+
+	data, err := json.Marshal(traits)
+	if err == nil {
+		decoder := json.NewDecoder(bytes.NewReader(data))
+		decoder.UseNumber()
+		err = decoder.Decode(&object)
 	}
 
-	for name, raw := range incoming {
-		var previous, update map[string]json.RawMessage
+	if err != nil {
+		return nil, fmt.Errorf("read trait object: %w", err)
+	}
 
-		priorErr := json.Unmarshal(existing[name], &previous)
+	return object, nil
+}
 
-		updateErr := json.Unmarshal(raw, &update)
+func mergeObjects(existing, incoming map[string]any) map[string]any {
+	if existing == nil {
+		existing = make(map[string]any)
+	}
 
-		if priorErr == nil && updateErr == nil && previous != nil && update != nil {
-			merged, err := mergeObjects(previous, update)
-			if err != nil {
-				return nil, err
-			}
+	for name, value := range incoming {
+		previous, priorObject := existing[name].(map[string]any)
+		update, updateObject := value.(map[string]any)
 
-			existing[name] = merged
+		if priorObject && updateObject && previous != nil && update != nil {
+			existing[name] = mergeObjects(previous, update)
 		} else {
-			existing[name] = raw
+			existing[name] = value
 		}
 	}
 
-	merged, err := json.Marshal(existing)
-	if err != nil {
-		return nil, fmt.Errorf("encode merged traits: %w", err)
-	}
-
-	return merged, nil
+	return existing
 }
 
 func applyRelation(state *DeviceState, relation ResourceRelation) bool {

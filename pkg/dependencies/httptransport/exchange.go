@@ -87,12 +87,7 @@ func (client *Client) exchange(
 		return fail(operation, ErrorInvalidResponse, err)
 	}
 
-	err = json.Unmarshal(payload, result)
-	if err != nil {
-		return fail(operation, ErrorInvalidResponse, err)
-	}
-
-	return nil
+	return decodeJSON(operation, payload, result)
 }
 
 func classifyCause(err error) ErrorKind {
@@ -124,4 +119,26 @@ func statusKind(status int) ErrorKind {
 
 		return ErrorInvalidResponse
 	}
+}
+
+//nolint:unparam // Each generated method stays paired with its schema route at the call site.
+func (client *Client) exchangeJSON(
+	ctx context.Context, operation, method, endpoint, token string, input, result any,
+) error {
+	body, err := json.Marshal(input)
+	if err != nil {
+		return fail(operation, ErrorInvalidRequest, err)
+	}
+
+	return client.exchange(ctx, operation, method, endpoint, token,
+		protocol.MIMEApplicationJSON, bytes.NewReader(body), result)
+}
+
+func decodeJSON(operation string, payload []byte, result any) error {
+	err := json.Unmarshal(payload, result)
+	if err != nil {
+		return fail(operation, ErrorInvalidResponse, err)
+	}
+
+	return nil
 }

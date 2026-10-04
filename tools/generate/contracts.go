@@ -50,7 +50,7 @@ func runtimeSchema(path string) error {
 
 	projected := map[string]any{
 		"$schema":    "http://json-schema.org/draft-07/schema#",
-		"$comment":   "Generated from " + path + "; DO NOT EDIT.",
+		"$comment":   runtimeSourceComment(path),
 		"components": projectSchema(source["components"]),
 	}
 
@@ -67,6 +67,12 @@ func runtimeSchema(path string) error {
 	}
 
 	return nil
+}
+
+func runtimeSourceComment(path string) string {
+	canonicalPath := strings.ReplaceAll(filepath.ToSlash(path), "\\", "/")
+
+	return "Generated from " + canonicalPath + "; DO NOT EDIT."
 }
 
 func projectSchema(value any) any {

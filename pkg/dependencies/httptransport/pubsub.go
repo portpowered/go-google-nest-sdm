@@ -1,9 +1,7 @@
 package httptransport
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"slices"
 
 	"github.com/portpowered/go-google-nest-sdm/internal/protocol"
@@ -30,19 +28,13 @@ func (client *Client) Pull(
 		return result, err
 	}
 
-	body, err := json.Marshal(input)
-	if err != nil {
-		return result, fail("Pull", ErrorInvalidRequest, err)
-	}
-
-	err = client.exchange(
+	err = client.exchangeJSON(
 		ctx,
 		"Pull",
 		protocol.MethodPull,
 		client.pubSubBaseURL+path,
 		token,
-		protocol.MIMEApplicationJSON,
-		bytes.NewReader(body),
+		input,
 		&result,
 	)
 
@@ -67,21 +59,15 @@ func (client *Client) Acknowledge(
 		return err
 	}
 
-	body, err := json.Marshal(input)
-	if err != nil {
-		return fail("Acknowledge", ErrorInvalidRequest, err)
-	}
-
 	var result wire.EmptyResponse
 
-	return client.exchange(
+	return client.exchangeJSON(
 		ctx,
 		"Acknowledge",
 		protocol.MethodAcknowledge,
 		client.pubSubBaseURL+path,
 		token,
-		protocol.MIMEApplicationJSON,
-		bytes.NewReader(body),
+		input,
 		&result,
 	)
 }
@@ -104,21 +90,15 @@ func (client *Client) ModifyAckDeadline(
 		return err
 	}
 
-	body, err := json.Marshal(input)
-	if err != nil {
-		return fail("ModifyAckDeadline", ErrorInvalidRequest, err)
-	}
-
 	var result wire.EmptyResponse
 
-	return client.exchange(
+	return client.exchangeJSON(
 		ctx,
 		"ModifyAckDeadline",
 		protocol.MethodModifyAckDeadline,
 		client.pubSubBaseURL+path,
 		token,
-		protocol.MIMEApplicationJSON,
-		bytes.NewReader(body),
+		input,
 		&result,
 	)
 }

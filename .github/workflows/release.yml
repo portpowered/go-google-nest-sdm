@@ -68,4 +68,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ github.ref_name }}
-        run: gh release create "$VERSION" --verify-tag --generate-notes
+        run: gh release create "$VERSION" --verify-tag --notes-file .github/release-notes-sdk.md

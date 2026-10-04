@@ -296,11 +296,10 @@ func executeTyped[Result any](
 	}
 
 	err = sdm.ValidateCommandResults(command, payload)
-	if err != nil {
-		return result, publicDecodeError(string(command), err)
+	if err == nil {
+		err = json.Unmarshal(payload, &result)
 	}
 
-	err = json.Unmarshal(payload, &result)
 	if err != nil {
 		return result, publicDecodeError(string(command), err)
 	}

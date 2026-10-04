@@ -54,6 +54,9 @@ func loadWireModels(root string) (map[string]ast.Expr, error) {
 		}
 
 		file := files[path]
+
+		models["approved-source:"+filepath.ToSlash(path)] = catalogString(path)
+
 		if file == nil {
 			file, err = parser.ParseFile(token.NewFileSet(), filepath.Join(root, path), nil, 0)
 			if err != nil {
@@ -99,9 +102,7 @@ func registerCatalogEntry(models map[string]ast.Expr, file *ast.File, entry wire
 		for _, spec := range group.Specs {
 			if model, recognized := spec.(*ast.TypeSpec); recognized && model.Name.Name == entry.Declaration {
 				models[prefix+entry.Declaration] = model.Type
-				models[prefix+"domain:"+entry.Declaration] = &ast.BasicLit{
-					ValuePos: token.NoPos, Kind: token.STRING, Value: entry.Schema,
-				}
+				models[prefix+"domain:"+entry.Declaration] = catalogString(entry.Schema)
 
 				return nil
 			}
@@ -129,6 +130,15 @@ func registerCatalogEntry(models map[string]ast.Expr, file *ast.File, entry wire
 	}
 
 	return fmt.Errorf("%w: missing registered declaration %s", errRouteInvalid, entry.Declaration)
+}
+
+func catalogString(value string) ast.Expr {
+	var literal ast.BasicLit
+
+	literal.Kind = token.STRING
+	literal.Value = value
+
+	return &literal
 }
 
 func expressionText(expression ast.Expr) string {

@@ -13,12 +13,15 @@ import (
 	"slices"
 	"sort"
 	"strings"
+	"time"
 )
 
 const (
 	lintVersion = "v2.14.0"
 	allPackages = "./..."
 	modulesMode = "modules"
+	// Compile-valid source controls build isolated SDKs; each subprocess remains bounded separately.
+	moduleTestTimeout = 10 * time.Minute
 )
 
 type verificationError struct {
@@ -148,7 +151,7 @@ func moduleArguments(mode string) []string {
 	case "build":
 		return []string{"build", allPackages}
 	case "test":
-		return []string{"test", "-race", "-timeout=180s", allPackages}
+		return []string{"test", "-race", "-timeout=" + moduleTestTimeout.String(), allPackages}
 	case "vet":
 		return []string{"vet", allPackages}
 	case "fmt":
@@ -274,14 +277,21 @@ func checkFormatting(ctx context.Context, root string) error {
 }
 
 func command(ctx context.Context, directory string, environment []string, program string, args ...string) error {
+	canonical, err := canonicalDirectory(directory)
+	if err != nil {
+		return err
+	}
+
 	// #nosec G204 -- fixed repository check executables and argument lists; no shell is invoked.
 	cmd := exec.CommandContext(ctx, program, args...)
-	cmd.Dir = directory
-	cmd.Env = environment
+	// Go workspace membership uses lexical paths. Resolve aliases at the
+	// subprocess boundary, including PWD used by Unix child processes.
+	cmd.Dir = canonical
+	cmd.Env = append(slices.Clone(environment), "PWD="+canonical)
 
 	cmd.Stdout, cmd.Stderr = os.Stdout, os.Stderr
 
-	err := cmd.Run()
+	err = cmd.Run()
 	if err != nil {
 		return verificationError{operation: program + " " + strings.Join(args, " "), cause: err}
 	}

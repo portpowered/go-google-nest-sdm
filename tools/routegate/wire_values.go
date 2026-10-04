@@ -165,7 +165,7 @@ func (state *wireValueAudit) indexedReference(names []*ast.Ident, values []ast.E
 func (state *wireValueAudit) reference(expression ast.Expr) wireReference {
 	switch value := expression.(type) {
 	case *ast.StructType:
-		return wireReference{name: "", owned: true, mapping: false, structure: value, sequence: nil, association: nil}
+		return state.nativeStructReference(value)
 	case *ast.Ident:
 		return state.bindings[bindingOf(value)]
 	case *ast.SelectorExpr:
@@ -377,4 +377,13 @@ func identifierCallable(identifier *ast.Ident, visited map[wireBinding]bool) wir
 	}
 
 	return wireCallable{signature: nil, body: nil}
+}
+
+func (state *wireValueAudit) nativeStructReference(shape *ast.StructType) wireReference {
+	owned := false
+	for _, field := range shape.Fields.List {
+		owned = owned || state.reference(field.Type).owned
+	}
+
+	return wireReference{name: "", owned: owned, mapping: false, structure: shape, sequence: nil, association: nil}
 }

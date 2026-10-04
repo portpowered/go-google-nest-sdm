@@ -79,16 +79,36 @@ func invalidCommand(cause error) error {
 }
 
 func validateCommandSemantics(params any) error {
+	var required string
+
 	switch params := params.(type) {
 	case ThermostatTemperatureSetpointSetRangeParams:
 		if params.HeatCelsius >= params.CoolCelsius {
 			return errSetpointOrder
 		}
+
+		return nil
 	case CameraLiveStreamGenerateWebRtcStreamParams:
 		return validateSDPOffer(params.OfferSdp)
+	case CameraEventImageGenerateImageParams:
+		required = string(params.EventId)
+	case CameraLiveStreamExtendRtspStreamParams:
+		required = string(params.StreamExtensionToken)
+	case CameraLiveStreamStopRtspStreamParams:
+		required = string(params.StreamExtensionToken)
+	case CameraLiveStreamExtendWebRtcStreamParams:
+		required = string(params.MediaSessionId)
+	case CameraLiveStreamStopWebRtcStreamParams:
+		required = string(params.MediaSessionId)
+	default:
+		return nil
 	}
 
-	return rejectEmptyRequiredStrings(params)
+	if strings.TrimSpace(required) == "" {
+		return errRequiredCommandValue
+	}
+
+	return nil
 }
 
 func validateSDPOffer(offer string) error {
@@ -220,22 +240,6 @@ func validateSDPAudio(lines []string) error {
 	for _, mapped := range payloads {
 		if !mapped {
 			return errSDPCodec
-		}
-	}
-
-	return nil
-}
-
-func rejectEmptyRequiredStrings(params any) error {
-	value := reflect.ValueOf(params)
-	if value.Kind() != reflect.Struct {
-		return nil
-	}
-
-	for index := range value.NumField() {
-		field := value.Field(index)
-		if field.Kind() == reflect.String && strings.TrimSpace(field.String()) == "" {
-			return errRequiredCommandValue
 		}
 	}
 

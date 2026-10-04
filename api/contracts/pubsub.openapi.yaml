@@ -1,5 +1,5 @@
 {
-  "$comment": "Generated from api\\external\\pubsub.openapi.yaml; DO NOT EDIT.",
+  "$comment": "Generated from api/external/pubsub.openapi.yaml; DO NOT EDIT.",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "components": {
     "schemas": {

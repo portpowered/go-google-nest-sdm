@@ -58,14 +58,13 @@ func providerFailure(operation string, oauth bool, response *http.Response) erro
 }
 
 func decodeOAuthFailure(payload []byte, status int) (*sdm.ProviderError, error) {
-	err := contracts.Validate("oauth.openapi.yaml", "OAuthErrorResponse", payload)
-	if err != nil {
-		return nil, errInvalidProviderError
-	}
-
 	var result wire.OAuthErrorResponse
 
-	err = json.Unmarshal(payload, &result)
+	err := contracts.Validate("oauth.openapi.yaml", "OAuthErrorResponse", payload)
+	if err == nil {
+		err = json.Unmarshal(payload, &result)
+	}
+
 	if err != nil {
 		return nil, errInvalidProviderError
 	}
@@ -74,14 +73,13 @@ func decodeOAuthFailure(payload []byte, status int) (*sdm.ProviderError, error) 
 }
 
 func decodeGoogleFailure(payload []byte, status int) (*sdm.ProviderError, error) {
-	err := contracts.Validate("errors.openapi.yaml", "GoogleErrorResponse", payload)
-	if err != nil {
-		return nil, errInvalidProviderError
-	}
-
 	var result wire.GoogleErrorResponse
 
-	err = json.Unmarshal(payload, &result)
+	err := contracts.Validate("errors.openapi.yaml", "GoogleErrorResponse", payload)
+	if err == nil {
+		err = json.Unmarshal(payload, &result)
+	}
+
 	if err != nil {
 		return nil, errInvalidProviderError
 	}

@@ -70,7 +70,7 @@ func TestDecodeRejectsMalformedKnownPayloads(t *testing.T) {
 	t.Parallel()
 
 	cases := []string{
-		`null`, `[]`, `{}`,
+		nullJSON, `[]`, `{}`,
 		`{"name":null}`,
 		`{"name":1}`,
 		`{"name":"enterprises/example/devices/device","traits":null}`,
