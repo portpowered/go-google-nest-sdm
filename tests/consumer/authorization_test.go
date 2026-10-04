@@ -40,7 +40,8 @@ func TestCallerOwnedAuthorization(t *testing.T) {
 	}
 
 	for range 2 {
-		if closeErr := session.Close(); closeErr != nil {
+		closeErr := session.Close()
+		if closeErr != nil {
 			t.Fatal(closeErr)
 		}
 	}
