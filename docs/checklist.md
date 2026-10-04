@@ -1,6 +1,6 @@
 # Library acceptance checklist
 
-This checklist applies the current parent [template library standards](standards/template.md) and [repository standards](standards/library.md) to the interactive authorization and schema example update. Acceptance is reopened until the new implementation, example validation, rendered references and exact-commit CI are independently verified. The existing review record describes the completed v0.1.0 baseline, not acceptance of this update. See [contributor verification](contributing.md) and [independent review](review.md).
+This checklist applies the current parent [template library standards](standards/template.md) and [repository standards](standards/library.md) to the interactive authorization and schema example update. Independent code approval and passing checks are recorded separately from pending publication and deployment acceptance. Historical v0.1.0 installation and deployment evidence does not establish acceptance of this update. See [contributor verification](contributing.md) and [independent review](review.md).
 
 - [ ] **1. Consumer independence.** SDK, examples and guides contain no consuming application adapters.
 - [ ] **2. Customer documentation.** Authentication, supported operations, typed errors, injection and ownership match the exported API; reference and synthetic behavior are clearly identified.
