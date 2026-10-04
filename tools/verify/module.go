@@ -3,8 +3,12 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -217,7 +221,12 @@ func canonicalDirectory(directory string) (string, error) {
 }
 
 func (check moduleCheck) tidyMatches(ctx context.Context) error {
-	err := command(ctx, check.directory, check.environment, "go", "mod", "edit", "-dropreplace="+publicModule)
+	version, err := check.pinnedSDKVersion(ctx)
+	if err != nil {
+		return err
+	}
+
+	err = command(ctx, check.directory, check.environment, "go", "mod", "edit", "-dropreplace="+publicModule)
 	if err != nil {
 		return err
 	}
@@ -233,7 +242,20 @@ func (check moduleCheck) tidyMatches(ctx context.Context) error {
 			return err
 		}
 
-		if !bytes.Equal(bytes.ReplaceAll(original, []byte("\r\n"), []byte("\n")), updated) {
+		original = bytes.ReplaceAll(original, []byte("\r\n"), []byte("\n"))
+		if filename == checksumFilename {
+			original, err = normalizeSDKChecksums(original, version)
+			if err != nil {
+				return err
+			}
+
+			updated, err = normalizeSDKChecksums(updated, version)
+			if err != nil {
+				return err
+			}
+		}
+
+		if !bytes.Equal(original, updated) {
 			message := "CLI " + filename + " is not tidy after local replacement is removed"
 
 			return verificationError{operation: message, cause: nil}
@@ -241,6 +263,93 @@ func (check moduleCheck) tidyMatches(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+//nolint:tagliatelle // Preserve the Go tool's published go mod edit -json field names.
+type goModuleRequirement struct {
+	Path    string `json:"Path"`
+	Version string `json:"Version"`
+}
+
+//nolint:tagliatelle // Preserve the Go tool's published go mod edit -json field names.
+type goModuleMetadata struct {
+	Require []goModuleRequirement `json:"Require"`
+}
+
+func (check moduleCheck) pinnedSDKVersion(ctx context.Context) (string, error) {
+	// Go's parser reads the distributable metadata without resolving the unpublished SDK.
+	// #nosec G204 -- fixed read-only Go command and repository module filename; no shell.
+	cmd := exec.CommandContext(ctx, "go", "mod", "edit", "-json", filepath.Join(check.directory, moduleFilename))
+	cmd.Dir = check.directory
+	cmd.Env = append(slices.Clone(check.environment), "GOFLAGS=", "GOWORK=off", "PWD="+check.directory)
+
+	output, err := cmd.Output()
+	if err != nil {
+		return "", verificationError{operation: "read pinned CLI SDK requirement", cause: err}
+	}
+
+	var metadata goModuleMetadata
+
+	err = json.Unmarshal(output, &metadata)
+	if err != nil {
+		return "", verificationError{operation: "decode CLI module metadata", cause: err}
+	}
+
+	version := ""
+
+	for _, requirement := range metadata.Require {
+		if requirement.Path == publicModule {
+			if version != "" || requirement.Version == "" {
+				return "", verificationError{operation: "invalid pinned CLI SDK requirement", cause: nil}
+			}
+
+			version = requirement.Version
+		}
+	}
+
+	if version == "" {
+		return "", verificationError{operation: "missing pinned CLI SDK requirement", cause: nil}
+	}
+
+	return version, nil
+}
+
+// A local replacement removes its own module and go.mod checksums during tidy.
+// Normalize only the two well-formed entries for the exact distributable pin.
+// Actual checksum authenticity and complete published metadata remain enforced
+// by the release workflow's replacement-free go mod tidy -diff.
+func normalizeSDKChecksums(data []byte, version string) ([]byte, error) {
+	seen := map[string]bool{}
+	lines := bytes.Split(data, []byte("\n"))
+
+	retained := make([][]byte, 0, len(lines))
+
+	for _, line := range lines {
+		fields := strings.Fields(string(line))
+		if len(fields) == 0 || fields[0] != publicModule {
+			retained = append(retained, line)
+
+			continue
+		}
+
+		if len(fields) != 3 || strings.Join(fields, " ") != string(line) ||
+			(fields[1] != version && fields[1] != version+"/go.mod") || seen[fields[1]] {
+			return nil, verificationError{operation: "invalid or stale CLI SDK checksum", cause: nil}
+		}
+
+		checksum, err := base64.StdEncoding.Strict().DecodeString(strings.TrimPrefix(fields[2], "h1:"))
+		if err != nil || !strings.HasPrefix(fields[2], "h1:") || len(checksum) != sha256.Size {
+			return nil, verificationError{operation: "malformed CLI SDK checksum", cause: err}
+		}
+
+		seen[fields[1]] = true
+	}
+
+	if len(seen) == 1 {
+		return nil, verificationError{operation: "incomplete CLI SDK checksum pair", cause: nil}
+	}
+
+	return bytes.Join(retained, []byte("\n")), nil
 }
 
 func optionalMetadata(filename string) ([]byte, error) {

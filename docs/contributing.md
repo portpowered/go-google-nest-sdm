@@ -92,6 +92,8 @@ Build customer MDX and schema references using the shared Fumadocs action. Inspe
 
 Two independent reviewers must audit every numbered requirement in [the checklist](checklist.md), independently search for missing wire definitions and examine every tracked documentation file. Record each verdict, final commit, evidence and finding disposition in [the review](review.md). Unresolved findings, unavailable publication checks or absent final-commit CI keep the corresponding items open.
 
+CLI contributor checks resolve the current SDK checkout with an owned temporary modfile, so they can run before the new SDK tag exists. Tidy must preserve every dependency and all other checksums; comparison normalizes only the exact pinned SDK's well-formed module and `go.mod` checksum pair, which local replacement removes. This proves the local dependency graph, not that the published SDK is available. After SDK publication, tidy the distributable CLI against that actual tag and commit its SDK checksums before tagging the CLI. The CLI release workflow runs replacement-free `GOWORK=off go mod tidy -diff` before separate installation, proving the published metadata is unchanged.
+
 
 
 
