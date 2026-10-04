@@ -1,0 +1,143 @@
+{
+  "provenance": "synthetic",
+  "exchanges": [
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ]
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"devices\":[{\"name\":\"enterprises/synthetic-enterprise/devices/synthetic-device\",\"type\":\"sdm.devices.types.THERMOSTAT\",\"traits\":{\"sdm.devices.traits.Temperature\":{\"ambientTemperatureCelsius\":21.5},\"sdm.devices.traits.CameraMotion\":{},\"future.traits.Feature\":{\"supported\":true}},\"parentRelations\":[{\"parent\":\"enterprises/synthetic-enterprise/structures/synthetic-structure/rooms/synthetic-room\",\"displayName\":\"Study\"}]}]}"
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ]
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"name\":\"enterprises/synthetic-enterprise/devices/synthetic-device\",\"type\":\"sdm.devices.types.THERMOSTAT\",\"traits\":{\"sdm.devices.traits.Temperature\":{\"ambientTemperatureCelsius\":21.5},\"sdm.devices.traits.CameraMotion\":{},\"future.traits.Feature\":{\"supported\":true}},\"parentRelations\":[{\"parent\":\"enterprises/synthetic-enterprise/structures/synthetic-structure/rooms/synthetic-room\",\"displayName\":\"Study\"}]}"
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/structures",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ]
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"structures\":[{\"name\":\"enterprises/synthetic-enterprise/structures/synthetic-structure\",\"traits\":{\"sdm.structures.traits.Info\":{\"customName\":\"Synthetic Home\"}}}]}"
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/structures/synthetic-structure",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ]
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"name\":\"enterprises/synthetic-enterprise/structures/synthetic-structure\",\"traits\":{\"sdm.structures.traits.Info\":{\"customName\":\"Synthetic Home\"}}}"
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/structures/synthetic-structure/rooms",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ]
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"rooms\":[{\"name\":\"enterprises/synthetic-enterprise/structures/synthetic-structure/rooms/synthetic-room\",\"traits\":{\"sdm.structures.traits.RoomInfo\":{\"customName\":\"Study\"}}}]}"
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/structures/synthetic-structure/rooms/synthetic-room",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ]
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"name\":\"enterprises/synthetic-enterprise/structures/synthetic-structure/rooms/synthetic-room\",\"traits\":{\"sdm.structures.traits.RoomInfo\":{\"customName\":\"Study\"}}}"
+      }
+    }
+  ]
+}

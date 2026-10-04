@@ -1,0 +1,80 @@
+{
+  "$comment": "Generated from api\\errors.openapi.yaml; DO NOT EDIT.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "components": {
+    "schemas": {
+      "GoogleError": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "details": {
+            "items": {
+              "$ref": "#/components/schemas/GoogleErrorDetail"
+            },
+            "type": "array"
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/GoogleErrorStatus"
+          }
+        },
+        "type": "object"
+      },
+      "GoogleErrorDetail": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Extensible provider error detail. The @type URL identifies its provider-defined payload. Unknown fields remain unchanged.",
+        "properties": {
+          "@type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GoogleErrorResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GoogleError"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "GoogleErrorStatus": {
+        "description": "Open Google RPC status identifier; unknown future statuses remain available.",
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "INVALID_ARGUMENT",
+          "NOT_FOUND",
+          "PERMISSION_DENIED",
+          "UNAUTHENTICATED",
+          "RESOURCE_EXHAUSTED",
+          "FAILED_PRECONDITION",
+          "DEADLINE_EXCEEDED",
+          "UNAVAILABLE",
+          "INTERNAL",
+          "UNKNOWN",
+          "ABORTED",
+          "ALREADY_EXISTS",
+          "CANCELLED",
+          "DATA_LOSS",
+          "OUT_OF_RANGE",
+          "UNIMPLEMENTED"
+        ]
+      }
+    }
+  }
+}

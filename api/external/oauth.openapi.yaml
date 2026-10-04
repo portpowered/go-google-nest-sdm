@@ -34,6 +34,16 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "The authorization grant or client credentials were rejected.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthErrorResponse"
+                }
+              }
+            }
           }
         },
         "requestBody": {
@@ -115,6 +125,10 @@
           },
           "id_token": {
             "type": "string"
+          },
+          "refresh_token_expires_in": {
+            "type": "integer",
+            "description": "Remaining refresh token lifetime in seconds, returned for time-based access grants."
           }
         },
         "additionalProperties": {
@@ -130,7 +144,7 @@
         "type": "object",
         "properties": {
           "error": {
-            "type": "string"
+            "$ref": "#/components/schemas/OAuthErrorCode"
           },
           "error_description": {
             "type": "string"
@@ -142,6 +156,20 @@
         "required": [
           "error"
         ]
+      },
+      "OAuthErrorCode": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$",
+        "x-known-values": [
+          "invalid_grant",
+          "invalid_client",
+          "unauthorized_client",
+          "access_denied",
+          "invalid_request",
+          "unsupported_grant_type",
+          "invalid_scope"
+        ],
+        "description": "Open OAuth token error code."
       }
     }
   },

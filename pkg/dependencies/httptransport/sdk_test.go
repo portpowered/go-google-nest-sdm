@@ -29,7 +29,7 @@ func TestSDKPreservesResourceFieldsAndRejectsNull(t *testing.T) {
 			false,
 		},
 
-		{"null resource", `null`, true},
+		{"null resource", testNullJSON, true},
 		{"null name", `{"name":null}`, true},
 		{"null known trait", `{"name":"enterprises/e/devices/d","traits":{"sdm.devices.traits.Temperature":null}}`, true},
 	}
@@ -69,9 +69,9 @@ func TestSDKPreservesResourceFieldsAndRejectsNull(t *testing.T) {
 				context.Background(),
 				sdm.GetDeviceRequest{
 					Auth: sdm.AuthContext{
-						AccessToken: "account",
+						AccessToken: testAccountToken,
 					},
-					Name: "enterprises/e/devices/d",
+					Name: testShortDeviceName,
 				},
 			)
 
@@ -123,9 +123,9 @@ func TestSDKMapsErrorsWithoutRetry(t *testing.T) {
 		context.Background(),
 		sdm.SetHeatRequest{
 			Auth: sdm.AuthContext{
-				AccessToken: "account",
+				AccessToken: testAccountToken,
 			},
-			DeviceName: "enterprises/e/devices/d",
+			DeviceName: testShortDeviceName,
 			Params: sdm.ThermostatTemperatureSetpointSetHeatParams{
 				HeatCelsius: 20,
 			},
@@ -158,11 +158,11 @@ func TestSDKRejectsMissingCommandResults(t *testing.T) {
 		context.Background(),
 		sdm.GenerateImageRequest{
 			Auth: sdm.AuthContext{
-				AccessToken: "account",
+				AccessToken: testAccountToken,
 			},
-			DeviceName: "enterprises/e/devices/d",
+			DeviceName: testShortDeviceName,
 			Params: sdm.CameraEventImageGenerateImageParams{
-				EventId: "event",
+				EventId: testEventID,
 			},
 		},
 	)
@@ -177,7 +177,7 @@ func TestSDKRejectsMissingCommandResults(t *testing.T) {
 func TestSDKListRejectsNullEntries(t *testing.T) {
 	t.Parallel()
 
-	for _, body := range []string{`null`, `{"devices":null}`, `{"devices":[null]}`, `{"devices":[{"name":null}]}`} {
+	for _, body := range []string{testNullJSON, `{"devices":null}`, `{"devices":[null]}`, `{"devices":[{"name":null}]}`} {
 		t.Run(body, func(t *testing.T) {
 			t.Parallel()
 
@@ -193,7 +193,7 @@ func TestSDKListRejectsNullEntries(t *testing.T) {
 				context.Background(),
 				sdm.ListDevicesRequest{
 					Auth: sdm.AuthContext{
-						AccessToken: "account",
+						AccessToken: testAccountToken,
 					},
 					Parent: "enterprises/e",
 					Filter: nil,
@@ -224,7 +224,7 @@ func TestSDKRetainsHTTPStatus(t *testing.T) {
 		context.Background(),
 		sdm.GetRoomRequest{
 			Auth: sdm.AuthContext{
-				AccessToken: "account",
+				AccessToken: testAccountToken,
 			},
 			Name: "enterprises/e/structures/s/rooms/r",
 		},
@@ -259,9 +259,9 @@ func TestSDKEmptyAcknowledgement(t *testing.T) {
 				context.Background(),
 				sdm.SetHeatRequest{
 					Auth: sdm.AuthContext{
-						AccessToken: "account",
+						AccessToken: testAccountToken,
 					},
-					DeviceName: "enterprises/e/devices/d",
+					DeviceName: testShortDeviceName,
 					Params: sdm.ThermostatTemperatureSetpointSetHeatParams{
 						HeatCelsius: 20,
 					},

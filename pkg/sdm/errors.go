@@ -26,6 +26,8 @@ const (
 	ErrorCanceled ErrorKind = "canceled"
 	// ErrorUnsupported means the requested capability is absent in the supplied snapshot.
 	ErrorUnsupported ErrorKind = "unsupported"
+	// ErrorRejected means the service rejected a request that passed local validation.
+	ErrorRejected ErrorKind = "rejected"
 )
 
 // Error describes a client failure and preserves its underlying cause.
@@ -47,6 +49,9 @@ func (e *Error) Error() string {
 
 // Unwrap exposes the original cause to errors.Is and errors.As.
 func (e *Error) Unwrap() error { return e.Cause }
+
+// Error describes the provider failure without printing response content.
+func (e *ProviderError) Error() string { return "SDM provider rejected the request" }
 
 func invalidResponse(operation string, cause error) error {
 	return &Error{Kind: ErrorInvalidResponse, Operation: operation, Cause: cause, StatusCode: 0}

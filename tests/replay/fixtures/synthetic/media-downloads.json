@@ -1,0 +1,17 @@
+{
+  "provenance": "synthetic",
+  "exchanges": [
+    {
+      "request": {"method": "GET", "origin": "https://media.example.invalid", "escapedPath": "/sdm_event_snapshot/synthetic-image", "query": {"width": ["480"]}, "headers": {"Authorization": ["Basic synthetic-event-token"]}, "body": ""},
+      "response": {"status": 200, "headers": {"Content-Type": ["image/jpeg"]}, "body": "\u0000synthetic-image\u0001"}
+    },
+    {
+      "request": {"method": "GET", "origin": "https://clips.example.invalid", "escapedPath": "/opaque/clip%2Fid", "query": {"signature": ["synthetic"], "item": ["a", "b"]}, "headers": {"Authorization": ["Bearer synthetic-access-token"]}, "body": ""},
+      "response": {"status": 200, "headers": {"Content-Type": ["video/mp4"]}, "body": "\u0000\u0000synthetic-mp4\u0001"}
+    },
+    {
+      "request": {"method": "GET", "origin": "https://clips.example.invalid", "escapedPath": "/expired", "query": {}, "headers": {"Authorization": ["Bearer synthetic-access-token"]}, "body": ""},
+      "response": {"status": 403, "headers": {}, "body": "Synthetic expired clip"}
+    }
+  ]
+}

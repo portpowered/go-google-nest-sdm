@@ -1,6 +1,6 @@
 # Library acceptance checklist
 
-This checklist applies the 16 requirements in the [template library standards](https://github.com/portpowered/go-third-party-template/blob/main/docs/library-standards.md) and the [repository standards](standards/library.md). Implementation is not acceptance evidence. Items stay open until checks and independent review establish the final commit's behavior. See [contributor verification](contributing.md) and [independent review](review.md).
+This checklist applies the 16 requirements in the [template library standards](standards/template.md) and the [repository standards](standards/library.md). Implementation is not acceptance evidence. Items stay open until checks and independent review establish the final commit's behavior. See [contributor verification](contributing.md) and [independent review](review.md).
 
 - [ ] **1. Consumer independence.** SDK, examples and guides contain no consuming application adapters.
 - [ ] **2. Customer documentation.** Authentication, supported operations, typed errors, injection and ownership match the exported API; reference and synthetic behavior are clearly identified.

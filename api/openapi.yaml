@@ -53,6 +53,16 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "The provider rejected the operation; status and typed error describe the failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -102,6 +112,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The provider rejected the operation; status and typed error describe the failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
                 }
               }
             }
@@ -157,6 +177,16 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "The provider rejected the operation; status and typed error describe the failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            }
           }
         },
         "requestBody": {
@@ -206,6 +236,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ListStructuresResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The provider rejected the operation; status and typed error describe the failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
                 }
               }
             }
@@ -261,6 +301,16 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "The provider rejected the operation; status and typed error describe the failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -310,6 +360,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ListRoomsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The provider rejected the operation; status and typed error describe the failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
                 }
               }
             }
@@ -372,6 +432,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The provider rejected the operation; status and typed error describe the failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
                 }
               }
             }
@@ -502,43 +572,6 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         }
-      },
-      "GoogleError": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "message": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "details": {
-            "type": "array",
-            "items": {
-              "x-go-type": "json.RawMessage"
-            }
-          }
-        },
-        "additionalProperties": {
-          "x-go-type": "json.RawMessage"
-        }
-      },
-      "GoogleErrorResponse": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "$ref": "#/components/schemas/GoogleError"
-          }
-        },
-        "additionalProperties": {
-          "x-go-type": "json.RawMessage"
-        },
-        "required": [
-          "error"
-        ]
       },
       "ListDevicesResponse": {
         "type": "object",

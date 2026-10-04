@@ -1,0 +1,115 @@
+{
+  "$comment": "Generated from api\\external\\oauth.openapi.yaml; DO NOT EDIT.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "components": {
+    "schemas": {
+      "OAuthErrorCode": {
+        "description": "Open OAuth token error code.",
+        "pattern": "^[a-z][a-z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "invalid_grant",
+          "invalid_client",
+          "unauthorized_client",
+          "access_denied",
+          "invalid_request",
+          "unsupported_grant_type",
+          "invalid_scope"
+        ]
+      },
+      "OAuthErrorResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/OAuthErrorCode"
+          },
+          "error_description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "OAuthGrantType": {
+        "enum": [
+          "authorization_code",
+          "refresh_token"
+        ],
+        "type": "string"
+      },
+      "OAuthTokenRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "code_verifier": {
+            "description": "PKCE verifier matching the authorization challenge.",
+            "type": "string"
+          },
+          "grant_type": {
+            "$ref": "#/components/schemas/OAuthGrantType"
+          },
+          "redirect_uri": {
+            "format": "uri",
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "client_secret",
+          "grant_type"
+        ],
+        "type": "object"
+      },
+      "OAuthTokenResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "expires_in": {
+            "type": "integer"
+          },
+          "id_token": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "refresh_token_expires_in": {
+            "description": "Remaining refresh token lifetime in seconds, returned for time-based access grants.",
+            "type": "integer"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "access_token",
+          "expires_in",
+          "token_type"
+        ],
+        "type": "object"
+      }
+    }
+  }
+}

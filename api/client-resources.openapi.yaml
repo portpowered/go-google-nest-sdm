@@ -779,6 +779,11 @@
           "expiresIn": {
             "type": "integer"
           },
+          "refreshTokenExpiresIn": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Remaining refresh-token lifetime in seconds when the service grants time-based access."
+          },
           "scope": {
             "type": "string"
           }

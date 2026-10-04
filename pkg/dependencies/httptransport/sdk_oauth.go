@@ -57,10 +57,11 @@ func (client *sdkClient) RefreshToken(
 
 func credentials(response wire.OAuthTokenResponse) sdm.Credentials {
 	return sdm.Credentials{
-		AccessToken:  response.AccessToken,
-		TokenType:    response.TokenType,
-		ExpiresIn:    response.ExpiresIn,
-		RefreshToken: response.RefreshToken,
-		Scope:        response.Scope,
+		AccessToken:           response.AccessToken,
+		TokenType:             response.TokenType,
+		ExpiresIn:             response.ExpiresIn,
+		RefreshToken:          response.RefreshToken,
+		RefreshTokenExpiresIn: response.RefreshTokenExpiresIn,
+		Scope:                 response.Scope,
 	}
 }

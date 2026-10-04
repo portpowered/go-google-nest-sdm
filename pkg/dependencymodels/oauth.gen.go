@@ -14,9 +14,13 @@ const (
 	RefreshToken      OAuthGrantType = "refresh_token"
 )
 
+// OAuthErrorCode Open OAuth token error code.
+type OAuthErrorCode string
+
 // OAuthErrorResponse defines model for OAuthErrorResponse.
 type OAuthErrorResponse struct {
-	Error                string                     `json:"error"`
+	// Error Open OAuth token error code.
+	Error                OAuthErrorCode             `json:"error"`
 	ErrorDescription     *string                    `json:"error_description,omitempty"`
 	AdditionalProperties map[string]json.RawMessage `json:"-"`
 }
@@ -39,13 +43,16 @@ type OAuthTokenRequest struct {
 
 // OAuthTokenResponse defines model for OAuthTokenResponse.
 type OAuthTokenResponse struct {
-	AccessToken          string                     `json:"access_token"`
-	ExpiresIn            int                        `json:"expires_in"`
-	IdToken              *string                    `json:"id_token,omitempty"`
-	RefreshToken         *string                    `json:"refresh_token,omitempty"`
-	Scope                *string                    `json:"scope,omitempty"`
-	TokenType            string                     `json:"token_type"`
-	AdditionalProperties map[string]json.RawMessage `json:"-"`
+	AccessToken  string  `json:"access_token"`
+	ExpiresIn    int     `json:"expires_in"`
+	IdToken      *string `json:"id_token,omitempty"`
+	RefreshToken *string `json:"refresh_token,omitempty"`
+
+	// RefreshTokenExpiresIn Remaining refresh token lifetime in seconds, returned for time-based access grants.
+	RefreshTokenExpiresIn *int                       `json:"refresh_token_expires_in,omitempty"`
+	Scope                 *string                    `json:"scope,omitempty"`
+	TokenType             string                     `json:"token_type"`
+	AdditionalProperties  map[string]json.RawMessage `json:"-"`
 }
 
 // OAuthTokenFormdataRequestBody defines body for OAuthToken for application/x-www-form-urlencoded ContentType.
@@ -189,6 +196,14 @@ func (a *OAuthTokenResponse) UnmarshalJSON(b []byte) error {
 		delete(object, "refresh_token")
 	}
 
+	if raw, found := object["refresh_token_expires_in"]; found {
+		err = json.Unmarshal(raw, &a.RefreshTokenExpiresIn)
+		if err != nil {
+			return fmt.Errorf("error reading 'refresh_token_expires_in': %w", err)
+		}
+		delete(object, "refresh_token_expires_in")
+	}
+
 	if raw, found := object["scope"]; found {
 		err = json.Unmarshal(raw, &a.Scope)
 		if err != nil {
@@ -245,6 +260,13 @@ func (a OAuthTokenResponse) MarshalJSON() ([]byte, error) {
 		object["refresh_token"], err = json.Marshal(a.RefreshToken)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'refresh_token': %w", err)
+		}
+	}
+
+	if a.RefreshTokenExpiresIn != nil {
+		object["refresh_token_expires_in"], err = json.Marshal(a.RefreshTokenExpiresIn)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'refresh_token_expires_in': %w", err)
 		}
 	}
 

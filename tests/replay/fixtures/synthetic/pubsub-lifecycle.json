@@ -1,0 +1,83 @@
+{
+  "provenance": "synthetic",
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://pubsub.googleapis.com",
+        "escapedPath": "/v1/projects/synthetic-project/subscriptions/synthetic-subscription:pull",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"maxMessages\":1}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"receivedMessages\":[{\"ackId\":\"synthetic-ack\",\"message\":{\"messageId\":\"synthetic-message\",\"publishTime\":\"2026-10-03T11:55:01Z\",\"data\":\"eyJldmVudElkIjoic3ludGhldGljLWVudmVsb3BlLWV2ZW50IiwidGltZXN0YW1wIjoiMjAyNi0xMC0wM1QxMTo1NTowMFoiLCJyZXNvdXJjZVVwZGF0ZSI6eyJuYW1lIjoiZW50ZXJwcmlzZXMvc3ludGhldGljLWVudGVycHJpc2UvZGV2aWNlcy9zeW50aGV0aWMtZGV2aWNlIiwiZXZlbnRzIjp7InNkbS5kZXZpY2VzLmV2ZW50cy5DYW1lcmFNb3Rpb24uTW90aW9uIjp7ImV2ZW50SWQiOiJzeW50aGV0aWMtY2FtZXJhLWV2ZW50In19fSwidXNlcklkIjoic3ludGhldGljLXVzZXIifQ==\"}}]}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://pubsub.googleapis.com",
+        "escapedPath": "/v1/projects/synthetic-project/subscriptions/synthetic-subscription:modifyAckDeadline",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"ackIds\":[\"synthetic-ack\"],\"ackDeadlineSeconds\":30}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://pubsub.googleapis.com",
+        "escapedPath": "/v1/projects/synthetic-project/subscriptions/synthetic-subscription:acknowledge",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"ackIds\":[\"synthetic-ack\"]}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{}"
+      }
+    }
+  ]
+}

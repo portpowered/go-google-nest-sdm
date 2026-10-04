@@ -39,8 +39,11 @@ type Credentials struct {
 	AccessToken  string  `json:"accessToken"`
 	ExpiresIn    int     `json:"expiresIn"`
 	RefreshToken *string `json:"refreshToken,omitempty"`
-	Scope        *string `json:"scope,omitempty"`
-	TokenType    string  `json:"tokenType"`
+
+	// RefreshTokenExpiresIn Remaining refresh-token lifetime in seconds when the service grants time-based access.
+	RefreshTokenExpiresIn *int    `json:"refreshTokenExpiresIn,omitempty"`
+	Scope                 *string `json:"scope,omitempty"`
+	TokenType             string  `json:"tokenType"`
 }
 
 // DecodePushEventRequest defines model for DecodePushEventRequest.

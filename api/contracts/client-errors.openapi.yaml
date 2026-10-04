@@ -1,0 +1,31 @@
+{
+  "$comment": "Generated from api\\client-errors.openapi.yaml; DO NOT EDIT.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "components": {
+    "schemas": {
+      "ProviderError": {
+        "additionalProperties": false,
+        "description": "Sanitized provider failure cause available through errors.As. HTTPStatus identifies the received status; Code identifies the machine-readable provider rejection.",
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ProviderErrorCode"
+          },
+          "httpStatus": {
+            "description": "HTTP response status; zero if unavailable.",
+            "type": "integer",
+            "x-go-name": "HTTPStatus"
+          }
+        },
+        "required": [
+          "code",
+          "httpStatus"
+        ],
+        "type": "object"
+      },
+      "ProviderErrorCode": {
+        "description": "Sanitized machine-readable provider code. Free-form descriptions and token-bearing raw response bodies are never stored here.",
+        "type": "string"
+      }
+    }
+  }
+}

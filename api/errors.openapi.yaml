@@ -1,0 +1,84 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Google provider error contracts",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "GoogleErrorStatus": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "x-known-values": [
+          "INVALID_ARGUMENT",
+          "NOT_FOUND",
+          "PERMISSION_DENIED",
+          "UNAUTHENTICATED",
+          "RESOURCE_EXHAUSTED",
+          "FAILED_PRECONDITION",
+          "DEADLINE_EXCEEDED",
+          "UNAVAILABLE",
+          "INTERNAL",
+          "UNKNOWN",
+          "ABORTED",
+          "ALREADY_EXISTS",
+          "CANCELLED",
+          "DATA_LOSS",
+          "OUT_OF_RANGE",
+          "UNIMPLEMENTED"
+        ],
+        "description": "Open Google RPC status identifier; unknown future statuses remain available."
+      },
+      "GoogleError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/GoogleErrorStatus"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoogleErrorDetail"
+            }
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        }
+      },
+      "GoogleErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GoogleError"
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "GoogleErrorDetail": {
+        "type": "object",
+        "description": "Extensible provider error detail. The @type URL identifies its provider-defined payload. Unknown fields remain unchanged.",
+        "properties": {
+          "@type": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        }
+      }
+    }
+  }
+}

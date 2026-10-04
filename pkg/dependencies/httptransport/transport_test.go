@@ -50,7 +50,7 @@ func TestExchangeClosesBodiesAndPreservesCauses(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = client.GetDevice(context.Background(), "secret", "enterprises/project/devices/device")
+	_, err = client.GetDevice(context.Background(), "secret", testDeviceName)
 
 	var failure *transport.Error
 
@@ -82,7 +82,7 @@ func TestCancellationAndNoRetry(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	_, err = client.GetDevice(ctx, "token", "enterprises/project/devices/device")
+	_, err = client.GetDevice(ctx, "token", testDeviceName)
 
 	var failure *transport.Error
 
@@ -200,7 +200,7 @@ func TestStatusClassificationAndCredentialSafety(t *testing.T) {
 	}{
 		{http.StatusUnauthorized, transport.ErrorUnauthorized}, {http.StatusForbidden, transport.ErrorUnauthorized},
 		{http.StatusNotFound, transport.ErrorNotFound}, {http.StatusTooManyRequests, transport.ErrorRateLimited},
-		{http.StatusInternalServerError, transport.ErrorServer}, {http.StatusBadRequest, transport.ErrorInvalidResponse},
+		{http.StatusInternalServerError, transport.ErrorServer}, {http.StatusBadRequest, transport.ErrorRejected},
 	}
 	for _, test := range cases {
 		client, err := transport.New(transport.WithHTTPClient(testDoer(func(*http.Request) (*http.Response, error) {
@@ -210,7 +210,7 @@ func TestStatusClassificationAndCredentialSafety(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		_, err = client.GetDevice(context.Background(), "private-token", "enterprises/project/devices/device")
+		_, err = client.GetDevice(context.Background(), "private-token", testDeviceName)
 
 		var failure *transport.Error
 
@@ -290,7 +290,7 @@ func TestDefaultClientRejectsRedirects(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = client.GetDevice(context.Background(), "private-bearer", "enterprises/project/devices/device")
+	_, err = client.GetDevice(context.Background(), "private-bearer", testDeviceName)
 
 	var failure *transport.Error
 

@@ -1,0 +1,9 @@
+package: dependencymodels
+generate:
+  models: true
+output-options:
+  skip-prune: true
+  user-templates:
+    typedef.tmpl: tools/generate/typedef.tmpl
+import-mapping:
+  ../errors.openapi.yaml: '-'

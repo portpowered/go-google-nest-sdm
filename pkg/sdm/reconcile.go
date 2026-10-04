@@ -102,10 +102,10 @@ func cloneState(state DeviceState) (DeviceState, error) {
 	var clone DeviceState
 
 	err = json.Unmarshal(data, &clone)
-
 	if err != nil {
 		return clone, fmt.Errorf("decode device state: %w", err)
 	}
+
 	return clone, nil
 }
 
@@ -130,12 +130,14 @@ func mergeTraits(device *Device, update *Traits) error {
 	}
 
 	var existing map[string]json.RawMessage
+
 	err = json.Unmarshal(prior, &existing)
 	if err != nil {
 		return fmt.Errorf("decode prior traits: %w", err)
 	}
 
 	var incoming map[string]json.RawMessage
+
 	err = json.Unmarshal(changes, &incoming)
 	if err != nil {
 		return fmt.Errorf("decode changed traits: %w", err)
@@ -191,6 +193,7 @@ func mergeObjects(existing, incoming map[string]json.RawMessage) ([]byte, error)
 	if err != nil {
 		return nil, fmt.Errorf("encode merged traits: %w", err)
 	}
+
 	return merged, nil
 }
 

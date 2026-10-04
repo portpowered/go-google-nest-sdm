@@ -1,0 +1,149 @@
+{
+  "$comment": "Generated from api\\external\\pubsub.openapi.yaml; DO NOT EDIT.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "components": {
+    "schemas": {
+      "AcknowledgeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "ackIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "ackIds"
+        ],
+        "type": "object"
+      },
+      "EmptyResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {},
+        "type": "object"
+      },
+      "ModifyAckDeadlineRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "ackDeadlineSeconds": {
+            "description": "Seconds from 0 through 600; zero makes the message available for immediate redelivery.",
+            "maximum": 600,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "ackIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "ackIds",
+          "ackDeadlineSeconds"
+        ],
+        "type": "object"
+      },
+      "PubSubMessage": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "attributes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "data": {
+            "format": "byte",
+            "type": "string"
+          },
+          "messageId": {
+            "type": "string"
+          },
+          "orderingKey": {
+            "type": "string"
+          },
+          "publishTime": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PullRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "maxMessages": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "returnImmediately": {
+            "deprecated": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "maxMessages"
+        ],
+        "type": "object"
+      },
+      "PullResponse": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "receivedMessages": {
+            "items": {
+              "$ref": "#/components/schemas/ReceivedMessage"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "PushEnvelope": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "deliveryAttempt": {
+            "type": "integer"
+          },
+          "message": {
+            "$ref": "#/components/schemas/PubSubMessage"
+          },
+          "subscription": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message",
+          "subscription"
+        ],
+        "type": "object"
+      },
+      "ReceivedMessage": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "ackId": {
+            "type": "string"
+          },
+          "deliveryAttempt": {
+            "type": "integer"
+          },
+          "message": {
+            "$ref": "#/components/schemas/PubSubMessage"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
+}

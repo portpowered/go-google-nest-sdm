@@ -1,0 +1,51 @@
+{
+  "provenance": "synthetic",
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://oauth2.googleapis.com",
+        "escapedPath": "/token",
+        "query": {},
+        "headers": {
+          "Content-Type": [
+            "application/x-www-form-urlencoded"
+          ]
+        },
+        "body": "client_id=synthetic-client&client_secret=synthetic-secret&code=synthetic-code&grant_type=authorization_code&redirect_uri=https%3A%2F%2Fexample.invalid%2Fcallback"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"access_token\":\"synthetic-access-token\",\"expires_in\":3600,\"refresh_token\":\"synthetic-refresh-token\",\"scope\":\"https://www.googleapis.com/auth/sdm.service\",\"token_type\":\"Bearer\"}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://oauth2.googleapis.com",
+        "escapedPath": "/token",
+        "query": {},
+        "headers": {
+          "Content-Type": [
+            "application/x-www-form-urlencoded"
+          ]
+        },
+        "body": "client_id=synthetic-client&client_secret=synthetic-secret&grant_type=refresh_token&refresh_token=synthetic-refresh-token"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"access_token\":\"synthetic-access-token-next\",\"expires_in\":3600,\"token_type\":\"Bearer\"}"
+      }
+    }
+  ]
+}

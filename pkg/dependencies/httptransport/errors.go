@@ -8,6 +8,7 @@ type ErrorKind string
 const (
 	ErrorInvalidRequest  ErrorKind = "invalid_request"
 	ErrorInvalidResponse ErrorKind = "invalid_response"
+	ErrorRejected        ErrorKind = "rejected"
 	ErrorUnauthorized    ErrorKind = "unauthorized"
 	ErrorNotFound        ErrorKind = "not_found"
 	ErrorRateLimited     ErrorKind = "rate_limited"

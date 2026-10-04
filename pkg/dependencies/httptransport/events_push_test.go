@@ -44,11 +44,11 @@ func TestPushDecodingWrappedAndUnwrapped(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if result.Event.EventId != "event" {
+		if result.Event.EventId != testEventID {
 			t.Fatal("wrong event")
 		}
 
-		if result.Event.ResourceUpdate == nil || result.Event.ResourceUpdate.Name != "enterprises/project/devices/device" {
+		if result.Event.ResourceUpdate == nil || result.Event.ResourceUpdate.Name != testDeviceName {
 			t.Fatal("resource update was lost")
 		}
 	}
@@ -59,7 +59,7 @@ func TestPushRejectsMalformedWrappedData(t *testing.T) {
 
 	client := newPushClient(t)
 	for _, body := range []string{
-		`null`, `[]`, `{}`, `{"subscription":"projects/project/subscriptions/events","message":null}`,
+		testNullJSON, `[]`, `{}`, `{"subscription":"projects/project/subscriptions/events","message":null}`,
 		`{"subscription":"projects/project/subscriptions/events","message":{"data":"!"}}`,
 		`{"subscription":"projects/project/subscriptions/events","message":{"data":"e30="}}`,
 	} {

@@ -1,0 +1,28 @@
+{
+  "provenance": "synthetic",
+  "exchanges": [
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ]
+        },
+        "body": ""
+      },
+      "response": {
+        "status": 403,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"error\":{\"code\":403,\"message\":\"Synthetic permission denied\",\"status\":\"PERMISSION_DENIED\"}}"
+      }
+    }
+  ]
+}

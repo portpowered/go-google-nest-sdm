@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const runtimeDirectoryMode = 0o750
@@ -18,6 +19,13 @@ func runtimeSchemas() error {
 	}
 
 	paths = append(paths, "api/openapi.yaml")
+
+	externalPaths, err := filepath.Glob("api/external/*.openapi.yaml")
+	if err != nil {
+		return fmt.Errorf("find dependency runtime schemas: %w", err)
+	}
+
+	paths = append(paths, externalPaths...)
 
 	err = os.MkdirAll("api/contracts", runtimeDirectoryMode)
 	if err != nil {
@@ -82,6 +90,10 @@ func projectObject(source map[string]any) map[string]any {
 
 	for key, value := range source {
 		if key != "nullable" && key != "exclusiveMinimum" && key != "exclusiveMaximum" {
+			if reference, ok := value.(string); key == "$ref" && ok {
+				value = strings.TrimPrefix(reference, "../")
+			}
+
 			result[key] = projectSchema(value)
 		}
 	}

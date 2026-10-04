@@ -1,0 +1,35 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Public provider failure details",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "ProviderErrorCode": {
+        "type": "string",
+        "description": "Sanitized machine-readable provider code. Free-form descriptions and token-bearing raw response bodies are never stored here."
+      },
+      "ProviderError": {
+        "type": "object",
+        "description": "Sanitized provider failure cause available through errors.As. HTTPStatus identifies the received status; Code identifies the machine-readable provider rejection.",
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ProviderErrorCode"
+          },
+          "httpStatus": {
+            "type": "integer",
+            "description": "HTTP response status; zero if unavailable.",
+            "x-go-name": "HTTPStatus"
+          }
+        },
+        "required": [
+          "code",
+          "httpStatus"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

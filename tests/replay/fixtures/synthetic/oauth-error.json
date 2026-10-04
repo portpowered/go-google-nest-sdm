@@ -1,0 +1,22 @@
+{
+  "provenance": "synthetic",
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://oauth2.googleapis.com",
+        "escapedPath": "/token",
+        "query": {},
+        "headers": {
+          "Content-Type": ["application/x-www-form-urlencoded"]
+        },
+        "body": "client_id=synthetic-client&client_secret=synthetic-secret&code=synthetic-code&grant_type=authorization_code&redirect_uri=https%3A%2F%2Fexample.invalid%2Fcallback"
+      },
+      "response": {
+        "status": 400,
+        "headers": {"Content-Type": ["application/json"]},
+        "body": "{\"error\":\"invalid_grant\",\"error_description\":\"synthetic secret must stay private\"}"
+      }
+    }
+  ]
+}

@@ -29,9 +29,9 @@ Use explicit control commands such as `thermostat mode`, `thermostat eco`, `ther
 
 Camera commands are `image`, `rtsp-start`, `rtsp-extend`, `rtsp-stop`, `webrtc-start`, `webrtc-extend` and `webrtc-stop` under `camera`. They execute SDM commands and return their results; your application owns media retrieval and playback. Save session identifiers securely and stop streams explicitly when finished.
 
-`events pull` optionally consumes an existing subscription with a Pub/Sub credential and emits NDJSON. `--count` selects a positive event count (default 1). It acknowledges each event only after successful output and closes its session on completion, failure or cancellation. `events decode` reads an event payload locally. Ctrl+C stops the command. See [event ownership](./events) before enabling acknowledgement in an application.
+`events pull` optionally consumes an existing subscription with a Pub/Sub credential and emits NDJSON. `--count` selects a positive event count (default 1). It acknowledges each event only after successful output and closes its session on completion, failure or cancellation. `events decode` reads an event payload locally. Ctrl+C stops the command. See [event ownership](/docs/guides/events) before enabling acknowledgement in an application.
 
-The CLI calls the same public SDK as Go consumers. The CLI depends on the published SDK module. Release the SDK tag first, followed by the CLI module's matching tag; installation from `@latest` depends on that publication. See the [authentication guide](./authentication) for credential ownership and [generated REST reference](/docs) for requests.
+The CLI calls the same public SDK as Go consumers. The CLI depends on the published SDK module. Release the SDK tag first, followed by the CLI module's matching tag; installation from `@latest` depends on that publication. See the [authentication guide](/docs/guides/authentication) for credential ownership and [generated REST reference](/docs) for requests.
 
 
 

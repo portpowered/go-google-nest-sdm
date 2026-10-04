@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"slices"
 
 	"github.com/portpowered/go-google-nest-sdm/internal/protocol"
 	wire "github.com/portpowered/go-google-nest-sdm/pkg/dependencymodels"
@@ -71,6 +72,8 @@ func (client *Client) Acknowledge(
 		return fail("Acknowledge", ErrorInvalidRequest, err)
 	}
 
+	var result wire.EmptyResponse
+
 	return client.exchange(
 		ctx,
 		"Acknowledge",
@@ -79,7 +82,7 @@ func (client *Client) Acknowledge(
 		token,
 		protocol.MIMEApplicationJSON,
 		bytes.NewReader(body),
-		nil,
+		&result,
 	)
 }
 
@@ -106,6 +109,8 @@ func (client *Client) ModifyAckDeadline(
 		return fail("ModifyAckDeadline", ErrorInvalidRequest, err)
 	}
 
+	var result wire.EmptyResponse
+
 	return client.exchange(
 		ctx,
 		"ModifyAckDeadline",
@@ -114,7 +119,7 @@ func (client *Client) ModifyAckDeadline(
 		token,
 		protocol.MIMEApplicationJSON,
 		bytes.NewReader(body),
-		nil,
+		&result,
 	)
 }
 
@@ -125,11 +130,5 @@ func validAckIDs(ids []string) bool {
 		return false
 	}
 
-	for _, id := range ids {
-		if id == "" {
-			return false
-		}
-	}
-
-	return true
+	return !slices.Contains(ids, "")
 }

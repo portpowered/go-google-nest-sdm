@@ -309,6 +309,30 @@
             "enum": [
               "a=inactive"
             ]
+          },
+          "OAuthErrorInvalidGrant": {
+            "type": "string",
+            "enum": [
+              "invalid_grant"
+            ]
+          },
+          "OAuthErrorInvalidClient": {
+            "type": "string",
+            "enum": [
+              "invalid_client"
+            ]
+          },
+          "OAuthErrorUnauthorizedClient": {
+            "type": "string",
+            "enum": [
+              "unauthorized_client"
+            ]
+          },
+          "OAuthErrorAccessDenied": {
+            "type": "string",
+            "enum": [
+              "access_denied"
+            ]
           }
         },
         "additionalProperties": false

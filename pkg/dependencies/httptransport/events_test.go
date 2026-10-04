@@ -112,12 +112,12 @@ func TestEventDeliveryExplicitAcknowledgement(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if delivery.Event().EventId != "event" || calls.Load() != 1 {
+	if delivery.Event().EventId != testEventID || calls.Load() != 1 {
 		t.Fatal("event or implicit acknowledgement")
 	}
 
 	if delivery.Event().ResourceUpdate == nil ||
-		delivery.Event().ResourceUpdate.Name != "enterprises/project/devices/device" {
+		delivery.Event().ResourceUpdate.Name != testDeviceName {
 		t.Fatal("resource update was lost")
 	}
 

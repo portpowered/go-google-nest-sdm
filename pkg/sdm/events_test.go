@@ -385,3 +385,35 @@ func TestErrorsPreserveCausesWithoutPrintingSecrets(t *testing.T) {
 		t.Fatal("error cause or safe diagnostic wrong")
 	}
 }
+
+func TestHandlerClassifiesContextFailure(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	_, err := sdm.HandleEvent(ctx, sdm.HandleEventRequest{Data: []byte(eventJSON)},
+		func(context.Context, sdm.EventEnvelope) error {
+			t.Fatal("canceled event dispatched")
+
+			return nil
+		})
+
+	var typed *sdm.Error
+	if !errors.As(err, &typed) || typed.Kind != sdm.ErrorCanceled {
+		t.Fatal("cancellation did not return a typed client error")
+	}
+
+	deadline, release := context.WithDeadline(context.Background(), time.Time{})
+	defer release()
+
+	_, err = sdm.HandleEvent(deadline, sdm.HandleEventRequest{Data: []byte(eventJSON)},
+		func(context.Context, sdm.EventEnvelope) error {
+			t.Fatal("expired event dispatched")
+
+			return nil
+		})
+	if !errors.As(err, &typed) || typed.Kind != sdm.ErrorTimeout || !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatal("deadline did not return a typed client error preserving the cause")
+	}
+}

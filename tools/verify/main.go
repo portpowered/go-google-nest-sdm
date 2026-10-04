@@ -18,6 +18,7 @@ import (
 const (
 	lintVersion = "v2.14.0"
 	allPackages = "./..."
+	modulesMode = "modules"
 )
 
 type verificationError struct {
@@ -36,23 +37,29 @@ func (err verificationError) Unwrap() error { return err.cause }
 
 func main() {
 	mode := flag.String("mode", "build", "build, test, vet, lint, fmt, or modules")
+	module := flag.String("module", "", "optional repository-relative Go module; defaults to every module")
 
 	flag.Parse()
 
-	err := run(context.Background(), *mode)
+	err := run(context.Background(), *mode, *module)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
-func run(ctx context.Context, mode string) error {
+func run(ctx context.Context, mode, selectedModule string) error {
 	root, err := os.Getwd()
 	if err != nil {
 		return verificationError{operation: "find repository", cause: err}
 	}
 
 	modules, err := findModules(root)
+	if err != nil {
+		return err
+	}
+
+	modules, err = selectModules(modules, selectedModule)
 	if err != nil {
 		return err
 	}
@@ -80,12 +87,12 @@ func run(ctx context.Context, mode string) error {
 			return verificationError{operation: "unknown verification mode: " + mode, cause: nil}
 		}
 
-		err = runModule(ctx, root, module, environment, "go", args, mode == "modules")
+		err = runModule(ctx, root, module, environment, "go", args, mode == modulesMode)
 		if err != nil {
 			return err
 		}
 
-		if mode == "modules" {
+		if mode == modulesMode {
 			err = cleanMetadata(ctx, root, module)
 			if err != nil {
 				return err
@@ -113,7 +120,7 @@ func findModules(root string) ([]string, error) {
 			return nil
 		}
 
-		if entry.Name() != "go.mod" {
+		if entry.Name() != moduleFilename {
 			return nil
 		}
 
@@ -145,7 +152,7 @@ func moduleArguments(mode string) []string {
 		return []string{"vet", allPackages}
 	case "fmt":
 		return []string{"fmt", allPackages}
-	case "modules":
+	case modulesMode:
 		return []string{"mod", "tidy"}
 	default:
 		return nil
@@ -184,7 +191,8 @@ func lintModules(ctx context.Context, root string, modules []string) error {
 	for _, module := range modules {
 		configuration := filepath.Join(root, ".golangci.yml")
 
-		args := []string{"run", "--config", configuration, allPackages}
+		args := []string{"run", "--allow-parallel-runners", "--config", configuration, allPackages}
+
 		err := runModule(ctx, root, module, environment, linter, args, false)
 		if err != nil {
 			return err
@@ -195,8 +203,8 @@ func lintModules(ctx context.Context, root string, modules []string) error {
 }
 
 func cleanMetadata(ctx context.Context, root, module string) error {
-	moduleFile := filepath.ToSlash(filepath.Join(module, "go.mod"))
-	checksumFile := filepath.ToSlash(filepath.Join(module, "go.sum"))
+	moduleFile := filepath.ToSlash(filepath.Join(module, moduleFilename))
+	checksumFile := filepath.ToSlash(filepath.Join(module, checksumFilename))
 
 	return cleanPaths(ctx, root, "module metadata drift", moduleFile, checksumFile)
 }

@@ -55,6 +55,16 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "Pub/Sub rejected the delivery operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            }
           }
         },
         "requestBody": {
@@ -117,6 +127,16 @@
                 }
               }
             }
+          },
+          "default": {
+            "description": "Pub/Sub rejected the delivery operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                }
+              }
+            }
           }
         },
         "requestBody": {
@@ -176,6 +196,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EmptyResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Pub/Sub rejected the delivery operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
                 }
               }
             }

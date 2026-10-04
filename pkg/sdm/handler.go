@@ -7,14 +7,11 @@ import (
 )
 
 var (
-	errEventHandlerIsRequired = errors.New("event handler is required")
-	errEventContextIsRequired = errors.New("event context is required")
+	errHandlerRequired = errors.New("event handler is required")
+	errContextRequired = errors.New("event context is required")
 )
 
-var (
-	errHandlerRequired = errEventHandlerIsRequired
-	errContextRequired = errEventContextIsRequired
-)
+const operationHandleEvent = "handle event"
 
 // EventHandler processes one decoded event synchronously using the caller's context.
 // A nil error permits the caller to acknowledge delivery; a returned error leaves
@@ -28,7 +25,7 @@ type EventHandler func(context.Context, EventEnvelope) error
 func HandleEvent(ctx context.Context, request HandleEventRequest, handler EventHandler) (HandleEventResult, error) {
 	if ctx == nil {
 		return HandleEventResult{}, &Error{
-			Kind: ErrorInvalidRequest, Operation: "handle event", Cause: errContextRequired, StatusCode: 0,
+			Kind: ErrorInvalidRequest, Operation: operationHandleEvent, Cause: errContextRequired, StatusCode: 0,
 		}
 	}
 
@@ -39,12 +36,12 @@ func HandleEvent(ctx context.Context, request HandleEventRequest, handler EventH
 			kind = ErrorTimeout
 		}
 
-		return HandleEventResult{}, &Error{Kind: kind, Operation: "handle event", Cause: contextErr, StatusCode: 0}
+		return HandleEventResult{}, &Error{Kind: kind, Operation: operationHandleEvent, Cause: contextErr, StatusCode: 0}
 	}
 
 	if handler == nil {
 		return HandleEventResult{}, &Error{
-			Kind: ErrorInvalidRequest, Operation: "handle event", Cause: errHandlerRequired, StatusCode: 0,
+			Kind: ErrorInvalidRequest, Operation: operationHandleEvent, Cause: errHandlerRequired, StatusCode: 0,
 		}
 	}
 
@@ -56,7 +53,6 @@ func HandleEvent(ctx context.Context, request HandleEventRequest, handler EventH
 	result := HandleEventResult{Event: event}
 
 	handlerErr := handler(ctx, event)
-
 	if handlerErr != nil {
 		return result, fmt.Errorf("SDM event handler: %w", handlerErr)
 	}

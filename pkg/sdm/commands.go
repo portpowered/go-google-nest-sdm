@@ -11,18 +11,18 @@ import (
 )
 
 var (
-	errUnsupportedCommand             = errors.New("unsupported command")
-	errHeatSetpointMustBeBelow        = errors.New("heat setpoint must be below cool setpoint")
-	errSdpOfferMustEndWith            = errors.New("SDP offer must end with a newline")
-	errSdpOfferRequiresVersionZero    = errors.New("SDP offer requires version zero")
-	errSdpMediaOrderMustBe            = errors.New("SDP media order must be audio, video, application")
-	errSdpUnifiedPlanRequiresDistinct = errors.New("SDP Unified Plan requires distinct media identifiers")
-	errSdpAudioMustBeReceive          = errors.New("SDP audio must be receive only")
-	errSdpAudioCodecMappingIs         = errors.New("SDP audio codec mapping is malformed")
-	errSdpAudioSupportsOnlyOpus       = errors.New("SDP audio supports only Opus")
-	errSdpOfferRequiresThreeMedia     = errors.New("SDP offer requires three media sections and receive-only Opus audio")
-	errSdpUnifiedPlanRequiresOne      = errors.New("SDP Unified Plan requires one media identifier per section")
-	errRequiredCommandValueMustNot    = errors.New("required command value must not be empty")
+	errUnsupportedCommand   = errors.New("unsupported command")
+	errSetpointOrder        = errors.New("heat setpoint must be below cool setpoint")
+	errSDPTerminator        = errors.New("SDP offer must end with a newline")
+	errSDPVersion           = errors.New("SDP offer requires version zero")
+	errSDPMediaOrder        = errors.New("SDP media order must be audio, video, application")
+	errSDPDuplicateMID      = errors.New("SDP Unified Plan requires distinct media identifiers")
+	errSDPAudioDirection    = errors.New("SDP audio must be receive only")
+	errSDPCodecMapping      = errors.New("SDP audio codec mapping is malformed")
+	errSDPCodec             = errors.New("SDP audio supports only Opus")
+	errSDPMedia             = errors.New("SDP offer requires three media sections and receive-only Opus audio")
+	errSDPMIDCount          = errors.New("SDP Unified Plan requires one media identifier per section")
+	errRequiredCommandValue = errors.New("required command value must not be empty")
 )
 
 // ValidateCommandParams checks generated command fields and SDM semantic constraints.
@@ -37,19 +37,20 @@ func ValidateCommandParams(command CommandName, data json.RawMessage) error {
 	if command == SdmDevicesCommandsCameraLiveStreamGenerateRtspStream {
 		component = "CameraLiveStreamGenerateRtspStreamParams"
 	}
-	err := contracts.Validate("client-models.openapi.yaml", component, data)
 
+	err := contracts.Validate("client-models.openapi.yaml", component, data)
 	if err != nil {
 		return invalidCommand(err)
 	}
 
 	value := reflect.New(params)
+
 	err = json.Unmarshal(data, value.Interface())
 	if err != nil {
 		return invalidCommand(err)
 	}
-	err = validateCommandSemantics(value.Elem().Interface())
 
+	err = validateCommandSemantics(value.Elem().Interface())
 	if err != nil {
 		return invalidCommand(err)
 	}
@@ -64,8 +65,8 @@ func ValidateCommandResults(command CommandName, data json.RawMessage) error {
 	if !found {
 		return invalidResponse("command", errUnsupportedCommand)
 	}
-	err := contracts.Validate("client-models.openapi.yaml", results.Name(), data)
 
+	err := contracts.Validate("client-models.openapi.yaml", results.Name(), data)
 	if err != nil {
 		return invalidResponse("command", err)
 	}
@@ -81,7 +82,7 @@ func validateCommandSemantics(params any) error {
 	switch params := params.(type) {
 	case ThermostatTemperatureSetpointSetRangeParams:
 		if params.HeatCelsius >= params.CoolCelsius {
-			return errHeatSetpointMustBeBelow
+			return errSetpointOrder
 		}
 	case CameraLiveStreamGenerateWebRtcStreamParams:
 		return validateSDPOffer(params.OfferSdp)
@@ -92,25 +93,29 @@ func validateCommandSemantics(params any) error {
 
 func validateSDPOffer(offer string) error {
 	if !strings.HasSuffix(offer, protocol.SDPLineSeparator) {
-		return errSdpOfferMustEndWith
+		return errSDPTerminator
 	}
 
 	lines := strings.Split(strings.ReplaceAll(offer, protocol.SDPCarriageReturn, ""), protocol.SDPLineSeparator)
 	if lines[0] != protocol.SDPSessionVersion {
-		return errSdpOfferRequiresVersionZero
+		return errSDPVersion
 	}
 
 	expected := []string{protocol.SDPAudioPrefix, protocol.SDPVideoPrefix, protocol.SDPApplicationPrefix}
+
 	media := splitSDPMedia(lines)
+
 	if len(media) != len(expected) {
-		return errSdpOfferRequiresThreeMedia
+		return errSDPMedia
 	}
 
 	mids := make(map[string]bool)
+
 	for index, section := range media {
 		if !strings.HasPrefix(section[0], expected[index]) {
-			return errSdpMediaOrderMustBe
+			return errSDPMediaOrder
 		}
+
 		err := validateSDPMid(section, mids)
 		if err != nil {
 			return err
@@ -122,6 +127,7 @@ func validateSDPOffer(offer string) error {
 
 func splitSDPMedia(lines []string) [][]string {
 	var media [][]string
+
 	for _, line := range lines {
 		if strings.HasPrefix(line, protocol.SDPMediaPrefix) {
 			media = append(media, []string{line})
@@ -130,58 +136,91 @@ func splitSDPMedia(lines []string) [][]string {
 			media[index] = append(media[index], line)
 		}
 	}
+
 	return media
 }
 
 func validateSDPMid(lines []string, mids map[string]bool) error {
 	count := 0
+
 	for _, line := range lines {
 		if !strings.HasPrefix(line, protocol.SDPMidPrefix) {
 			continue
 		}
+
 		mid := strings.TrimPrefix(line, protocol.SDPMidPrefix)
 		if mid == "" || mids[mid] {
-			return errSdpUnifiedPlanRequiresDistinct
+			return errSDPDuplicateMID
 		}
+
 		mids[mid] = true
 		count++
 	}
+
 	if count != 1 {
-		return errSdpUnifiedPlanRequiresOne
+		return errSDPMIDCount
 	}
+
 	return nil
 }
 
 func validateSDPAudio(lines []string) error {
-	receiveOnly, opus := false, false
-	for _, line := range lines {
+	const mediaHeaderFields = 3
 
+	mediaFields := strings.Fields(lines[0])
+	if len(mediaFields) <= mediaHeaderFields {
+		return errSDPCodecMapping
+	}
+
+	payloads := make(map[string]bool)
+	for _, payload := range mediaFields[mediaHeaderFields:] {
+		payloads[payload] = false
+	}
+
+	receiveOnly, opus := false, false
+
+	for _, line := range lines {
 		if line == protocol.SDPReceiveOnlyLine {
 			receiveOnly = true
 		}
 
 		if line == protocol.SDPDirectionSendReceiveLine ||
 			line == protocol.SDPSendOnlyLine || line == protocol.SDPInactiveLine {
-			return errSdpAudioMustBeReceive
+			return errSDPAudioDirection
 		}
 
 		if strings.HasPrefix(line, protocol.SDPRtpMapPrefix) {
+			const codecMappingFields = 2
+
 			fields := strings.Fields(line)
-			if len(fields) != 2 {
-				return errSdpAudioCodecMappingIs
+			if len(fields) != codecMappingFields {
+				return errSDPCodecMapping
 			}
 
 			codec := strings.ToLower(fields[1])
 			if codec != protocol.SDPOpusCodec && !strings.HasPrefix(codec, protocol.SDPOpusCodec+"/") {
-				return errSdpAudioSupportsOnlyOpus
+				return errSDPCodec
 			}
 
 			opus = true
+
+			payload := strings.TrimPrefix(fields[0], protocol.SDPRtpMapPrefix)
+			if _, declared := payloads[payload]; !declared {
+				return errSDPCodecMapping
+			}
+
+			payloads[payload] = true
 		}
 	}
 
 	if !receiveOnly || !opus {
-		return errSdpOfferRequiresThreeMedia
+		return errSDPMedia
+	}
+
+	for _, mapped := range payloads {
+		if !mapped {
+			return errSDPCodec
+		}
 	}
 
 	return nil
@@ -196,7 +235,7 @@ func rejectEmptyRequiredStrings(params any) error {
 	for index := range value.NumField() {
 		field := value.Field(index)
 		if field.Kind() == reflect.String && strings.TrimSpace(field.String()) == "" {
-			return errRequiredCommandValueMustNot
+			return errRequiredCommandValue
 		}
 	}
 

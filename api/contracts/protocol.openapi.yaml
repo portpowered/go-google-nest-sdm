@@ -192,6 +192,30 @@
             ],
             "type": "string"
           },
+          "OAuthErrorAccessDenied": {
+            "enum": [
+              "access_denied"
+            ],
+            "type": "string"
+          },
+          "OAuthErrorInvalidClient": {
+            "enum": [
+              "invalid_client"
+            ],
+            "type": "string"
+          },
+          "OAuthErrorInvalidGrant": {
+            "enum": [
+              "invalid_grant"
+            ],
+            "type": "string"
+          },
+          "OAuthErrorUnauthorizedClient": {
+            "enum": [
+              "unauthorized_client"
+            ],
+            "type": "string"
+          },
           "OAuthGrantAuthorizationCode": {
             "enum": [
               "authorization_code"

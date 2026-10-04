@@ -61,12 +61,7 @@ func (client *Client) exchange(
 	}
 
 	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusMultipleChoices {
-		return &Error{
-			Operation:  operation,
-			Kind:       statusKind(response.StatusCode),
-			StatusCode: response.StatusCode,
-			Cause:      nil,
-		}
+		return providerFailure(operation, endpoint == client.oauthBaseURL+protocol.PathOAuthToken, response)
 	}
 
 	if response.Body == nil {
@@ -89,6 +84,11 @@ func (client *Client) exchange(
 	trimmed := bytes.TrimSpace(payload)
 	if len(trimmed) == 0 || trimmed[0] != '{' {
 		return fail(operation, ErrorInvalidResponse, nil)
+	}
+
+	err = validateDependencyResponse(payload, result)
+	if err != nil {
+		return fail(operation, ErrorInvalidResponse, err)
 	}
 
 	err = json.Unmarshal(payload, result)
@@ -119,6 +119,8 @@ func statusKind(status int) ErrorKind {
 		return ErrorNotFound
 	case http.StatusTooManyRequests:
 		return ErrorRateLimited
+	case http.StatusBadRequest:
+		return ErrorRejected
 	default:
 		if status >= http.StatusInternalServerError {
 			return ErrorServer

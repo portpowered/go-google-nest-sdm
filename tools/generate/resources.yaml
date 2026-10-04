@@ -9,3 +9,4 @@ import-mapping:
   ./traits.openapi.yaml: '-'
   ./commands.openapi.yaml: '-'
 
+  ./errors.openapi.yaml: '-'

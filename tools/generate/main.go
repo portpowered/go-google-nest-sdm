@@ -50,9 +50,11 @@ func run() error {
 		{wireConfig, "pkg/dependencymodels/traits.gen.go", "traits.openapi.yaml"},
 		{"commands-wire.yaml", "pkg/dependencymodels/commands.gen.go", "commands.openapi.yaml"},
 		{"resources.yaml", "pkg/dependencymodels/devices.gen.go", "openapi.yaml"},
-		{wireConfig, "pkg/dependencymodels/pubsub.gen.go", "external/pubsub.openapi.yaml"},
+		{wireConfig, "pkg/dependencymodels/errors.gen.go", "errors.openapi.yaml"},
+		{"pubsub-wire.yaml", "pkg/dependencymodels/pubsub.gen.go", "external/pubsub.openapi.yaml"},
 		{wireConfig, "pkg/dependencymodels/oauth.gen.go", "external/oauth.openapi.yaml"},
 		{"media-public.yaml", "pkg/sdm/media.gen.go", "client-media.openapi.yaml"},
+		{"public.yaml", "pkg/sdm/provider-errors.gen.go", "client-errors.openapi.yaml"},
 	}
 	for _, job := range jobs {
 		err = generateModels(job)

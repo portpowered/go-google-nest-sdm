@@ -43,9 +43,8 @@ linters:
   exclusions:
     generated: strict
     rules:
-      # These development modules import the unpublished SDK from this checkout.
-      # Remove the CLI replacement when publishing matching SDK and CLI tags.
-      - path: '^(cmd/go-google-nest-sdm|tests/consumer)/go\.mod$'
+      # The independent consumer smoke test imports this checkout through a local replacement.
+      - path: '^tests/consumer/go\.mod$'
         linters: [gomoddirectives]
 
 formatters:

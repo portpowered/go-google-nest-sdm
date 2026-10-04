@@ -71,43 +71,6 @@
         },
         "type": "object"
       },
-      "GoogleError": {
-        "additionalProperties": {
-          "x-go-type": "json.RawMessage"
-        },
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "details": {
-            "items": {
-              "x-go-type": "json.RawMessage"
-            },
-            "type": "array"
-          },
-          "message": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "GoogleErrorResponse": {
-        "additionalProperties": {
-          "x-go-type": "json.RawMessage"
-        },
-        "properties": {
-          "error": {
-            "$ref": "#/components/schemas/GoogleError"
-          }
-        },
-        "required": [
-          "error"
-        ],
-        "type": "object"
-      },
       "ListDevicesResponse": {
         "additionalProperties": {
           "x-go-type": "json.RawMessage"

@@ -1,0 +1,30 @@
+{
+  "$comment": "Generated from api\\external\\media.openapi.yaml; DO NOT EDIT.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "components": {
+    "schemas": {
+      "MediaClipURL": {
+        "format": "uri",
+        "pattern": "^https://[^/?#]+/",
+        "type": "string"
+      },
+      "MediaImageURL": {
+        "format": "uri",
+        "pattern": "^https://[^/?#]+/sdm_event_snapshot/[^?#]+",
+        "type": "string"
+      }
+    },
+    "securitySchemes": {
+      "eventToken": {
+        "description": "Basic followed by one space and the literal event token; not RFC 7617 user/password encoding.",
+        "in": "header",
+        "name": "Authorization",
+        "type": "apiKey"
+      },
+      "oauthAccessToken": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  }
+}

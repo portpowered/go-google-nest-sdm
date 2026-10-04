@@ -107,7 +107,31 @@ func constants() error {
 		return err
 	}
 
-	return writeEnums("pkg/dependencymodels/device-values.gen.go", "dependencymodels", schemas(resourceDoc))
+	err = writeEnums("pkg/dependencymodels/device-values.gen.go", "dependencymodels", schemas(resourceDoc))
+	if err != nil {
+		return err
+	}
+
+	return errorEnums()
+}
+
+func errorEnums() error {
+	for _, inventory := range []struct{ schema, output string }{
+		{"api/errors.openapi.yaml", "pkg/dependencymodels/error-values.gen.go"},
+		{"api/external/oauth.openapi.yaml", "pkg/dependencymodels/oauth-values.gen.go"},
+	} {
+		doc, err := document(inventory.schema)
+		if err != nil {
+			return err
+		}
+
+		err = writeEnums(inventory.output, "dependencymodels", schemas(doc))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func pathTemplate(path string) string {

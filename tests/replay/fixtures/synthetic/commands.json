@@ -1,0 +1,343 @@
+{
+  "provenance": "synthetic",
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.Fan.SetTimer\",\"params\":{\"timerMode\":\"ON\",\"duration\":\"900s\"}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.ThermostatEco.SetMode\",\"params\":{\"mode\":\"MANUAL_ECO\"}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.ThermostatMode.SetMode\",\"params\":{\"mode\":\"HEAT\"}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.ThermostatTemperatureSetpoint.SetHeat\",\"params\":{\"heatCelsius\":20}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.ThermostatTemperatureSetpoint.SetCool\",\"params\":{\"coolCelsius\":25}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.ThermostatTemperatureSetpoint.SetRange\",\"params\":{\"heatCelsius\":20,\"coolCelsius\":25}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.CameraEventImage.GenerateImage\",\"params\":{\"eventId\":\"synthetic-camera-event\"}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"results\":{\"url\":\"https://example.invalid/image\",\"token\":\"synthetic-image-token\"}}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.CameraLiveStream.GenerateRtspStream\",\"params\":{}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"results\":{\"streamUrls\":{\"rtspUrl\":\"rtsp://example.invalid/live\"},\"streamExtensionToken\":\"synthetic-extension\",\"streamToken\":\"synthetic-stream\",\"expiresAt\":\"2026-10-03T12:00:00Z\"}}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.CameraLiveStream.ExtendRtspStream\",\"params\":{\"streamExtensionToken\":\"synthetic-extension\"}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"results\":{\"streamExtensionToken\":\"synthetic-extension-next\",\"streamToken\":\"synthetic-stream-next\",\"expiresAt\":\"2026-10-03T12:05:00Z\"}}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.CameraLiveStream.StopRtspStream\",\"params\":{\"streamExtensionToken\":\"synthetic-extension-next\"}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.CameraLiveStream.GenerateWebRtcStream\",\"params\":{\"offerSdp\":\"v=0\\r\\nm=audio 9 UDP/TLS/RTP/SAVPF 111\\r\\na=mid:0\\r\\na=recvonly\\r\\na=rtpmap:111 opus/48000/2\\r\\nm=video 9 UDP/TLS/RTP/SAVPF 96\\r\\na=mid:1\\r\\nm=application 9 UDP/DTLS/SCTP webrtc-datachannel\\r\\na=mid:2\\r\\n\"}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"results\":{\"answerSdp\":\"v=0\\r\\n\",\"expiresAt\":\"2026-10-03T12:00:00Z\",\"mediaSessionId\":\"synthetic-session\"}}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.CameraLiveStream.ExtendWebRtcStream\",\"params\":{\"mediaSessionId\":\"synthetic-session\"}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"results\":{\"expiresAt\":\"2026-10-03T12:05:00Z\",\"mediaSessionId\":\"synthetic-session\"}}"
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://smartdevicemanagement.googleapis.com",
+        "escapedPath": "/v1/enterprises/synthetic-enterprise/devices/synthetic-device:executeCommand",
+        "query": {},
+        "headers": {
+          "Authorization": [
+            "Bearer synthetic-access-token"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{\"command\":\"sdm.devices.commands.CameraLiveStream.StopWebRtcStream\",\"params\":{\"mediaSessionId\":\"synthetic-session\"}}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "body": "{}"
+      }
+    }
+  ]
+}

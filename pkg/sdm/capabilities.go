@@ -6,15 +6,9 @@ import (
 )
 
 var (
-	errRequiredTraitOrStreamProtocol = errors.New("required trait or stream protocol absent")
-	errSetpointsCannotChangeInManual = errors.New("setpoints cannot change in manual Eco mode")
-	errSetpointCommandDoesNotMatch   = errors.New("setpoint command does not match current thermostat mode")
-)
-
-var (
-	errCapabilityAbsent = errRequiredTraitOrStreamProtocol
-	errManualEco        = errSetpointsCannotChangeInManual
-	errSetpointMode     = errSetpointCommandDoesNotMatch
+	errCapabilityAbsent = errors.New("required trait or stream protocol absent")
+	errManualEco        = errors.New("setpoints cannot change in manual Eco mode")
+	errSetpointMode     = errors.New("setpoint command does not match current thermostat mode")
 )
 
 // SupportsCommand derives capabilities from returned traits and stream protocols.
