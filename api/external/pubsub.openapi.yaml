@@ -1,0 +1,336 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Pub/Sub delivery transport",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://pubsub.googleapis.com/v1"
+    }
+  ],
+  "paths": {
+    "/projects/{projectId}/subscriptions/{subscriptionId}:pull": {
+      "post": {
+        "operationId": "Pull",
+        "summary": "Pull",
+        "description": "Use the caller authorization to Pull.",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          },
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PullResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PullRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectId}/subscriptions/{subscriptionId}:acknowledge": {
+      "post": {
+        "operationId": "Acknowledge",
+        "summary": "Acknowledge",
+        "description": "Use the caller authorization to Acknowledge.",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          },
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptyResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcknowledgeRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectId}/subscriptions/{subscriptionId}:modifyAckDeadline": {
+      "post": {
+        "operationId": "ModifyAckDeadline",
+        "summary": "ModifyAckDeadline",
+        "description": "Use the caller authorization to ModifyAckDeadline.",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          },
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptyResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModifyAckDeadlineRequest"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PubSubMessage": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string",
+            "format": "byte"
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "messageId": {
+            "type": "string"
+          },
+          "publishTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "orderingKey": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        }
+      },
+      "ReceivedMessage": {
+        "type": "object",
+        "properties": {
+          "ackId": {
+            "type": "string"
+          },
+          "message": {
+            "$ref": "#/components/schemas/PubSubMessage"
+          },
+          "deliveryAttempt": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        }
+      },
+      "PullRequest": {
+        "type": "object",
+        "properties": {
+          "maxMessages": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "returnImmediately": {
+            "type": "boolean",
+            "deprecated": true
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "maxMessages"
+        ]
+      },
+      "PullResponse": {
+        "type": "object",
+        "properties": {
+          "receivedMessages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReceivedMessage"
+            }
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        }
+      },
+      "AcknowledgeRequest": {
+        "type": "object",
+        "properties": {
+          "ackIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "ackIds"
+        ]
+      },
+      "ModifyAckDeadlineRequest": {
+        "type": "object",
+        "properties": {
+          "ackIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ackDeadlineSeconds": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 600,
+            "description": "Seconds from 0 through 600; zero makes the message available for immediate redelivery."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "ackIds",
+          "ackDeadlineSeconds"
+        ]
+      },
+      "PushEnvelope": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "$ref": "#/components/schemas/PubSubMessage"
+          },
+          "subscription": {
+            "type": "string"
+          },
+          "deliveryAttempt": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "required": [
+          "message",
+          "subscription"
+        ]
+      },
+      "EmptyResponse": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        }
+      }
+    }
+  }
+}

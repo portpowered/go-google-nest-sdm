@@ -1,0 +1,8 @@
+package: dependencymodels
+generate:
+  models: true
+output-options:
+  skip-prune: true
+import-mapping:
+  ./traits.openapi.yaml: '-'
+  ./commands.openapi.yaml: '-'

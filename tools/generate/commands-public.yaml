@@ -1,0 +1,7 @@
+package: sdm
+generate:
+  models: true
+output-options:
+  skip-prune: true
+import-mapping:
+  ./traits.openapi.yaml: '-'

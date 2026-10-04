@@ -1,0 +1,565 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Google Nest SDM REST API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://smartdevicemanagement.googleapis.com/v1"
+    }
+  ],
+  "paths": {
+    "/enterprises/{enterpriseId}/devices": {
+      "get": {
+        "operationId": "ListDevices",
+        "summary": "List authorized Devices",
+        "description": "Use the caller authorization to ListDevices.",
+        "parameters": [
+          {
+            "name": "enterpriseId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Requested device filter; service-defined expression.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDevicesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/enterprises/{enterpriseId}/devices/{deviceId}": {
+      "get": {
+        "operationId": "GetDevice",
+        "summary": "Get authorized Device",
+        "description": "Use the caller authorization to GetDevice.",
+        "parameters": [
+          {
+            "name": "enterpriseId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          },
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/enterprises/{enterpriseId}/devices/{deviceId}:executeCommand": {
+      "post": {
+        "operationId": "ExecuteCommand",
+        "summary": "ExecuteCommand",
+        "description": "Use the caller authorization to ExecuteCommand.",
+        "parameters": [
+          {
+            "name": "enterpriseId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          },
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteCommandResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecuteCommandRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/enterprises/{enterpriseId}/structures": {
+      "get": {
+        "operationId": "ListStructures",
+        "summary": "List authorized Structures",
+        "description": "Use the caller authorization to ListStructures.",
+        "parameters": [
+          {
+            "name": "enterpriseId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListStructuresResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/enterprises/{enterpriseId}/structures/{structureId}": {
+      "get": {
+        "operationId": "GetStructure",
+        "summary": "Get authorized Structure",
+        "description": "Use the caller authorization to GetStructure.",
+        "parameters": [
+          {
+            "name": "enterpriseId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          },
+          {
+            "name": "structureId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Structure"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/enterprises/{enterpriseId}/structures/{structureId}/rooms": {
+      "get": {
+        "operationId": "ListRooms",
+        "summary": "List authorized Rooms",
+        "description": "Use the caller authorization to ListRooms.",
+        "parameters": [
+          {
+            "name": "enterpriseId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          },
+          {
+            "name": "structureId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListRoomsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/enterprises/{enterpriseId}/structures/{structureId}/rooms/{roomId}": {
+      "get": {
+        "operationId": "GetRoom",
+        "summary": "Get authorized Room",
+        "description": "Use the caller authorization to GetRoom.",
+        "parameters": [
+          {
+            "name": "enterpriseId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          },
+          {
+            "name": "structureId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          },
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "description": "Authorized resource identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[^/]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "headers": {
+              "userId": {
+                "description": "Obfuscated user identity.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DeviceType": {
+        "type": "string",
+        "enum": [
+          "sdm.devices.types.THERMOSTAT",
+          "sdm.devices.types.CAMERA",
+          "sdm.devices.types.DOORBELL",
+          "sdm.devices.types.DISPLAY"
+        ],
+        "description": "Informational device type; use traits to infer capabilities."
+      },
+      "ParentRelation": {
+        "type": "object",
+        "properties": {
+          "parent": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        }
+      },
+      "Device": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^enterprises/[^/]+/devices/[^/]+$"
+          },
+          "type": {
+            "$ref": "#/components/schemas/DeviceType"
+          },
+          "traits": {
+            "$ref": "./traits.openapi.yaml#/components/schemas/Traits"
+          },
+          "parentRelations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParentRelation"
+            }
+          },
+          "assignee": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "Structure": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^enterprises/[^/]+/structures/[^/]+$"
+          },
+          "traits": {
+            "$ref": "./traits.openapi.yaml#/components/schemas/Traits"
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "Room": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^enterprises/[^/]+/structures/[^/]+/rooms/[^/]+$"
+          },
+          "traits": {
+            "$ref": "./traits.openapi.yaml#/components/schemas/Traits"
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ExecuteCommandRequest": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CommandName"
+          },
+          "params": {
+            "x-go-type": "json.RawMessage"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "command",
+          "params"
+        ]
+      },
+      "ExecuteCommandResponse": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "x-go-type": "json.RawMessage"
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        }
+      },
+      "GoogleError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "x-go-type": "json.RawMessage"
+            }
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        }
+      },
+      "GoogleErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GoogleError"
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "ListDevicesResponse": {
+        "type": "object",
+        "properties": {
+          "devices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Device"
+            }
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        }
+      },
+      "ListStructuresResponse": {
+        "type": "object",
+        "properties": {
+          "structures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Structure"
+            }
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        }
+      },
+      "ListRoomsResponse": {
+        "type": "object",
+        "properties": {
+          "rooms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Room"
+            }
+          }
+        },
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        }
+      }
+    }
+  }
+}

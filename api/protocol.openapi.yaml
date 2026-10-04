@@ -1,0 +1,222 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "SDM protocol keys and fixed values",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "ProtocolValues": {
+        "type": "object",
+        "properties": {
+          "HeaderAccept": {
+            "type": "string",
+            "enum": [
+              "Accept"
+            ]
+          },
+          "HeaderAuthorization": {
+            "type": "string",
+            "enum": [
+              "Authorization"
+            ]
+          },
+          "HeaderContentType": {
+            "type": "string",
+            "enum": [
+              "Content-Type"
+            ]
+          },
+          "HeaderUserID": {
+            "type": "string",
+            "enum": [
+              "userId"
+            ]
+          },
+          "MIMEApplicationJSON": {
+            "type": "string",
+            "enum": [
+              "application/json"
+            ]
+          },
+          "MIMEFormURLEncoded": {
+            "type": "string",
+            "enum": [
+              "application/x-www-form-urlencoded"
+            ]
+          },
+          "BearerPrefix": {
+            "type": "string",
+            "enum": [
+              "Bearer "
+            ]
+          },
+          "BasicPrefix": {
+            "type": "string",
+            "enum": [
+              "Basic "
+            ]
+          },
+          "FormClientID": {
+            "type": "string",
+            "enum": [
+              "client_id"
+            ]
+          },
+          "FormClientSecret": {
+            "type": "string",
+            "enum": [
+              "client_secret"
+            ]
+          },
+          "FormCode": {
+            "type": "string",
+            "enum": [
+              "code"
+            ]
+          },
+          "FormCodeVerifier": {
+            "type": "string",
+            "enum": [
+              "code_verifier"
+            ]
+          },
+          "FormRedirectURI": {
+            "type": "string",
+            "enum": [
+              "redirect_uri"
+            ]
+          },
+          "FormRefreshToken": {
+            "type": "string",
+            "enum": [
+              "refresh_token"
+            ]
+          },
+          "FormGrantType": {
+            "type": "string",
+            "enum": [
+              "grant_type"
+            ]
+          },
+          "OAuthGrantAuthorizationCode": {
+            "type": "string",
+            "enum": [
+              "authorization_code"
+            ]
+          },
+          "OAuthGrantRefreshToken": {
+            "type": "string",
+            "enum": [
+              "refresh_token"
+            ]
+          },
+          "QueryFilter": {
+            "type": "string",
+            "enum": [
+              "filter"
+            ]
+          },
+          "QueryWidth": {
+            "type": "string",
+            "enum": [
+              "width"
+            ]
+          },
+          "QueryHeight": {
+            "type": "string",
+            "enum": [
+              "height"
+            ]
+          },
+          "CollectionEnterprises": {
+            "type": "string",
+            "enum": [
+              "enterprises"
+            ]
+          },
+          "CollectionDevices": {
+            "type": "string",
+            "enum": [
+              "devices"
+            ]
+          },
+          "CollectionStructures": {
+            "type": "string",
+            "enum": [
+              "structures"
+            ]
+          },
+          "CollectionRooms": {
+            "type": "string",
+            "enum": [
+              "rooms"
+            ]
+          },
+          "CollectionProjects": {
+            "type": "string",
+            "enum": [
+              "projects"
+            ]
+          },
+          "CollectionSubscriptions": {
+            "type": "string",
+            "enum": [
+              "subscriptions"
+            ]
+          },
+          "KeyDevices": {
+            "type": "string",
+            "enum": [
+              "devices"
+            ]
+          },
+          "KeyStructures": {
+            "type": "string",
+            "enum": [
+              "structures"
+            ]
+          },
+          "KeyRooms": {
+            "type": "string",
+            "enum": [
+              "rooms"
+            ]
+          },
+          "KeyResults": {
+            "type": "string",
+            "enum": [
+              "results"
+            ]
+          },
+          "HeaderPubSubMessageID": {
+            "type": "string",
+            "enum": [
+              "x-goog-pubsub-message-id"
+            ]
+          },
+          "HeaderPubSubPublishTime": {
+            "type": "string",
+            "enum": [
+              "x-goog-pubsub-publish-time"
+            ]
+          },
+          "HeaderPubSubSubscriptionName": {
+            "type": "string",
+            "enum": [
+              "x-goog-pubsub-subscription-name"
+            ]
+          },
+          "HeaderPubSubOrderingKey": {
+            "type": "string",
+            "enum": [
+              "x-goog-pubsub-ordering-key"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
