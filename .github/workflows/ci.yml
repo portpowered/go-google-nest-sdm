@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        go: ['1.24.x', '1.26.x']
+    runs-on: ${{ matrix.os }}
+    env:
+      GOWORK: 'off'
+      GOTOOLCHAIN: auto
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+          cache: true
+          cache-dependency-path: '**/go.sum'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Lint every Go module with pinned all-linter configuration
+        run: make lint
+      - name: Build, contract checks, paired replay, races, vet, coverage floor
+        run: make check
+      - name: Check formatting
+        run: go run ./tools/verify -mode format-check
+      - name: Check every module's metadata
+        run: make check-modules
+      - name: Regenerate schemas and models and detect tracked or untracked drift
+        run: make check-generated
+      - name: Upload separate unit, replay, and combined coverage profiles
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.os }}-${{ matrix.go }}
+          path: coverage-*.out
+
+  api-compatibility:
+    runs-on: ubuntu-latest
+    env:
+      GOWORK: 'off'
+      GOTOOLCHAIN: auto
+      COMPAT_BASE: ${{ github.event.pull_request.base.sha || github.event.before || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Report public API compatibility against the exact base commit
+        run: go run ./tools/compatibility -policy report -base "$COMPAT_BASE"

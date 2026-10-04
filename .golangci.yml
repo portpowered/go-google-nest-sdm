@@ -1,0 +1,48 @@
+version: "2"
+
+run:
+  timeout: 10m
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+linters:
+  default: all
+  settings:
+    depguard:
+      rules:
+        Main:
+          list-mode: strict
+          allow:
+            - $gostd
+            - github.com/portpowered/go-google-nest-sdm
+            - github.com/oapi-codegen/runtime
+            - github.com/getkin/kin-openapi
+            - github.com/santhosh-tekuri/jsonschema/v6
+            - gopkg.in/yaml.v3
+    funlen:
+      lines: 120
+      statements: 200
+    cyclop:
+      max-complexity: 25
+    tagliatelle:
+      case:
+        rules:
+          json: camel
+    revive:
+      rules:
+        - name: nested-structs
+        - name: function-length
+          arguments: [120, 200]
+        - name: file-length-limit
+          arguments:
+            - max: 650
+              skip-comments: true
+              skip-blank-lines: true
+  exclusions:
+    generated: strict
+
+formatters:
+  enable:
+    - gofmt

@@ -1,0 +1,75 @@
+name: Documentation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GOWORK: 'off'
+      GOTOOLCHAIN: auto
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Validate contracts and customer guide inputs
+        run: make test-contracts
+      - name: Measure unit, replay, and combined coverage
+        run: make test-cover
+      - name: Build SDM REST, Pub/Sub, and customer guide documentation
+        uses: portpowered/api-docs-website-github-action@v0.3.1
+        with:
+          title: Google Nest SDM API Reference
+          openapi: api/openapi.yaml,api/client-models.openapi.yaml,api/external/pubsub.openapi.yaml
+          asyncapi: api/asyncapi.yaml
+          discover: false
+          guides-directory: docs/guides
+          output: site
+      - name: Publish separate coverage reports and replay badge data
+        shell: bash
+        run: |
+          go tool cover -html=coverage-unit-filtered.out -o site/coverage-unit.html
+          go tool cover -html=coverage-replay-filtered.out -o site/coverage-replay.html
+          go tool cover -html=coverage-combined-filtered.out -o site/coverage-combined.html
+          replay="$(go run ./tools/coverage -profile coverage-replay.out -min 0 -percent-only)"
+          node - "$replay" <<'JS'
+          const fs = require('node:fs');
+          const percent = Number(process.argv[2]);
+          const color = percent >= 80 ? 'brightgreen' : percent >= 60 ? 'yellow' : 'red';
+          fs.writeFileSync('site/coverage-replay.json', JSON.stringify({schemaVersion: 1, label: 'replay coverage', message: `${percent}%`, color}) + '\n');
+          JS
+      - name: Upload Pages artifact
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
