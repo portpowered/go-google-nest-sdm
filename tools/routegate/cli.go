@@ -69,7 +69,7 @@ func auditCLI(root string) error {
 
 	seen := map[string]bool{}
 
-	err = filepath.WalkDir(filepath.Join(root, cliRoot), func(path string, entry fs.DirEntry, walkErr error) error {
+	err = filepath.WalkDir(filepath.Join(root, "cmd"), func(path string, entry fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
 		}
