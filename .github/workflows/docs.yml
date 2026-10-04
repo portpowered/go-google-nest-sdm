@@ -40,18 +40,21 @@ jobs:
           output: site
       - name: Verify generated customer guides, reference pages, and internal navigation
         run: go run ./tools/docs -site site -base /${{ github.event.repository.name }}
-      - name: Publish separate coverage reports and replay badge data
+      - name: Publish separate coverage reports and badge data
         shell: bash
         run: |
           go tool cover -html=coverage-unit-filtered.out -o site/coverage-unit.html
           go tool cover -html=coverage-replay-filtered.out -o site/coverage-replay.html
           go tool cover -html=coverage-combined-filtered.out -o site/coverage-combined.html
           replay="$(go run ./tools/coverage -profile coverage-replay.out -min 0 -percent-only)"
-          node - "$replay" <<'JS'
+          combined="$(go run ./tools/coverage -profile coverage-combined.out -min 100 -percent-only)"
+          node - "$replay" "$combined" <<'JS'
           const fs = require('node:fs');
           const percent = Number(process.argv[2]);
           const color = percent >= 80 ? 'brightgreen' : percent >= 60 ? 'yellow' : 'red';
           fs.writeFileSync('site/coverage-replay.json', JSON.stringify({schemaVersion: 1, label: 'replay coverage', message: `${percent}%`, color}) + '\n');
+          const combined = Number(process.argv[3]);
+          fs.writeFileSync('site/coverage-combined.json', JSON.stringify({schemaVersion: 1, label: 'combined coverage', message: `${combined}%`, color: 'brightgreen'}) + '\n');
           JS
       - name: Upload Pages artifact
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'

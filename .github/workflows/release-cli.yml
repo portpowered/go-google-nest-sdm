@@ -52,4 +52,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
-        run: gh release create "$TAG" --verify-tag --generate-notes
+        run: gh release create "$TAG" --verify-tag --latest=false --notes-file .github/release-notes-cli.md
