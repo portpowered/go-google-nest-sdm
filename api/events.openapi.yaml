@@ -86,7 +86,33 @@
             }
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "example": {
+          "eventId": "envelope-event-ThermostatTraitUpdate",
+          "timestamp": "2026-01-01T12:00:00Z",
+          "userId": "synthetic-user",
+          "resourceUpdate": {
+            "name": "enterprises/example-enterprise/devices/example-device",
+            "traits": {
+              "sdm.devices.traits.ThermostatMode": {
+                "mode": "HEAT",
+                "availableModes": [
+                  "HEAT",
+                  "COOL",
+                  "HEATCOOL",
+                  "OFF"
+                ]
+              },
+              "sdm.devices.traits.Temperature": {
+                "ambientTemperatureCelsius": 21.5
+              },
+              "sdm.devices.traits.ThermostatTemperatureSetpoint": {
+                "heatCelsius": 20,
+                "coolCelsius": 25
+              }
+            }
+          }
+        }
       },
       "ResourceUpdate": {
         "title": "ResourceUpdate",
@@ -107,7 +133,28 @@
             "$ref": "#/components/schemas/CameraEvents"
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "example": {
+          "name": "enterprises/example-enterprise/devices/example-device",
+          "traits": {
+            "sdm.devices.traits.ThermostatMode": {
+              "mode": "HEAT",
+              "availableModes": [
+                "HEAT",
+                "COOL",
+                "HEATCOOL",
+                "OFF"
+              ]
+            },
+            "sdm.devices.traits.Temperature": {
+              "ambientTemperatureCelsius": 21.5
+            },
+            "sdm.devices.traits.ThermostatTemperatureSetpoint": {
+              "heatCelsius": 20,
+              "coolCelsius": 25
+            }
+          }
+        }
       },
       "ResourceRelation": {
         "title": "ResourceRelation",
@@ -130,7 +177,12 @@
             "minLength": 1
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "example": {
+          "type": "CREATED",
+          "subject": "enterprises/example-enterprise/structures/example-structure",
+          "object": "enterprises/example-enterprise/devices/example-device"
+        }
       },
       "RelationType": {
         "title": "RelationType",
@@ -175,7 +227,13 @@
             "$ref": "#/components/schemas/DoorbellChimeEvent"
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "example": {
+          "sdm.devices.events.CameraMotion.Motion": {
+            "eventId": "camera-image-event-example",
+            "eventSessionId": "camera-session-example"
+          }
+        }
       },
       "CameraMotionEvent": {
         "title": "CameraMotionEvent",
@@ -189,7 +247,11 @@
             "$ref": "#/components/schemas/EventSessionID"
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "example": {
+          "eventId": "camera-image-event-example",
+          "eventSessionId": "camera-session-example"
+        }
       },
       "CameraPersonEvent": {
         "title": "CameraPersonEvent",
@@ -203,7 +265,11 @@
             "$ref": "#/components/schemas/EventSessionID"
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "example": {
+          "eventId": "camera-image-event-example",
+          "eventSessionId": "camera-session-example"
+        }
       },
       "CameraSoundEvent": {
         "title": "CameraSoundEvent",
@@ -217,7 +283,11 @@
             "$ref": "#/components/schemas/EventSessionID"
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "example": {
+          "eventId": "camera-image-event-example",
+          "eventSessionId": "camera-session-example"
+        }
       },
       "DoorbellChimeEvent": {
         "title": "DoorbellChimeEvent",
@@ -231,7 +301,11 @@
             "$ref": "#/components/schemas/EventSessionID"
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "example": {
+          "eventId": "camera-image-event-example",
+          "eventSessionId": "camera-session-example"
+        }
       },
       "CameraClipPreviewEvent": {
         "title": "CameraClipPreviewEvent",
@@ -251,7 +325,11 @@
             "pattern": "^https://"
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "example": {
+          "eventSessionId": "camera-session-example",
+          "previewUrl": "https://media.example.invalid/clip.mp4"
+        }
       }
     }
   }

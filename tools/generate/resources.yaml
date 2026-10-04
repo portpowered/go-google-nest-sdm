@@ -6,6 +6,7 @@ output-options:
   user-templates:
     typedef.tmpl: tools/generate/typedef.tmpl
     imports.tmpl: tools/generate/imports.tmpl
+    union.tmpl: tools/generate/union.tmpl
 import-mapping:
   ./traits.openapi.yaml: '-'
   ./commands.openapi.yaml: '-'

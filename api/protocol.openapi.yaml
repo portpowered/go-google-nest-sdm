@@ -333,6 +333,114 @@
             "enum": [
               "access_denied"
             ]
+          },
+          "PCMBaseURL": {
+            "type": "string",
+            "enum": [
+              "https://nestservices.google.com"
+            ]
+          },
+          "QueryParamClientID": {
+            "type": "string",
+            "enum": [
+              "client_id"
+            ]
+          },
+          "QueryParamRedirectURI": {
+            "type": "string",
+            "enum": [
+              "redirect_uri"
+            ]
+          },
+          "QueryParamResponseType": {
+            "type": "string",
+            "enum": [
+              "response_type"
+            ]
+          },
+          "QueryParamScope": {
+            "type": "string",
+            "enum": [
+              "scope"
+            ]
+          },
+          "QueryParamAccessType": {
+            "type": "string",
+            "enum": [
+              "access_type"
+            ]
+          },
+          "QueryParamPrompt": {
+            "type": "string",
+            "enum": [
+              "prompt"
+            ]
+          },
+          "QueryParamState": {
+            "type": "string",
+            "enum": [
+              "state"
+            ]
+          },
+          "QueryParamCodeChallenge": {
+            "type": "string",
+            "enum": [
+              "code_challenge"
+            ]
+          },
+          "QueryParamCodeChallengeMethod": {
+            "type": "string",
+            "enum": [
+              "code_challenge_method"
+            ]
+          },
+          "QueryParamCode": {
+            "type": "string",
+            "enum": [
+              "code"
+            ]
+          },
+          "QueryParamError": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "QueryParamErrorDescription": {
+            "type": "string",
+            "enum": [
+              "error_description"
+            ]
+          },
+          "OAuthResponseTypeCode": {
+            "type": "string",
+            "enum": [
+              "code"
+            ]
+          },
+          "OAuthScopeSDM": {
+            "type": "string",
+            "enum": [
+              "https://www.googleapis.com/auth/sdm.service"
+            ]
+          },
+          "OAuthAccessTypeOffline": {
+            "type": "string",
+            "enum": [
+              "offline"
+            ]
+          },
+          "OAuthPromptConsent": {
+            "type": "string",
+            "enum": [
+              "consent"
+            ]
+          },
+          "OAuthPKCES256": {
+            "type": "string",
+            "enum": [
+              "S256"
+            ]
           }
         },
         "additionalProperties": false

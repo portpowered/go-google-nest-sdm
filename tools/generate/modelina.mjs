@@ -8,11 +8,23 @@ import { parse } from 'yaml';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const document = parse(await readFile(resolve(root, 'api/asyncapi.yaml'), 'utf8'));
 const schemas = structuredClone(document.components.schemas);
+// OpenAPI 3.0 uses one schema example; the AsyncAPI message retains the complete
+// named example catalog. Keep that dialect conversion in the generated view.
+function openapiProjection(value) {
+  if (Array.isArray(value)) return value.map(openapiProjection);
+  if (!value || typeof value !== 'object') return value;
+  const result = Object.fromEntries(Object.entries(value).map(([key, child]) => [key, openapiProjection(child)]));
+  if (Array.isArray(result.examples)) {
+    result.example = result.examples[0];
+    delete result.examples;
+  }
+  return result;
+}
 // A generated OpenAPI view lets public operation schemas reference event types
 // without teaching the REST generator the AsyncAPI document dialect.
 await writeFile(resolve(root, 'api/events.openapi.yaml'), JSON.stringify({
   openapi: '3.0.3', info: { title: 'Generated SDM event projection', version: document.info.version },
-  paths: {}, components: { schemas },
+  paths: {}, components: { schemas: openapiProjection(schemas) },
 }, null, 2) + '\n');
 // Modelina consumes a Draft 7 schema projection of the signaling catalog.
 // Traits is generated separately by oapi-codegen from the canonical trait catalog.

@@ -1003,6 +1003,73 @@
         "required": [
           "event"
         ]
+      },
+      "OpenAuthorizationSessionRequest": {
+        "type": "object",
+        "description": "Account linking through Device Access Partner Connections Manager. The caller owns the HTTP callback endpoint and browser. Register the exact redirect URI in the OAuth client.",
+        "additionalProperties": false,
+        "required": [
+          "projectId",
+          "clientId",
+          "clientSecret",
+          "redirectUri"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Device Access project ID, not the Google Cloud project ID."
+          },
+          "clientId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "OAuth client ID associated with the Device Access project."
+          },
+          "clientSecret": {
+            "type": "string",
+            "minLength": 1,
+            "description": "OAuth client secret; never print or persist it implicitly."
+          },
+          "redirectUri": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Exact registered HTTPS callback URI, or HTTP loopback URI for a local application."
+          }
+        }
+      },
+      "CompleteAuthorizationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "callbackURL"
+        ],
+        "properties": {
+          "callbackURL": {
+            "type": "string",
+            "format": "uri",
+            "description": "Absolute callback URI constructed using the registered redirect origin and path, with the received query string. Never trust an arbitrary incoming Host header."
+          }
+        }
+      },
+      "CompleteAuthorizationResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "credentials",
+          "devices"
+        ],
+        "properties": {
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          },
+          "devices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Device"
+            },
+            "description": "Initial devices.list result that completes account authorization and enables events."
+          }
+        }
       }
     }
   }

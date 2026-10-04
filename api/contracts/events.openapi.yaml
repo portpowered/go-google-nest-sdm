@@ -6,6 +6,10 @@
       "CameraClipPreviewEvent": {
         "additionalProperties": true,
         "description": "Clip preview URL associated with related events by eventSessionId. No inner eventId is required.",
+        "example": {
+          "eventSessionId": "camera-session-example",
+          "previewUrl": "https://media.example.invalid/clip.mp4"
+        },
         "properties": {
           "eventSessionId": {
             "$ref": "#/components/schemas/EventSessionID"
@@ -32,6 +36,12 @@
       "CameraEvents": {
         "additionalProperties": true,
         "description": "Fully qualified event keys; future event payloads are retained.",
+        "example": {
+          "sdm.devices.events.CameraMotion.Motion": {
+            "eventId": "camera-image-event-example",
+            "eventSessionId": "camera-session-example"
+          }
+        },
         "properties": {
           "sdm.devices.events.CameraClipPreview.ClipPreview": {
             "$ref": "#/components/schemas/CameraClipPreviewEvent"
@@ -55,6 +65,10 @@
       "CameraMotionEvent": {
         "additionalProperties": true,
         "description": "Motion detected. Event session and image event identifiers depend on the device family.",
+        "example": {
+          "eventId": "camera-image-event-example",
+          "eventSessionId": "camera-session-example"
+        },
         "properties": {
           "eventId": {
             "$ref": "#/components/schemas/CameraEventID"
@@ -69,6 +83,10 @@
       "CameraPersonEvent": {
         "additionalProperties": true,
         "description": "Person detected. Event session and image event identifiers depend on the device family.",
+        "example": {
+          "eventId": "camera-image-event-example",
+          "eventSessionId": "camera-session-example"
+        },
         "properties": {
           "eventId": {
             "$ref": "#/components/schemas/CameraEventID"
@@ -83,6 +101,10 @@
       "CameraSoundEvent": {
         "additionalProperties": true,
         "description": "Sound detected by the camera.",
+        "example": {
+          "eventId": "camera-image-event-example",
+          "eventSessionId": "camera-session-example"
+        },
         "properties": {
           "eventId": {
             "$ref": "#/components/schemas/CameraEventID"
@@ -97,6 +119,10 @@
       "DoorbellChimeEvent": {
         "additionalProperties": true,
         "description": "Doorbell pressed. Session and image identifiers depend on the device family.",
+        "example": {
+          "eventId": "camera-image-event-example",
+          "eventSessionId": "camera-session-example"
+        },
         "properties": {
           "eventId": {
             "$ref": "#/components/schemas/CameraEventID"
@@ -129,6 +155,32 @@
           }
         ],
         "description": "SDM payload after decoding Pub/Sub message data. Outer event IDs differ from camera image event IDs.",
+        "example": {
+          "eventId": "envelope-event-ThermostatTraitUpdate",
+          "resourceUpdate": {
+            "name": "enterprises/example-enterprise/devices/example-device",
+            "traits": {
+              "sdm.devices.traits.Temperature": {
+                "ambientTemperatureCelsius": 21.5
+              },
+              "sdm.devices.traits.ThermostatMode": {
+                "availableModes": [
+                  "HEAT",
+                  "COOL",
+                  "HEATCOOL",
+                  "OFF"
+                ],
+                "mode": "HEAT"
+              },
+              "sdm.devices.traits.ThermostatTemperatureSetpoint": {
+                "coolCelsius": 25,
+                "heatCelsius": 20
+              }
+            }
+          },
+          "timestamp": "2026-01-01T12:00:00Z",
+          "userId": "synthetic-user"
+        },
         "properties": {
           "eventId": {
             "$ref": "#/components/schemas/EnvelopeEventID"
@@ -208,6 +260,11 @@
       "ResourceRelation": {
         "additionalProperties": true,
         "description": "A relation change. Subject may be empty when structure access is unavailable.",
+        "example": {
+          "object": "enterprises/example-enterprise/devices/example-device",
+          "subject": "enterprises/example-enterprise/structures/example-structure",
+          "type": "CREATED"
+        },
         "properties": {
           "object": {
             "minLength": 1,
@@ -231,6 +288,27 @@
       "ResourceUpdate": {
         "additionalProperties": true,
         "description": "Typed trait changes and device action events for a resource.",
+        "example": {
+          "name": "enterprises/example-enterprise/devices/example-device",
+          "traits": {
+            "sdm.devices.traits.Temperature": {
+              "ambientTemperatureCelsius": 21.5
+            },
+            "sdm.devices.traits.ThermostatMode": {
+              "availableModes": [
+                "HEAT",
+                "COOL",
+                "HEATCOOL",
+                "OFF"
+              ],
+              "mode": "HEAT"
+            },
+            "sdm.devices.traits.ThermostatTemperatureSetpoint": {
+              "coolCelsius": 25,
+              "heatCelsius": 20
+            }
+          }
+        },
         "properties": {
           "events": {
             "$ref": "#/components/schemas/CameraEvents"

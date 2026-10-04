@@ -5,6 +5,11 @@
     "schemas": {
       "AcknowledgeRequest": {
         "additionalProperties": false,
+        "example": {
+          "ackIds": [
+            "synthetic-ack-id"
+          ]
+        },
         "properties": {
           "ackIds": {
             "items": {
@@ -22,11 +27,18 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
+        "example": {},
         "properties": {},
         "type": "object"
       },
       "ModifyAckDeadlineRequest": {
         "additionalProperties": false,
+        "example": {
+          "ackDeadlineSeconds": 60,
+          "ackIds": [
+            "synthetic-ack-id"
+          ]
+        },
         "properties": {
           "ackDeadlineSeconds": {
             "description": "Seconds from 0 through 600; zero makes the message available for immediate redelivery.",
@@ -50,6 +62,14 @@
       "PubSubMessage": {
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "attributes": {
+            "example": "synthetic"
+          },
+          "data": "eyJldmVudElkIjoiZW52ZWxvcGUtZXZlbnQtZXhhbXBsZSIsInRpbWVzdGFtcCI6IjIwMjYtMDEtMDFUMTI6MDA6MDBaIiwidXNlcklkIjoic3ludGhldGljLXVzZXIiLCJyZXNvdXJjZVVwZGF0ZSI6eyJuYW1lIjoiZW50ZXJwcmlzZXMvZXhhbXBsZS1lbnRlcnByaXNlL2RldmljZXMvZXhhbXBsZS10aGVybW9zdGF0IiwidHJhaXRzIjp7InNkbS5kZXZpY2VzLnRyYWl0cy5UZW1wZXJhdHVyZSI6eyJhbWJpZW50VGVtcGVyYXR1cmVDZWxzaXVzIjoyMS41fX19fQ==",
+          "messageId": "synthetic-message-id",
+          "publishTime": "2026-01-01T12:00:01Z"
         },
         "properties": {
           "attributes": {
@@ -77,6 +97,9 @@
       },
       "PullRequest": {
         "additionalProperties": false,
+        "example": {
+          "maxMessages": 10
+        },
         "properties": {
           "maxMessages": {
             "minimum": 1,
@@ -96,6 +119,22 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
+        "example": {
+          "receivedMessages": [
+            {
+              "ackId": "synthetic-ack-id",
+              "deliveryAttempt": 1,
+              "message": {
+                "attributes": {
+                  "example": "synthetic"
+                },
+                "data": "eyJldmVudElkIjoiZW52ZWxvcGUtZXZlbnQtZXhhbXBsZSIsInRpbWVzdGFtcCI6IjIwMjYtMDEtMDFUMTI6MDA6MDBaIiwidXNlcklkIjoic3ludGhldGljLXVzZXIiLCJyZXNvdXJjZVVwZGF0ZSI6eyJuYW1lIjoiZW50ZXJwcmlzZXMvZXhhbXBsZS1lbnRlcnByaXNlL2RldmljZXMvZXhhbXBsZS10aGVybW9zdGF0IiwidHJhaXRzIjp7InNkbS5kZXZpY2VzLnRyYWl0cy5UZW1wZXJhdHVyZSI6eyJhbWJpZW50VGVtcGVyYXR1cmVDZWxzaXVzIjoyMS41fX19fQ==",
+                "messageId": "synthetic-message-id",
+                "publishTime": "2026-01-01T12:00:01Z"
+              }
+            }
+          ]
+        },
         "properties": {
           "receivedMessages": {
             "items": {
@@ -109,6 +148,18 @@
       "PushEnvelope": {
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "deliveryAttempt": 1,
+          "message": {
+            "attributes": {
+              "example": "synthetic"
+            },
+            "data": "eyJldmVudElkIjoiZW52ZWxvcGUtZXZlbnQtZXhhbXBsZSIsInRpbWVzdGFtcCI6IjIwMjYtMDEtMDFUMTI6MDA6MDBaIiwidXNlcklkIjoic3ludGhldGljLXVzZXIiLCJyZXNvdXJjZVVwZGF0ZSI6eyJuYW1lIjoiZW50ZXJwcmlzZXMvZXhhbXBsZS1lbnRlcnByaXNlL2RldmljZXMvZXhhbXBsZS10aGVybW9zdGF0IiwidHJhaXRzIjp7InNkbS5kZXZpY2VzLnRyYWl0cy5UZW1wZXJhdHVyZSI6eyJhbWJpZW50VGVtcGVyYXR1cmVDZWxzaXVzIjoyMS41fX19fQ==",
+            "messageId": "synthetic-message-id",
+            "publishTime": "2026-01-01T12:00:01Z"
+          },
+          "subscription": "projects/example-cloud-project/subscriptions/example-subscription"
         },
         "properties": {
           "deliveryAttempt": {
@@ -130,6 +181,18 @@
       "ReceivedMessage": {
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "ackId": "synthetic-ack-id",
+          "deliveryAttempt": 1,
+          "message": {
+            "attributes": {
+              "example": "synthetic"
+            },
+            "data": "eyJldmVudElkIjoiZW52ZWxvcGUtZXZlbnQtZXhhbXBsZSIsInRpbWVzdGFtcCI6IjIwMjYtMDEtMDFUMTI6MDA6MDBaIiwidXNlcklkIjoic3ludGhldGljLXVzZXIiLCJyZXNvdXJjZVVwZGF0ZSI6eyJuYW1lIjoiZW50ZXJwcmlzZXMvZXhhbXBsZS1lbnRlcnByaXNlL2RldmljZXMvZXhhbXBsZS10aGVybW9zdGF0IiwidHJhaXRzIjp7InNkbS5kZXZpY2VzLnRyYWl0cy5UZW1wZXJhdHVyZSI6eyJhbWJpZW50VGVtcGVyYXR1cmVDZWxzaXVzIjoyMS41fX19fQ==",
+            "messageId": "synthetic-message-id",
+            "publishTime": "2026-01-01T12:00:01Z"
+          }
         },
         "properties": {
           "ackId": {

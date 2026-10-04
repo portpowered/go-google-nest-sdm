@@ -21,14 +21,14 @@ channels:
         description: Topic configured in Device Access.
     messages:
       event:
-        $ref: '#/components/messages/SDMEvent'
+        $ref: "#/components/messages/SDMEvent"
 operations:
   receiveEvents:
     action: receive
     tags:
       - name: Events
     channel:
-      $ref: '#/channels/sdmEvents'
+      $ref: "#/channels/sdmEvents"
     summary: Receive changes to authorized devices and structures.
 components:
   messages:
@@ -36,7 +36,151 @@ components:
       name: SDMEvent
       title: SDM resource event
       payload:
-        $ref: '#/components/schemas/EventEnvelope'
+        $ref: "#/components/schemas/EventEnvelope"
+      examples:
+        - name: ThermostatTraitUpdate
+          summary: ThermostatTraitUpdate
+          payload: &a1
+            eventId: envelope-event-ThermostatTraitUpdate
+            timestamp: 2026-01-01T12:00:00Z
+            userId: synthetic-user
+            resourceUpdate: &a11
+              name: enterprises/example-enterprise/devices/example-device
+              traits:
+                sdm.devices.traits.ThermostatMode:
+                  mode: HEAT
+                  availableModes:
+                    - HEAT
+                    - COOL
+                    - HEATCOOL
+                    - OFF
+                sdm.devices.traits.Temperature:
+                  ambientTemperatureCelsius: 21.5
+                sdm.devices.traits.ThermostatTemperatureSetpoint:
+                  heatCelsius: 20
+                  coolCelsius: 25
+        - name: ResourceRelationCREATED
+          summary: ResourceRelationCREATED
+          payload: &a2
+            eventId: envelope-event-ResourceRelationCREATED
+            timestamp: 2026-01-01T12:00:00Z
+            userId: synthetic-user
+            relationUpdate: &a13
+              type: CREATED
+              subject: enterprises/example-enterprise/structures/example-structure
+              object: enterprises/example-enterprise/devices/example-device
+        - name: ResourceRelationUPDATED
+          summary: ResourceRelationUPDATED
+          payload: &a3
+            eventId: envelope-event-ResourceRelationUPDATED
+            timestamp: 2026-01-01T12:00:00Z
+            userId: synthetic-user
+            relationUpdate: &a14
+              type: UPDATED
+              subject: enterprises/example-enterprise/structures/example-structure
+              object: enterprises/example-enterprise/devices/example-device
+        - name: ResourceRelationDELETED
+          summary: ResourceRelationDELETED
+          payload: &a4
+            eventId: envelope-event-ResourceRelationDELETED
+            timestamp: 2026-01-01T12:00:00Z
+            userId: synthetic-user
+            relationUpdate: &a15
+              type: DELETED
+              subject: enterprises/example-enterprise/structures/example-structure
+              object: enterprises/example-enterprise/devices/example-device
+        - name: ResourceRelationWithoutStructureAccess
+          summary: ResourceRelationWithoutStructureAccess
+          payload: &a5
+            eventId: envelope-event-ResourceRelationWithoutStructureAccess
+            timestamp: 2026-01-01T12:00:00Z
+            userId: synthetic-user
+            relationUpdate: &a16
+              type: DELETED
+              subject: ""
+              object: enterprises/example-enterprise/devices/example-device
+        - name: CameraMotionMotion
+          summary: CameraMotionMotion
+          payload: &a6
+            eventId: envelope-event-CameraMotionMotion
+            timestamp: 2026-01-01T12:00:00Z
+            userId: synthetic-user
+            resourceUpdate: &a12
+              name: enterprises/example-enterprise/devices/example-device
+              events: &a17
+                sdm.devices.events.CameraMotion.Motion: &a22
+                  eventId: camera-image-event-example
+                  eventSessionId: camera-session-example
+            eventThreadId: thread-example
+            eventThreadState: STARTED
+            resourceGroup:
+              - enterprises/example-enterprise/devices/example-device
+        - name: CameraPersonPerson
+          summary: CameraPersonPerson
+          payload: &a7
+            eventId: envelope-event-CameraPersonPerson
+            timestamp: 2026-01-01T12:00:00Z
+            userId: synthetic-user
+            resourceUpdate:
+              name: enterprises/example-enterprise/devices/example-device
+              events: &a18
+                sdm.devices.events.CameraPerson.Person: &a23
+                  eventId: camera-image-event-example
+                  eventSessionId: camera-session-example
+            eventThreadId: thread-example
+            eventThreadState: STARTED
+            resourceGroup:
+              - enterprises/example-enterprise/devices/example-device
+        - name: CameraSoundSound
+          summary: CameraSoundSound
+          payload: &a8
+            eventId: envelope-event-CameraSoundSound
+            timestamp: 2026-01-01T12:00:00Z
+            userId: synthetic-user
+            resourceUpdate:
+              name: enterprises/example-enterprise/devices/example-device
+              events: &a19
+                sdm.devices.events.CameraSound.Sound: &a24
+                  eventId: camera-image-event-example
+                  eventSessionId: camera-session-example
+            eventThreadId: thread-example
+            eventThreadState: STARTED
+            resourceGroup:
+              - enterprises/example-enterprise/devices/example-device
+        - name: DoorbellChimeChime
+          summary: DoorbellChimeChime
+          payload: &a9
+            eventId: envelope-event-DoorbellChimeChime
+            timestamp: 2026-01-01T12:00:00Z
+            userId: synthetic-user
+            resourceUpdate:
+              name: enterprises/example-enterprise/devices/example-device
+              events: &a20
+                sdm.devices.events.DoorbellChime.Chime: &a25
+                  eventId: camera-image-event-example
+                  eventSessionId: camera-session-example
+            eventThreadId: thread-example
+            eventThreadState: STARTED
+            resourceGroup:
+              - enterprises/example-enterprise/devices/example-device
+        - name: CameraClipPreviewClipPreview
+          summary: CameraClipPreviewClipPreview
+          payload: &a10
+            eventId: envelope-event-CameraClipPreviewClipPreview
+            timestamp: 2026-01-01T12:00:00Z
+            userId: synthetic-user
+            resourceUpdate:
+              name: enterprises/example-enterprise/devices/example-device
+              events: &a21
+                sdm.devices.events.CameraClipPreview.ClipPreview: &a26
+                  eventSessionId: camera-session-example
+                  previewUrl: https://media.example.invalid/clip.mp4
+            eventThreadId: thread-example
+            eventThreadState: UPDATED
+            resourceGroup:
+              - enterprises/example-enterprise/devices/example-device
+      summary: Decoded resource updates, relation changes and camera notifications.
+      description: Select a named message example to see a complete decoded event. These examples are synthetic illustrations using reserved identifiers and media hosts. Pub/Sub message.data contains the base64-encoded UTF-8 JSON envelope; it is not the envelope itself.
   schemas:
     EnvelopeEventID:
       title: EnvelopeEventID
@@ -62,13 +206,18 @@ components:
       title: EventEnvelope
       type: object
       description: SDM payload after decoding Pub/Sub message data. Outer event IDs differ from camera image event IDs.
-      required: [eventId, timestamp, userId]
+      required:
+        - eventId
+        - timestamp
+        - userId
       anyOf:
-        - required: [resourceUpdate]
-        - required: [relationUpdate]
+        - required:
+            - resourceUpdate
+        - required:
+            - relationUpdate
       properties:
         eventId:
-          $ref: '#/components/schemas/EnvelopeEventID'
+          $ref: "#/components/schemas/EnvelopeEventID"
         timestamp:
           type: string
           format: date-time
@@ -78,125 +227,172 @@ components:
           minLength: 1
           description: Obfuscated user identifier.
         resourceUpdate:
-          $ref: '#/components/schemas/ResourceUpdate'
+          $ref: "#/components/schemas/ResourceUpdate"
         relationUpdate:
-          $ref: '#/components/schemas/ResourceRelation'
+          $ref: "#/components/schemas/ResourceRelation"
         eventThreadId:
-          $ref: '#/components/schemas/EventThreadID'
+          $ref: "#/components/schemas/EventThreadID"
         eventThreadState:
-          $ref: '#/components/schemas/EventThreadState'
+          $ref: "#/components/schemas/EventThreadState"
         resourceGroup:
           type: array
           description: Resource names that may have related updates.
           items:
             type: string
       additionalProperties: true
+      examples:
+        - *a1
+        - *a2
+        - *a3
+        - *a4
+        - *a5
+        - *a6
+        - *a7
+        - *a8
+        - *a9
+        - *a10
     ResourceUpdate:
       title: ResourceUpdate
       type: object
       description: Typed trait changes and device action events for a resource.
-      required: [name]
+      required:
+        - name
       properties:
         name:
           type: string
           minLength: 1
         traits:
-          $ref: './traits.openapi.yaml#/components/schemas/Traits'
+          $ref: ./traits.openapi.yaml#/components/schemas/Traits
         events:
-          $ref: '#/components/schemas/CameraEvents'
+          $ref: "#/components/schemas/CameraEvents"
       additionalProperties: true
+      examples:
+        - *a11
+        - *a12
     ResourceRelation:
       title: ResourceRelation
       type: object
       description: A relation change. Subject may be empty when structure access is unavailable.
-      required: [type, subject, object]
+      required:
+        - type
+        - subject
+        - object
       properties:
         type:
-          $ref: '#/components/schemas/RelationType'
+          $ref: "#/components/schemas/RelationType"
         subject:
           type: string
         object:
           type: string
           minLength: 1
       additionalProperties: true
+      examples:
+        - *a13
+        - *a14
+        - *a15
+        - *a16
     RelationType:
       title: RelationType
       type: string
       description: Extensible relation state; known values are CREATED, UPDATED, DELETED.
-      pattern: '^[A-Z][A-Z0-9_]*$'
-      x-known-values: [CREATED, UPDATED, DELETED]
+      pattern: ^[A-Z][A-Z0-9_]*$
+      x-known-values:
+        - CREATED
+        - UPDATED
+        - DELETED
     EventThreadState:
       title: EventThreadState
       type: string
       description: Extensible thread state; known values are STARTED, UPDATED, ENDED.
-      pattern: '^[A-Z][A-Z0-9_]*$'
-      x-known-values: [STARTED, UPDATED, ENDED]
+      pattern: ^[A-Z][A-Z0-9_]*$
+      x-known-values:
+        - STARTED
+        - UPDATED
+        - ENDED
     CameraEvents:
       title: CameraEvents
       type: object
       description: Fully qualified event keys; future event payloads are retained.
       properties:
         sdm.devices.events.CameraMotion.Motion:
-          $ref: '#/components/schemas/CameraMotionEvent'
+          $ref: "#/components/schemas/CameraMotionEvent"
         sdm.devices.events.CameraPerson.Person:
-          $ref: '#/components/schemas/CameraPersonEvent'
+          $ref: "#/components/schemas/CameraPersonEvent"
         sdm.devices.events.CameraSound.Sound:
-          $ref: '#/components/schemas/CameraSoundEvent'
+          $ref: "#/components/schemas/CameraSoundEvent"
         sdm.devices.events.CameraClipPreview.ClipPreview:
-          $ref: '#/components/schemas/CameraClipPreviewEvent'
+          $ref: "#/components/schemas/CameraClipPreviewEvent"
         sdm.devices.events.DoorbellChime.Chime:
-          $ref: '#/components/schemas/DoorbellChimeEvent'
+          $ref: "#/components/schemas/DoorbellChimeEvent"
       additionalProperties: true
+      examples:
+        - *a17
+        - *a18
+        - *a19
+        - *a20
+        - *a21
     CameraMotionEvent:
       title: CameraMotionEvent
       type: object
       description: Motion detected. Event session and image event identifiers depend on the device family.
       properties:
         eventId:
-          $ref: '#/components/schemas/CameraEventID'
+          $ref: "#/components/schemas/CameraEventID"
         eventSessionId:
-          $ref: '#/components/schemas/EventSessionID'
+          $ref: "#/components/schemas/EventSessionID"
       additionalProperties: true
+      examples:
+        - *a22
     CameraPersonEvent:
       title: CameraPersonEvent
       type: object
       description: Person detected. Event session and image event identifiers depend on the device family.
       properties:
         eventId:
-          $ref: '#/components/schemas/CameraEventID'
+          $ref: "#/components/schemas/CameraEventID"
         eventSessionId:
-          $ref: '#/components/schemas/EventSessionID'
+          $ref: "#/components/schemas/EventSessionID"
       additionalProperties: true
+      examples:
+        - *a23
     CameraSoundEvent:
       title: CameraSoundEvent
       type: object
       description: Sound detected by the camera.
       properties:
         eventId:
-          $ref: '#/components/schemas/CameraEventID'
+          $ref: "#/components/schemas/CameraEventID"
         eventSessionId:
-          $ref: '#/components/schemas/EventSessionID'
+          $ref: "#/components/schemas/EventSessionID"
       additionalProperties: true
+      examples:
+        - *a24
     DoorbellChimeEvent:
       title: DoorbellChimeEvent
       type: object
       description: Doorbell pressed. Session and image identifiers depend on the device family.
       properties:
         eventId:
-          $ref: '#/components/schemas/CameraEventID'
+          $ref: "#/components/schemas/CameraEventID"
         eventSessionId:
-          $ref: '#/components/schemas/EventSessionID'
+          $ref: "#/components/schemas/EventSessionID"
       additionalProperties: true
+      examples:
+        - *a25
     CameraClipPreviewEvent:
       title: CameraClipPreviewEvent
       type: object
       description: Clip preview URL associated with related events by eventSessionId. No inner eventId is required.
-      required: [eventSessionId, previewUrl]
+      required:
+        - eventSessionId
+        - previewUrl
       properties:
         eventSessionId:
-          $ref: '#/components/schemas/EventSessionID'
+          $ref: "#/components/schemas/EventSessionID"
         previewUrl:
           type: string
           format: uri
-          pattern: '^https://'
+          pattern: ^https://
       additionalProperties: true
+      examples:
+        - *a26

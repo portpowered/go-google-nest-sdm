@@ -46,6 +46,40 @@
         ],
         "type": "object"
       },
+      "CompleteAuthorizationRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "callbackURL": {
+            "description": "Absolute callback URI constructed using the registered redirect origin and path, with the received query string. Never trust an arbitrary incoming Host header.",
+            "format": "uri",
+            "type": "string"
+          }
+        },
+        "required": [
+          "callbackURL"
+        ],
+        "type": "object"
+      },
+      "CompleteAuthorizationResult": {
+        "additionalProperties": false,
+        "properties": {
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          },
+          "devices": {
+            "description": "Initial devices.list result that completes account authorization and enables events.",
+            "items": {
+              "$ref": "#/components/schemas/Device"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "credentials",
+          "devices"
+        ],
+        "type": "object"
+      },
       "Credentials": {
         "additionalProperties": false,
         "properties": {
@@ -575,6 +609,39 @@
         },
         "required": [
           "structures"
+        ],
+        "type": "object"
+      },
+      "OpenAuthorizationSessionRequest": {
+        "additionalProperties": false,
+        "description": "Account linking through Device Access Partner Connections Manager. The caller owns the HTTP callback endpoint and browser. Register the exact redirect URI in the OAuth client.",
+        "properties": {
+          "clientId": {
+            "description": "OAuth client ID associated with the Device Access project.",
+            "minLength": 1,
+            "type": "string"
+          },
+          "clientSecret": {
+            "description": "OAuth client secret; never print or persist it implicitly.",
+            "minLength": 1,
+            "type": "string"
+          },
+          "projectId": {
+            "description": "Device Access project ID, not the Google Cloud project ID.",
+            "minLength": 1,
+            "type": "string"
+          },
+          "redirectUri": {
+            "description": "Exact registered HTTPS callback URI, or HTTP loopback URI for a local application.",
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId",
+          "clientId",
+          "clientSecret",
+          "redirectUri"
         ],
         "type": "object"
       },

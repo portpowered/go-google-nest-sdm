@@ -192,6 +192,12 @@
             ],
             "type": "string"
           },
+          "OAuthAccessTypeOffline": {
+            "enum": [
+              "offline"
+            ],
+            "type": "string"
+          },
           "OAuthErrorAccessDenied": {
             "enum": [
               "access_denied"
@@ -228,6 +234,36 @@
             ],
             "type": "string"
           },
+          "OAuthPKCES256": {
+            "enum": [
+              "S256"
+            ],
+            "type": "string"
+          },
+          "OAuthPromptConsent": {
+            "enum": [
+              "consent"
+            ],
+            "type": "string"
+          },
+          "OAuthResponseTypeCode": {
+            "enum": [
+              "code"
+            ],
+            "type": "string"
+          },
+          "OAuthScopeSDM": {
+            "enum": [
+              "https://www.googleapis.com/auth/sdm.service"
+            ],
+            "type": "string"
+          },
+          "PCMBaseURL": {
+            "enum": [
+              "https://nestservices.google.com"
+            ],
+            "type": "string"
+          },
           "QueryFilter": {
             "enum": [
               "filter"
@@ -237,6 +273,78 @@
           "QueryHeight": {
             "enum": [
               "height"
+            ],
+            "type": "string"
+          },
+          "QueryParamAccessType": {
+            "enum": [
+              "access_type"
+            ],
+            "type": "string"
+          },
+          "QueryParamClientID": {
+            "enum": [
+              "client_id"
+            ],
+            "type": "string"
+          },
+          "QueryParamCode": {
+            "enum": [
+              "code"
+            ],
+            "type": "string"
+          },
+          "QueryParamCodeChallenge": {
+            "enum": [
+              "code_challenge"
+            ],
+            "type": "string"
+          },
+          "QueryParamCodeChallengeMethod": {
+            "enum": [
+              "code_challenge_method"
+            ],
+            "type": "string"
+          },
+          "QueryParamError": {
+            "enum": [
+              "error"
+            ],
+            "type": "string"
+          },
+          "QueryParamErrorDescription": {
+            "enum": [
+              "error_description"
+            ],
+            "type": "string"
+          },
+          "QueryParamPrompt": {
+            "enum": [
+              "prompt"
+            ],
+            "type": "string"
+          },
+          "QueryParamRedirectURI": {
+            "enum": [
+              "redirect_uri"
+            ],
+            "type": "string"
+          },
+          "QueryParamResponseType": {
+            "enum": [
+              "response_type"
+            ],
+            "type": "string"
+          },
+          "QueryParamScope": {
+            "enum": [
+              "scope"
+            ],
+            "type": "string"
+          },
+          "QueryParamState": {
+            "enum": [
+              "state"
             ],
             "type": "string"
           },

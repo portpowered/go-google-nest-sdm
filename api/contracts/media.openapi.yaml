@@ -4,11 +4,13 @@
   "components": {
     "schemas": {
       "MediaClipURL": {
+        "example": "https://media.example.invalid/synthetic-clip.mp4",
         "format": "uri",
         "pattern": "^https://[^/?#]+/",
         "type": "string"
       },
       "MediaImageURL": {
+        "example": "https://media.example.invalid/sdm_event_snapshot/synthetic-image?width=640",
         "format": "uri",
         "pattern": "^https://[^/?#]+/sdm_event_snapshot/[^?#]+",
         "type": "string"

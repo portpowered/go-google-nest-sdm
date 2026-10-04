@@ -76,7 +76,11 @@
         "required": [
           "timerMode"
         ],
-        "description": "Inputs for Fan.SetTimer."
+        "description": "Inputs for Fan.SetTimer.",
+        "example": {
+          "timerMode": "ON",
+          "duration": "900s"
+        }
       },
       "FanSetTimerResults": {
         "type": "object",
@@ -84,7 +88,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Acknowledgement result for Fan.SetTimer; physical action may complete later."
+        "description": "Acknowledgement result for Fan.SetTimer; physical action may complete later.",
+        "example": {}
       },
       "ThermostatEcoSetModeParams": {
         "type": "object",
@@ -109,7 +114,10 @@
         "required": [
           "mode"
         ],
-        "description": "Inputs for ThermostatEco.SetMode."
+        "description": "Inputs for ThermostatEco.SetMode.",
+        "example": {
+          "mode": "MANUAL_ECO"
+        }
       },
       "ThermostatEcoSetModeResults": {
         "type": "object",
@@ -117,7 +125,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Acknowledgement result for ThermostatEco.SetMode; physical action may complete later."
+        "description": "Acknowledgement result for ThermostatEco.SetMode; physical action may complete later.",
+        "example": {}
       },
       "ThermostatModeSetModeParams": {
         "type": "object",
@@ -144,7 +153,10 @@
         "required": [
           "mode"
         ],
-        "description": "Inputs for ThermostatMode.SetMode."
+        "description": "Inputs for ThermostatMode.SetMode.",
+        "example": {
+          "mode": "HEAT"
+        }
       },
       "ThermostatModeSetModeResults": {
         "type": "object",
@@ -152,7 +164,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Acknowledgement result for ThermostatMode.SetMode; physical action may complete later."
+        "description": "Acknowledgement result for ThermostatMode.SetMode; physical action may complete later.",
+        "example": {}
       },
       "ThermostatTemperatureSetpointSetHeatParams": {
         "type": "object",
@@ -166,7 +179,10 @@
         "required": [
           "heatCelsius"
         ],
-        "description": "Inputs for ThermostatTemperatureSetpoint.SetHeat."
+        "description": "Inputs for ThermostatTemperatureSetpoint.SetHeat.",
+        "example": {
+          "heatCelsius": 20
+        }
       },
       "ThermostatTemperatureSetpointSetHeatResults": {
         "type": "object",
@@ -174,7 +190,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Acknowledgement result for ThermostatTemperatureSetpoint.SetHeat; physical action may complete later."
+        "description": "Acknowledgement result for ThermostatTemperatureSetpoint.SetHeat; physical action may complete later.",
+        "example": {}
       },
       "ThermostatTemperatureSetpointSetCoolParams": {
         "type": "object",
@@ -188,7 +205,10 @@
         "required": [
           "coolCelsius"
         ],
-        "description": "Inputs for ThermostatTemperatureSetpoint.SetCool."
+        "description": "Inputs for ThermostatTemperatureSetpoint.SetCool.",
+        "example": {
+          "coolCelsius": 25
+        }
       },
       "ThermostatTemperatureSetpointSetCoolResults": {
         "type": "object",
@@ -196,7 +216,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Acknowledgement result for ThermostatTemperatureSetpoint.SetCool; physical action may complete later."
+        "description": "Acknowledgement result for ThermostatTemperatureSetpoint.SetCool; physical action may complete later.",
+        "example": {}
       },
       "ThermostatTemperatureSetpointSetRangeParams": {
         "type": "object",
@@ -215,7 +236,11 @@
           "heatCelsius",
           "coolCelsius"
         ],
-        "description": "Inputs for ThermostatTemperatureSetpoint.SetRange."
+        "description": "Inputs for ThermostatTemperatureSetpoint.SetRange.",
+        "example": {
+          "heatCelsius": 20,
+          "coolCelsius": 25
+        }
       },
       "ThermostatTemperatureSetpointSetRangeResults": {
         "type": "object",
@@ -223,7 +248,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Acknowledgement result for ThermostatTemperatureSetpoint.SetRange; physical action may complete later."
+        "description": "Acknowledgement result for ThermostatTemperatureSetpoint.SetRange; physical action may complete later.",
+        "example": {}
       },
       "CameraEventImageGenerateImageParams": {
         "type": "object",
@@ -236,7 +262,10 @@
         "required": [
           "eventId"
         ],
-        "description": "Inputs for CameraEventImage.GenerateImage."
+        "description": "Inputs for CameraEventImage.GenerateImage.",
+        "example": {
+          "eventId": "camera-image-event-example"
+        }
       },
       "CameraEventImageGenerateImageResults": {
         "type": "object",
@@ -257,7 +286,11 @@
           "url",
           "token"
         ],
-        "description": "Acknowledgement result for CameraEventImage.GenerateImage; physical action may complete later."
+        "description": "Acknowledgement result for CameraEventImage.GenerateImage; physical action may complete later.",
+        "example": {
+          "url": "https://media.example.invalid/image",
+          "token": "synthetic-image-token"
+        }
       },
       "CameraLiveStreamGenerateRtspStreamParams": {
         "type": "object",
@@ -265,7 +298,8 @@
         "additionalProperties": false,
         "description": "Inputs for CameraLiveStream.GenerateRtspStream.",
         "maxProperties": 0,
-        "x-go-type": "struct{}"
+        "x-go-type": "struct{}",
+        "example": {}
       },
       "CameraLiveStreamGenerateRtspStreamResults": {
         "type": "object",
@@ -293,7 +327,15 @@
           "expiresAt",
           "streamUrls"
         ],
-        "description": "Acknowledgement result for CameraLiveStream.GenerateRtspStream; physical action may complete later."
+        "description": "Acknowledgement result for CameraLiveStream.GenerateRtspStream; physical action may complete later.",
+        "example": {
+          "streamExtensionToken": "synthetic-extension-token",
+          "streamToken": "synthetic-stream-token",
+          "expiresAt": "2026-01-01T12:05:00Z",
+          "streamUrls": {
+            "rtspUrl": "rtsp://media.example.invalid/live"
+          }
+        }
       },
       "CameraLiveStreamExtendRtspStreamParams": {
         "type": "object",
@@ -306,7 +348,10 @@
         "required": [
           "streamExtensionToken"
         ],
-        "description": "Inputs for CameraLiveStream.ExtendRtspStream."
+        "description": "Inputs for CameraLiveStream.ExtendRtspStream.",
+        "example": {
+          "streamExtensionToken": "synthetic-extension-token"
+        }
       },
       "CameraLiveStreamExtendRtspStreamResults": {
         "type": "object",
@@ -330,7 +375,12 @@
           "streamToken",
           "expiresAt"
         ],
-        "description": "Acknowledgement result for CameraLiveStream.ExtendRtspStream; physical action may complete later."
+        "description": "Acknowledgement result for CameraLiveStream.ExtendRtspStream; physical action may complete later.",
+        "example": {
+          "streamExtensionToken": "synthetic-extension-token",
+          "streamToken": "synthetic-stream-token",
+          "expiresAt": "2026-01-01T12:05:00Z"
+        }
       },
       "CameraLiveStreamStopRtspStreamParams": {
         "type": "object",
@@ -343,7 +393,10 @@
         "required": [
           "streamExtensionToken"
         ],
-        "description": "Inputs for CameraLiveStream.StopRtspStream."
+        "description": "Inputs for CameraLiveStream.StopRtspStream.",
+        "example": {
+          "streamExtensionToken": "synthetic-extension-token"
+        }
       },
       "CameraLiveStreamStopRtspStreamResults": {
         "type": "object",
@@ -351,7 +404,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Acknowledgement result for CameraLiveStream.StopRtspStream; physical action may complete later."
+        "description": "Acknowledgement result for CameraLiveStream.StopRtspStream; physical action may complete later.",
+        "example": {}
       },
       "CameraLiveStreamGenerateWebRtcStreamParams": {
         "type": "object",
@@ -365,7 +419,10 @@
         "required": [
           "offerSdp"
         ],
-        "description": "Inputs for CameraLiveStream.GenerateWebRtcStream."
+        "description": "Inputs for CameraLiveStream.GenerateWebRtcStream.",
+        "example": {
+          "offerSdp": "v=0\r\no=- 12345 1 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\nm=video 9 UDP/TLS/RTP/SAVPF 96\r\na=mid:0\r\na=ice-ufrag:synthetic\r\na=ice-pwd:syntheticIcePasswordExampleOnly\r\na=fingerprint:sha-256 00:01:02:03:04:05:06:07:08:09:0A:0B:0C:0D:0E:0F:10:11:12:13:14:15:16:17:18:19:1A:1B:1C:1D:1E:1F\r\na=setup:actpass\r\na=rtcp-mux\r\na=recvonly\r\na=rtpmap:96 H264/90000\r\n"
+        }
       },
       "CameraLiveStreamGenerateWebRtcStreamResults": {
         "type": "object",
@@ -389,7 +446,12 @@
           "mediaSessionId",
           "answerSdp"
         ],
-        "description": "Acknowledgement result for CameraLiveStream.GenerateWebRtcStream; physical action may complete later."
+        "description": "Acknowledgement result for CameraLiveStream.GenerateWebRtcStream; physical action may complete later.",
+        "example": {
+          "expiresAt": "2026-01-01T12:05:00Z",
+          "mediaSessionId": "synthetic-media-session",
+          "answerSdp": "v=0\r\no=- 12345 1 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\nm=video 9 UDP/TLS/RTP/SAVPF 96\r\na=mid:0\r\na=ice-ufrag:synthetic\r\na=ice-pwd:syntheticIcePasswordExampleOnly\r\na=fingerprint:sha-256 00:01:02:03:04:05:06:07:08:09:0A:0B:0C:0D:0E:0F:10:11:12:13:14:15:16:17:18:19:1A:1B:1C:1D:1E:1F\r\na=setup:active\r\na=rtcp-mux\r\na=sendonly\r\na=rtpmap:96 H264/90000\r\n"
+        }
       },
       "CameraLiveStreamExtendWebRtcStreamParams": {
         "type": "object",
@@ -402,7 +464,10 @@
         "required": [
           "mediaSessionId"
         ],
-        "description": "Inputs for CameraLiveStream.ExtendWebRtcStream."
+        "description": "Inputs for CameraLiveStream.ExtendWebRtcStream.",
+        "example": {
+          "mediaSessionId": "synthetic-media-session"
+        }
       },
       "CameraLiveStreamExtendWebRtcStreamResults": {
         "type": "object",
@@ -422,7 +487,11 @@
           "expiresAt",
           "mediaSessionId"
         ],
-        "description": "Acknowledgement result for CameraLiveStream.ExtendWebRtcStream; physical action may complete later."
+        "description": "Acknowledgement result for CameraLiveStream.ExtendWebRtcStream; physical action may complete later.",
+        "example": {
+          "expiresAt": "2026-01-01T12:10:00Z",
+          "mediaSessionId": "synthetic-media-session"
+        }
       },
       "CameraLiveStreamStopWebRtcStreamParams": {
         "type": "object",
@@ -435,7 +504,10 @@
         "required": [
           "mediaSessionId"
         ],
-        "description": "Inputs for CameraLiveStream.StopWebRtcStream."
+        "description": "Inputs for CameraLiveStream.StopWebRtcStream.",
+        "example": {
+          "mediaSessionId": "synthetic-media-session"
+        }
       },
       "CameraLiveStreamStopWebRtcStreamResults": {
         "type": "object",
@@ -443,7 +515,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Acknowledgement result for CameraLiveStream.StopWebRtcStream; physical action may complete later."
+        "description": "Acknowledgement result for CameraLiveStream.StopWebRtcStream; physical action may complete later.",
+        "example": {}
       },
       "StreamToken": {
         "type": "string",

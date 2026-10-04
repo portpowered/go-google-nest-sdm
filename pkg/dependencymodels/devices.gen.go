@@ -5,11 +5,69 @@ package dependencymodels
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/oapi-codegen/runtime"
 )
 
 const (
 	SdmBearerAuthScopes = "sdmBearerAuth.Scopes"
 )
+
+// CameraEventImageGenerateImageRequest Request for CameraEventImage.GenerateImage.
+type CameraEventImageGenerateImageRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for CameraEventImage.GenerateImage.
+	Params CameraEventImageGenerateImageParams `json:"params"`
+}
+
+// CameraLiveStreamExtendRtspStreamRequest Request for CameraLiveStream.ExtendRtspStream.
+type CameraLiveStreamExtendRtspStreamRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for CameraLiveStream.ExtendRtspStream.
+	Params CameraLiveStreamExtendRtspStreamParams `json:"params"`
+}
+
+// CameraLiveStreamExtendWebRtcStreamRequest Request for CameraLiveStream.ExtendWebRtcStream.
+type CameraLiveStreamExtendWebRtcStreamRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for CameraLiveStream.ExtendWebRtcStream.
+	Params CameraLiveStreamExtendWebRtcStreamParams `json:"params"`
+}
+
+// CameraLiveStreamGenerateRtspStreamRequest Request for CameraLiveStream.GenerateRtspStream.
+type CameraLiveStreamGenerateRtspStreamRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for CameraLiveStream.GenerateRtspStream.
+	Params CameraLiveStreamGenerateRtspStreamParams `json:"params"`
+}
+
+// CameraLiveStreamGenerateWebRtcStreamRequest Request for CameraLiveStream.GenerateWebRtcStream.
+type CameraLiveStreamGenerateWebRtcStreamRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for CameraLiveStream.GenerateWebRtcStream.
+	Params CameraLiveStreamGenerateWebRtcStreamParams `json:"params"`
+}
+
+// CameraLiveStreamStopRtspStreamRequest Request for CameraLiveStream.StopRtspStream.
+type CameraLiveStreamStopRtspStreamRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for CameraLiveStream.StopRtspStream.
+	Params CameraLiveStreamStopRtspStreamParams `json:"params"`
+}
+
+// CameraLiveStreamStopWebRtcStreamRequest Request for CameraLiveStream.StopWebRtcStream.
+type CameraLiveStreamStopWebRtcStreamRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for CameraLiveStream.StopWebRtcStream.
+	Params CameraLiveStreamStopWebRtcStreamParams `json:"params"`
+}
 
 // Device defines model for Device.
 type Device struct {
@@ -28,16 +86,34 @@ type Device struct {
 // DeviceType Informational device type; use traits to infer capabilities.
 type DeviceType string
 
-// ExecuteCommandRequest defines model for ExecuteCommandRequest.
+// ExecuteCommandRequest Select a command variant to see its required parameters. Examples are sanitized synthetic illustrations of the published SDM contracts. Future command names have an explicit open branch; known commands must use their matching parameter schema.
 type ExecuteCommandRequest struct {
-	Command CommandName     `json:"command"`
-	Params  json.RawMessage `json:"params"`
+	// Command Fully qualified command name. The selected request variant determines the allowed params.
+	Command CommandName `json:"command"`
+
+	// Params Parameters are defined by the selected command variant below.
+	Params json.RawMessage `json:"params"`
+	union  json.RawMessage
 }
 
-// ExecuteCommandResponse defines model for ExecuteCommandResponse.
+// ExecuteCommandResponse Command-specific result object. Select the response example with the same command name as the request. Empty acknowledgement schemas overlap, so results use anyOf.
 type ExecuteCommandResponse struct {
 	Results              *json.RawMessage           `json:"results,omitempty"`
 	AdditionalProperties map[string]json.RawMessage `json:"-"`
+}
+
+// FanSetTimerRequest Request for Fan.SetTimer.
+type FanSetTimerRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for Fan.SetTimer.
+	Params FanSetTimerParams `json:"params"`
+}
+
+// FutureCommandRequest Compatibility shape for a future command absent from this catalog. Its parameters are caller defined; this branch does not permit malformed parameters for the known commands.
+type FutureCommandRequest struct {
+	Command CommandName                `json:"command"`
+	Params  map[string]json.RawMessage `json:"params"`
 }
 
 // ListDevicesResponse defines model for ListDevicesResponse.
@@ -83,9 +159,49 @@ type Structure struct {
 	AdditionalProperties map[string]json.RawMessage `json:"-"`
 }
 
+// ThermostatEcoSetModeRequest Request for ThermostatEco.SetMode.
+type ThermostatEcoSetModeRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for ThermostatEco.SetMode.
+	Params ThermostatEcoSetModeParams `json:"params"`
+}
+
+// ThermostatModeSetModeRequest Request for ThermostatMode.SetMode.
+type ThermostatModeSetModeRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for ThermostatMode.SetMode.
+	Params ThermostatModeSetModeParams `json:"params"`
+}
+
+// ThermostatTemperatureSetpointSetCoolRequest Request for ThermostatTemperatureSetpoint.SetCool.
+type ThermostatTemperatureSetpointSetCoolRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for ThermostatTemperatureSetpoint.SetCool.
+	Params ThermostatTemperatureSetpointSetCoolParams `json:"params"`
+}
+
+// ThermostatTemperatureSetpointSetHeatRequest Request for ThermostatTemperatureSetpoint.SetHeat.
+type ThermostatTemperatureSetpointSetHeatRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for ThermostatTemperatureSetpoint.SetHeat.
+	Params ThermostatTemperatureSetpointSetHeatParams `json:"params"`
+}
+
+// ThermostatTemperatureSetpointSetRangeRequest Request for ThermostatTemperatureSetpoint.SetRange.
+type ThermostatTemperatureSetpointSetRangeRequest struct {
+	Command CommandName `json:"command"`
+
+	// Params Inputs for ThermostatTemperatureSetpoint.SetRange.
+	Params ThermostatTemperatureSetpointSetRangeParams `json:"params"`
+}
+
 // ListDevicesParams defines parameters for ListDevices.
 type ListDevicesParams struct {
-	// Filter Requested device filter; service-defined expression.
+	// Filter Optional device custom-name substring filter, for example customName=Living.
 	Filter *string `form:"filter,omitempty" json:"filter,omitempty"`
 }
 
@@ -733,4 +849,591 @@ func (a Structure) MarshalJSON() ([]byte, error) {
 		}
 	}
 	return json.Marshal(object)
+}
+
+// AsFanSetTimerRequest returns the union data inside the ExecuteCommandRequest as a FanSetTimerRequest
+func (t ExecuteCommandRequest) AsFanSetTimerRequest() (FanSetTimerRequest, error) {
+	var body FanSetTimerRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromFanSetTimerRequest overwrites any union data inside the ExecuteCommandRequest as the provided FanSetTimerRequest
+func (t *ExecuteCommandRequest) FromFanSetTimerRequest(v FanSetTimerRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeFanSetTimerRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided FanSetTimerRequest
+func (t *ExecuteCommandRequest) MergeFanSetTimerRequest(v FanSetTimerRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsThermostatEcoSetModeRequest returns the union data inside the ExecuteCommandRequest as a ThermostatEcoSetModeRequest
+func (t ExecuteCommandRequest) AsThermostatEcoSetModeRequest() (ThermostatEcoSetModeRequest, error) {
+	var body ThermostatEcoSetModeRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromThermostatEcoSetModeRequest overwrites any union data inside the ExecuteCommandRequest as the provided ThermostatEcoSetModeRequest
+func (t *ExecuteCommandRequest) FromThermostatEcoSetModeRequest(v ThermostatEcoSetModeRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeThermostatEcoSetModeRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided ThermostatEcoSetModeRequest
+func (t *ExecuteCommandRequest) MergeThermostatEcoSetModeRequest(v ThermostatEcoSetModeRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsThermostatModeSetModeRequest returns the union data inside the ExecuteCommandRequest as a ThermostatModeSetModeRequest
+func (t ExecuteCommandRequest) AsThermostatModeSetModeRequest() (ThermostatModeSetModeRequest, error) {
+	var body ThermostatModeSetModeRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromThermostatModeSetModeRequest overwrites any union data inside the ExecuteCommandRequest as the provided ThermostatModeSetModeRequest
+func (t *ExecuteCommandRequest) FromThermostatModeSetModeRequest(v ThermostatModeSetModeRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeThermostatModeSetModeRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided ThermostatModeSetModeRequest
+func (t *ExecuteCommandRequest) MergeThermostatModeSetModeRequest(v ThermostatModeSetModeRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsThermostatTemperatureSetpointSetHeatRequest returns the union data inside the ExecuteCommandRequest as a ThermostatTemperatureSetpointSetHeatRequest
+func (t ExecuteCommandRequest) AsThermostatTemperatureSetpointSetHeatRequest() (ThermostatTemperatureSetpointSetHeatRequest, error) {
+	var body ThermostatTemperatureSetpointSetHeatRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromThermostatTemperatureSetpointSetHeatRequest overwrites any union data inside the ExecuteCommandRequest as the provided ThermostatTemperatureSetpointSetHeatRequest
+func (t *ExecuteCommandRequest) FromThermostatTemperatureSetpointSetHeatRequest(v ThermostatTemperatureSetpointSetHeatRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeThermostatTemperatureSetpointSetHeatRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided ThermostatTemperatureSetpointSetHeatRequest
+func (t *ExecuteCommandRequest) MergeThermostatTemperatureSetpointSetHeatRequest(v ThermostatTemperatureSetpointSetHeatRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsThermostatTemperatureSetpointSetCoolRequest returns the union data inside the ExecuteCommandRequest as a ThermostatTemperatureSetpointSetCoolRequest
+func (t ExecuteCommandRequest) AsThermostatTemperatureSetpointSetCoolRequest() (ThermostatTemperatureSetpointSetCoolRequest, error) {
+	var body ThermostatTemperatureSetpointSetCoolRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromThermostatTemperatureSetpointSetCoolRequest overwrites any union data inside the ExecuteCommandRequest as the provided ThermostatTemperatureSetpointSetCoolRequest
+func (t *ExecuteCommandRequest) FromThermostatTemperatureSetpointSetCoolRequest(v ThermostatTemperatureSetpointSetCoolRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeThermostatTemperatureSetpointSetCoolRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided ThermostatTemperatureSetpointSetCoolRequest
+func (t *ExecuteCommandRequest) MergeThermostatTemperatureSetpointSetCoolRequest(v ThermostatTemperatureSetpointSetCoolRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsThermostatTemperatureSetpointSetRangeRequest returns the union data inside the ExecuteCommandRequest as a ThermostatTemperatureSetpointSetRangeRequest
+func (t ExecuteCommandRequest) AsThermostatTemperatureSetpointSetRangeRequest() (ThermostatTemperatureSetpointSetRangeRequest, error) {
+	var body ThermostatTemperatureSetpointSetRangeRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromThermostatTemperatureSetpointSetRangeRequest overwrites any union data inside the ExecuteCommandRequest as the provided ThermostatTemperatureSetpointSetRangeRequest
+func (t *ExecuteCommandRequest) FromThermostatTemperatureSetpointSetRangeRequest(v ThermostatTemperatureSetpointSetRangeRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeThermostatTemperatureSetpointSetRangeRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided ThermostatTemperatureSetpointSetRangeRequest
+func (t *ExecuteCommandRequest) MergeThermostatTemperatureSetpointSetRangeRequest(v ThermostatTemperatureSetpointSetRangeRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsCameraEventImageGenerateImageRequest returns the union data inside the ExecuteCommandRequest as a CameraEventImageGenerateImageRequest
+func (t ExecuteCommandRequest) AsCameraEventImageGenerateImageRequest() (CameraEventImageGenerateImageRequest, error) {
+	var body CameraEventImageGenerateImageRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromCameraEventImageGenerateImageRequest overwrites any union data inside the ExecuteCommandRequest as the provided CameraEventImageGenerateImageRequest
+func (t *ExecuteCommandRequest) FromCameraEventImageGenerateImageRequest(v CameraEventImageGenerateImageRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeCameraEventImageGenerateImageRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided CameraEventImageGenerateImageRequest
+func (t *ExecuteCommandRequest) MergeCameraEventImageGenerateImageRequest(v CameraEventImageGenerateImageRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsCameraLiveStreamGenerateRtspStreamRequest returns the union data inside the ExecuteCommandRequest as a CameraLiveStreamGenerateRtspStreamRequest
+func (t ExecuteCommandRequest) AsCameraLiveStreamGenerateRtspStreamRequest() (CameraLiveStreamGenerateRtspStreamRequest, error) {
+	var body CameraLiveStreamGenerateRtspStreamRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromCameraLiveStreamGenerateRtspStreamRequest overwrites any union data inside the ExecuteCommandRequest as the provided CameraLiveStreamGenerateRtspStreamRequest
+func (t *ExecuteCommandRequest) FromCameraLiveStreamGenerateRtspStreamRequest(v CameraLiveStreamGenerateRtspStreamRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeCameraLiveStreamGenerateRtspStreamRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided CameraLiveStreamGenerateRtspStreamRequest
+func (t *ExecuteCommandRequest) MergeCameraLiveStreamGenerateRtspStreamRequest(v CameraLiveStreamGenerateRtspStreamRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsCameraLiveStreamExtendRtspStreamRequest returns the union data inside the ExecuteCommandRequest as a CameraLiveStreamExtendRtspStreamRequest
+func (t ExecuteCommandRequest) AsCameraLiveStreamExtendRtspStreamRequest() (CameraLiveStreamExtendRtspStreamRequest, error) {
+	var body CameraLiveStreamExtendRtspStreamRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromCameraLiveStreamExtendRtspStreamRequest overwrites any union data inside the ExecuteCommandRequest as the provided CameraLiveStreamExtendRtspStreamRequest
+func (t *ExecuteCommandRequest) FromCameraLiveStreamExtendRtspStreamRequest(v CameraLiveStreamExtendRtspStreamRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeCameraLiveStreamExtendRtspStreamRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided CameraLiveStreamExtendRtspStreamRequest
+func (t *ExecuteCommandRequest) MergeCameraLiveStreamExtendRtspStreamRequest(v CameraLiveStreamExtendRtspStreamRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsCameraLiveStreamStopRtspStreamRequest returns the union data inside the ExecuteCommandRequest as a CameraLiveStreamStopRtspStreamRequest
+func (t ExecuteCommandRequest) AsCameraLiveStreamStopRtspStreamRequest() (CameraLiveStreamStopRtspStreamRequest, error) {
+	var body CameraLiveStreamStopRtspStreamRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromCameraLiveStreamStopRtspStreamRequest overwrites any union data inside the ExecuteCommandRequest as the provided CameraLiveStreamStopRtspStreamRequest
+func (t *ExecuteCommandRequest) FromCameraLiveStreamStopRtspStreamRequest(v CameraLiveStreamStopRtspStreamRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeCameraLiveStreamStopRtspStreamRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided CameraLiveStreamStopRtspStreamRequest
+func (t *ExecuteCommandRequest) MergeCameraLiveStreamStopRtspStreamRequest(v CameraLiveStreamStopRtspStreamRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsCameraLiveStreamGenerateWebRtcStreamRequest returns the union data inside the ExecuteCommandRequest as a CameraLiveStreamGenerateWebRtcStreamRequest
+func (t ExecuteCommandRequest) AsCameraLiveStreamGenerateWebRtcStreamRequest() (CameraLiveStreamGenerateWebRtcStreamRequest, error) {
+	var body CameraLiveStreamGenerateWebRtcStreamRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromCameraLiveStreamGenerateWebRtcStreamRequest overwrites any union data inside the ExecuteCommandRequest as the provided CameraLiveStreamGenerateWebRtcStreamRequest
+func (t *ExecuteCommandRequest) FromCameraLiveStreamGenerateWebRtcStreamRequest(v CameraLiveStreamGenerateWebRtcStreamRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeCameraLiveStreamGenerateWebRtcStreamRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided CameraLiveStreamGenerateWebRtcStreamRequest
+func (t *ExecuteCommandRequest) MergeCameraLiveStreamGenerateWebRtcStreamRequest(v CameraLiveStreamGenerateWebRtcStreamRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsCameraLiveStreamExtendWebRtcStreamRequest returns the union data inside the ExecuteCommandRequest as a CameraLiveStreamExtendWebRtcStreamRequest
+func (t ExecuteCommandRequest) AsCameraLiveStreamExtendWebRtcStreamRequest() (CameraLiveStreamExtendWebRtcStreamRequest, error) {
+	var body CameraLiveStreamExtendWebRtcStreamRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromCameraLiveStreamExtendWebRtcStreamRequest overwrites any union data inside the ExecuteCommandRequest as the provided CameraLiveStreamExtendWebRtcStreamRequest
+func (t *ExecuteCommandRequest) FromCameraLiveStreamExtendWebRtcStreamRequest(v CameraLiveStreamExtendWebRtcStreamRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeCameraLiveStreamExtendWebRtcStreamRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided CameraLiveStreamExtendWebRtcStreamRequest
+func (t *ExecuteCommandRequest) MergeCameraLiveStreamExtendWebRtcStreamRequest(v CameraLiveStreamExtendWebRtcStreamRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsCameraLiveStreamStopWebRtcStreamRequest returns the union data inside the ExecuteCommandRequest as a CameraLiveStreamStopWebRtcStreamRequest
+func (t ExecuteCommandRequest) AsCameraLiveStreamStopWebRtcStreamRequest() (CameraLiveStreamStopWebRtcStreamRequest, error) {
+	var body CameraLiveStreamStopWebRtcStreamRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromCameraLiveStreamStopWebRtcStreamRequest overwrites any union data inside the ExecuteCommandRequest as the provided CameraLiveStreamStopWebRtcStreamRequest
+func (t *ExecuteCommandRequest) FromCameraLiveStreamStopWebRtcStreamRequest(v CameraLiveStreamStopWebRtcStreamRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeCameraLiveStreamStopWebRtcStreamRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided CameraLiveStreamStopWebRtcStreamRequest
+func (t *ExecuteCommandRequest) MergeCameraLiveStreamStopWebRtcStreamRequest(v CameraLiveStreamStopWebRtcStreamRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+// AsFutureCommandRequest returns the union data inside the ExecuteCommandRequest as a FutureCommandRequest
+func (t ExecuteCommandRequest) AsFutureCommandRequest() (FutureCommandRequest, error) {
+	var body FutureCommandRequest
+	encoded, err := t.MarshalJSON()
+	if err != nil {
+		return body, err
+	}
+	err = json.Unmarshal(encoded, &body)
+	return body, err
+}
+
+// FromFutureCommandRequest overwrites any union data inside the ExecuteCommandRequest as the provided FutureCommandRequest
+func (t *ExecuteCommandRequest) FromFutureCommandRequest(v FutureCommandRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(b)
+}
+
+// MergeFutureCommandRequest performs a merge with any union data inside the ExecuteCommandRequest, using the provided FutureCommandRequest
+func (t *ExecuteCommandRequest) MergeFutureCommandRequest(v FutureCommandRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	current, err := t.MarshalJSON()
+	if err != nil {
+		return err
+	}
+	merged, err := runtime.JSONMerge(current, b)
+	if err != nil {
+		return err
+	}
+	return t.UnmarshalJSON(merged)
+}
+
+func (t ExecuteCommandRequest) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	object := make(map[string]json.RawMessage)
+	if t.union != nil {
+		err = json.Unmarshal(b, &object)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	object["command"], err = json.Marshal(t.Command)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'command': %w", err)
+	}
+
+	object["params"], err = json.Marshal(t.Params)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'params': %w", err)
+	}
+
+	b, err = json.Marshal(object)
+	return b, err
+}
+
+func (t *ExecuteCommandRequest) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	if err != nil {
+		return err
+	}
+	object := make(map[string]json.RawMessage)
+	err = json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["command"]; found {
+		err = json.Unmarshal(raw, &t.Command)
+		if err != nil {
+			return fmt.Errorf("error reading 'command': %w", err)
+		}
+	}
+
+	if raw, found := object["params"]; found {
+		err = json.Unmarshal(raw, &t.Params)
+		if err != nil {
+			return fmt.Errorf("error reading 'params': %w", err)
+		}
+	}
+
+	return err
 }

@@ -33,6 +33,20 @@ type CheckCommandRequest struct {
 	Device  Device      `json:"device"`
 }
 
+// CompleteAuthorizationRequest defines model for CompleteAuthorizationRequest.
+type CompleteAuthorizationRequest struct {
+	// CallbackURL Absolute callback URI constructed using the registered redirect origin and path, with the received query string. Never trust an arbitrary incoming Host header.
+	CallbackURL string `json:"callbackURL"`
+}
+
+// CompleteAuthorizationResult defines model for CompleteAuthorizationResult.
+type CompleteAuthorizationResult struct {
+	Credentials Credentials `json:"credentials"`
+
+	// Devices Initial devices.list result that completes account authorization and enables events.
+	Devices []Device `json:"devices"`
+}
+
 // Credentials defines model for Credentials.
 type Credentials struct {
 	AccessToken  string  `json:"accessToken"`
@@ -247,6 +261,21 @@ type ListStructuresRequest struct {
 // ListStructuresResult defines model for ListStructuresResult.
 type ListStructuresResult struct {
 	Structures []Structure `json:"structures"`
+}
+
+// OpenAuthorizationSessionRequest Account linking through Device Access Partner Connections Manager. The caller owns the HTTP callback endpoint and browser. Register the exact redirect URI in the OAuth client.
+type OpenAuthorizationSessionRequest struct {
+	// ClientId OAuth client ID associated with the Device Access project.
+	ClientId string `json:"clientId"`
+
+	// ClientSecret OAuth client secret; never print or persist it implicitly.
+	ClientSecret string `json:"clientSecret"`
+
+	// ProjectId Device Access project ID, not the Google Cloud project ID.
+	ProjectId string `json:"projectId"`
+
+	// RedirectUri Exact registered HTTPS callback URI, or HTTP loopback URI for a local application.
+	RedirectUri string `json:"redirectUri"`
 }
 
 // OpenEventSessionRequest defines model for OpenEventSessionRequest.

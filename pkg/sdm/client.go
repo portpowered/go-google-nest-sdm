@@ -38,6 +38,34 @@ type AuthClient interface {
 	RefreshToken(ctx context.Context, request RefreshTokenRequest) (RefreshTokenResult, error)
 }
 
+// AuthorizationClient opens an explicit account-linking session. Existing Client
+// implementations remain compatible; the HTTP client also implements this interface.
+type AuthorizationClient interface {
+	OpenAuthorizationSession(ctx context.Context, request OpenAuthorizationSessionRequest) (AuthorizationSession, error)
+}
+
+// AccountAuthorizationClient supplies token exchange and the mandatory initial
+// device discovery without retaining account credentials on a reusable client.
+type AccountAuthorizationClient interface {
+	ExchangeToken(ctx context.Context, request ExchangeTokenRequest) (ExchangeTokenResult, error)
+	ListDevices(ctx context.Context, request ListDevicesRequest) (ListDevicesResult, error)
+}
+
+// AuthorizationSession binds OAuth state, PKCE, and the exact callback URI to one
+// account-linking attempt. The caller owns its browser and HTTP endpoint, closes
+// the session, and explicitly stores credentials returned by Complete.
+type AuthorizationSession interface {
+	// AuthorizationURL is the PCM browser destination for this attempt.
+	AuthorizationURL() string
+	// Complete validates the callback, exchanges its code, and performs initial
+	// discovery. ErrorInvalidRequest with Operation CompleteAuthorization allows
+	// another callback attempt. Other failures consume or close the attempt;
+	// token/discovery failures report Operation AuthorizeAccount.
+	Complete(ctx context.Context, request CompleteAuthorizationRequest) (CompleteAuthorizationResult, error)
+	// Close cancels completion and erases retained secrets; repeated calls are safe.
+	Close() error
+}
+
 // EventClient opens an account-bound Pub/Sub pull session.
 type EventClient interface {
 	OpenEventSession(ctx context.Context, request OpenEventSessionRequest) (EventSession, error)
