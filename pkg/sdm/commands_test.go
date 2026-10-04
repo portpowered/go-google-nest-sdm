@@ -32,7 +32,7 @@ func TestCommandValidation(t *testing.T) {
 			t.Errorf("valid %s: %v", command, err)
 		}
 
-		for _, bad := range []string{`null`, `[]`, `{"unknown":true}`} {
+		for _, bad := range []string{nullJSON, `[]`, `{"unknown":true}`} {
 			err := sdm.ValidateCommandParams(command, json.RawMessage(bad))
 			if err == nil {
 				t.Errorf("%s accepted %s", command, bad)

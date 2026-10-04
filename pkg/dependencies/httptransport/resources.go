@@ -147,21 +147,15 @@ func (client *Client) ExecuteCommand(
 		return result, err
 	}
 
-	body, err := json.Marshal(input)
-	if err != nil {
-		return result, fail("ExecuteCommand", ErrorInvalidRequest, err)
-	}
-
 	var payload json.RawMessage
 
-	err = client.exchange(
+	err = client.exchangeJSON(
 		ctx,
 		"ExecuteCommand",
 		protocol.MethodExecuteCommand,
 		client.sdmBaseURL+path,
 		token,
-		protocol.MIMEApplicationJSON,
-		bytes.NewReader(body),
+		input,
 		&payload,
 	)
 	if err != nil {
@@ -171,20 +165,16 @@ func (client *Client) ExecuteCommand(
 	var fields map[string]json.RawMessage
 
 	err = json.Unmarshal(payload, &fields)
-	if err != nil {
+
+	value, supplied := fields[protocol.KeyResults]
+
+	if err != nil || (supplied && bytes.Equal(bytes.TrimSpace(value), []byte("null"))) {
 		return result, fail("ExecuteCommand", ErrorInvalidResponse, err)
 	}
 
-	if value, supplied := fields[protocol.KeyResults]; supplied && bytes.Equal(bytes.TrimSpace(value), []byte("null")) {
-		return result, fail("ExecuteCommand", ErrorInvalidResponse, nil)
-	}
+	err = decodeJSON("ExecuteCommand", payload, &result)
 
-	err = json.Unmarshal(payload, &result)
-	if err != nil {
-		return result, fail("ExecuteCommand", ErrorInvalidResponse, err)
-	}
-
-	return result, nil
+	return result, err
 }
 
 func resourcePath(name, template string, collections ...string) (string, error) {
