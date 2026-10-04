@@ -1,0 +1,451 @@
+{
+  "$comment": "Generated from api\\commands.openapi.yaml; DO NOT EDIT.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "components": {
+    "schemas": {
+      "CameraEventImageGenerateImageParams": {
+        "additionalProperties": false,
+        "description": "Inputs for CameraEventImage.GenerateImage.",
+        "properties": {
+          "eventId": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "eventId"
+        ],
+        "type": "object"
+      },
+      "CameraEventImageGenerateImageResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for CameraEventImage.GenerateImage; physical action may complete later.",
+        "properties": {
+          "token": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "url": {
+            "format": "uri",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "token"
+        ],
+        "type": "object"
+      },
+      "CameraLiveStreamExtendRtspStreamParams": {
+        "additionalProperties": false,
+        "description": "Inputs for CameraLiveStream.ExtendRtspStream.",
+        "properties": {
+          "streamExtensionToken": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "streamExtensionToken"
+        ],
+        "type": "object"
+      },
+      "CameraLiveStreamExtendRtspStreamResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for CameraLiveStream.ExtendRtspStream; physical action may complete later.",
+        "properties": {
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "streamExtensionToken": {
+            "type": "string"
+          },
+          "streamToken": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "streamExtensionToken",
+          "streamToken",
+          "expiresAt"
+        ],
+        "type": "object"
+      },
+      "CameraLiveStreamExtendWebRtcStreamParams": {
+        "additionalProperties": false,
+        "description": "Inputs for CameraLiveStream.ExtendWebRtcStream.",
+        "properties": {
+          "mediaSessionId": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "mediaSessionId"
+        ],
+        "type": "object"
+      },
+      "CameraLiveStreamExtendWebRtcStreamResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for CameraLiveStream.ExtendWebRtcStream; physical action may complete later.",
+        "properties": {
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "mediaSessionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "expiresAt",
+          "mediaSessionId"
+        ],
+        "type": "object"
+      },
+      "CameraLiveStreamGenerateRtspStreamParams": {
+        "additionalProperties": false,
+        "description": "Inputs for CameraLiveStream.GenerateRtspStream.",
+        "maxProperties": 0,
+        "properties": {},
+        "type": "object",
+        "x-go-type": "struct{}"
+      },
+      "CameraLiveStreamGenerateRtspStreamResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for CameraLiveStream.GenerateRtspStream; physical action may complete later.",
+        "properties": {
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "streamExtensionToken": {
+            "type": "string"
+          },
+          "streamToken": {
+            "type": "string"
+          },
+          "streamUrls": {
+            "$ref": "#/components/schemas/RtspStreamURLs"
+          }
+        },
+        "required": [
+          "streamExtensionToken",
+          "streamToken",
+          "expiresAt",
+          "streamUrls"
+        ],
+        "type": "object"
+      },
+      "CameraLiveStreamGenerateWebRtcStreamParams": {
+        "additionalProperties": false,
+        "description": "Inputs for CameraLiveStream.GenerateWebRtcStream.",
+        "properties": {
+          "offerSdp": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "offerSdp"
+        ],
+        "type": "object"
+      },
+      "CameraLiveStreamGenerateWebRtcStreamResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for CameraLiveStream.GenerateWebRtcStream; physical action may complete later.",
+        "properties": {
+          "answerSdp": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "mediaSessionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "expiresAt",
+          "mediaSessionId",
+          "answerSdp"
+        ],
+        "type": "object"
+      },
+      "CameraLiveStreamStopRtspStreamParams": {
+        "additionalProperties": false,
+        "description": "Inputs for CameraLiveStream.StopRtspStream.",
+        "properties": {
+          "streamExtensionToken": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "streamExtensionToken"
+        ],
+        "type": "object"
+      },
+      "CameraLiveStreamStopRtspStreamResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for CameraLiveStream.StopRtspStream; physical action may complete later.",
+        "properties": {},
+        "type": "object"
+      },
+      "CameraLiveStreamStopWebRtcStreamParams": {
+        "additionalProperties": false,
+        "description": "Inputs for CameraLiveStream.StopWebRtcStream.",
+        "properties": {
+          "mediaSessionId": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "mediaSessionId"
+        ],
+        "type": "object"
+      },
+      "CameraLiveStreamStopWebRtcStreamResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for CameraLiveStream.StopWebRtcStream; physical action may complete later.",
+        "properties": {},
+        "type": "object"
+      },
+      "CommandName": {
+        "enum": [
+          "sdm.devices.commands.Fan.SetTimer",
+          "sdm.devices.commands.ThermostatEco.SetMode",
+          "sdm.devices.commands.ThermostatMode.SetMode",
+          "sdm.devices.commands.ThermostatTemperatureSetpoint.SetHeat",
+          "sdm.devices.commands.ThermostatTemperatureSetpoint.SetCool",
+          "sdm.devices.commands.ThermostatTemperatureSetpoint.SetRange",
+          "sdm.devices.commands.CameraEventImage.GenerateImage",
+          "sdm.devices.commands.CameraLiveStream.GenerateRtspStream",
+          "sdm.devices.commands.CameraLiveStream.ExtendRtspStream",
+          "sdm.devices.commands.CameraLiveStream.StopRtspStream",
+          "sdm.devices.commands.CameraLiveStream.GenerateWebRtcStream",
+          "sdm.devices.commands.CameraLiveStream.ExtendWebRtcStream",
+          "sdm.devices.commands.CameraLiveStream.StopWebRtcStream"
+        ],
+        "type": "string"
+      },
+      "EmptyResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {},
+        "type": "object"
+      },
+      "FanSetTimerParams": {
+        "additionalProperties": false,
+        "description": "Inputs for Fan.SetTimer.",
+        "properties": {
+          "duration": {
+            "default": "900s",
+            "description": "Optional fan duration from 1 through 43200 seconds, default 900 seconds.",
+            "pattern": "^(?:[1-9]|[1-9][0-9]{1,3}|[1-3][0-9]{4}|4[0-2][0-9]{3}|43[01][0-9]{2}|43200)s$",
+            "type": "string"
+          },
+          "timerMode": {
+            "allOf": [
+              {
+                "$ref": "./traits.openapi.yaml#/components/schemas/FanTimerMode"
+              },
+              {
+                "enum": [
+                  "ON",
+                  "OFF"
+                ],
+                "type": "string"
+              }
+            ],
+            "x-go-type": "FanTimerMode"
+          }
+        },
+        "required": [
+          "timerMode"
+        ],
+        "type": "object"
+      },
+      "FanSetTimerResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for Fan.SetTimer; physical action may complete later.",
+        "properties": {},
+        "type": "object"
+      },
+      "RtspStreamURLs": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "rtspUrl": {
+            "format": "uri",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rtspUrl"
+        ],
+        "type": "object"
+      },
+      "ThermostatEcoSetModeParams": {
+        "additionalProperties": false,
+        "description": "Inputs for ThermostatEco.SetMode.",
+        "properties": {
+          "mode": {
+            "allOf": [
+              {
+                "$ref": "./traits.openapi.yaml#/components/schemas/EcoMode"
+              },
+              {
+                "enum": [
+                  "MANUAL_ECO",
+                  "OFF"
+                ],
+                "type": "string"
+              }
+            ],
+            "x-go-type": "EcoMode"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "type": "object"
+      },
+      "ThermostatEcoSetModeResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for ThermostatEco.SetMode; physical action may complete later.",
+        "properties": {},
+        "type": "object"
+      },
+      "ThermostatModeSetModeParams": {
+        "additionalProperties": false,
+        "description": "Inputs for ThermostatMode.SetMode.",
+        "properties": {
+          "mode": {
+            "allOf": [
+              {
+                "$ref": "./traits.openapi.yaml#/components/schemas/ThermostatModeValue"
+              },
+              {
+                "enum": [
+                  "HEAT",
+                  "COOL",
+                  "HEATCOOL",
+                  "OFF"
+                ],
+                "type": "string"
+              }
+            ],
+            "x-go-type": "ThermostatModeValue"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "type": "object"
+      },
+      "ThermostatModeSetModeResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for ThermostatMode.SetMode; physical action may complete later.",
+        "properties": {},
+        "type": "object"
+      },
+      "ThermostatTemperatureSetpointSetCoolParams": {
+        "additionalProperties": false,
+        "description": "Inputs for ThermostatTemperatureSetpoint.SetCool.",
+        "properties": {
+          "coolCelsius": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "coolCelsius"
+        ],
+        "type": "object"
+      },
+      "ThermostatTemperatureSetpointSetCoolResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for ThermostatTemperatureSetpoint.SetCool; physical action may complete later.",
+        "properties": {},
+        "type": "object"
+      },
+      "ThermostatTemperatureSetpointSetHeatParams": {
+        "additionalProperties": false,
+        "description": "Inputs for ThermostatTemperatureSetpoint.SetHeat.",
+        "properties": {
+          "heatCelsius": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "heatCelsius"
+        ],
+        "type": "object"
+      },
+      "ThermostatTemperatureSetpointSetHeatResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for ThermostatTemperatureSetpoint.SetHeat; physical action may complete later.",
+        "properties": {},
+        "type": "object"
+      },
+      "ThermostatTemperatureSetpointSetRangeParams": {
+        "additionalProperties": false,
+        "description": "Inputs for ThermostatTemperatureSetpoint.SetRange.",
+        "properties": {
+          "coolCelsius": {
+            "format": "double",
+            "type": "number"
+          },
+          "heatCelsius": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "heatCelsius",
+          "coolCelsius"
+        ],
+        "type": "object"
+      },
+      "ThermostatTemperatureSetpointSetRangeResults": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Acknowledgement result for ThermostatTemperatureSetpoint.SetRange; physical action may complete later.",
+        "properties": {},
+        "type": "object"
+      }
+    }
+  }
+}

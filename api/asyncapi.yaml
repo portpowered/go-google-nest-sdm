@@ -24,6 +24,8 @@ channels:
 operations:
   receiveEvents:
     action: receive
+    tags:
+      - name: Events
     channel:
       $ref: '#/channels/sdmEvents'
     summary: Receive changes to authorized devices and structures.

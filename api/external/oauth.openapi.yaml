@@ -45,7 +45,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Auth"
+        ]
       }
     }
   },
@@ -141,5 +144,11 @@
         ]
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorized auth operations."
+    }
+  ]
 }

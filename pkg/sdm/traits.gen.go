@@ -10,7 +10,7 @@ import (
 )
 
 // AudioCodec Known values; incoming values remain open for future service additions.
-type AudioCodec = string
+type AudioCodec string
 
 // CameraClipPreview Presence-aware CameraClipPreview trait fields; event updates may contain only changed fields. Unknown fields are retained.
 type CameraClipPreview map[string]json.RawMessage
@@ -50,13 +50,13 @@ type Connectivity struct {
 }
 
 // ConnectivityStatus Known values; incoming values remain open for future service additions.
-type ConnectivityStatus = string
+type ConnectivityStatus string
 
 // DoorbellChime Presence-aware DoorbellChime trait fields; event updates may contain only changed fields. Unknown fields are retained.
 type DoorbellChime map[string]json.RawMessage
 
 // EcoMode Known values; incoming values remain open for future service additions.
-type EcoMode = string
+type EcoMode string
 
 // Fan Presence-aware Fan trait fields; event updates may contain only changed fields. Unknown fields are retained.
 type Fan struct {
@@ -67,7 +67,7 @@ type Fan struct {
 }
 
 // FanTimerMode Known values; incoming values remain open for future service additions.
-type FanTimerMode = string
+type FanTimerMode string
 
 // Humidity Presence-aware Humidity trait fields; event updates may contain only changed fields. Unknown fields are retained.
 type Humidity struct {
@@ -77,7 +77,7 @@ type Humidity struct {
 }
 
 // HvacStatus Known values; incoming values remain open for future service additions.
-type HvacStatus = string
+type HvacStatus string
 
 // ImageResolution defines model for ImageResolution.
 type ImageResolution struct {
@@ -109,7 +109,7 @@ type Settings struct {
 }
 
 // StreamProtocol Known values; incoming values remain open for future service additions.
-type StreamProtocol = string
+type StreamProtocol string
 
 // StructureInfo Presence-aware StructureInfo trait fields; event updates may contain only changed fields. Unknown fields are retained.
 type StructureInfo struct {
@@ -125,7 +125,7 @@ type Temperature struct {
 }
 
 // TemperatureScale Known values; incoming values remain open for future service additions.
-type TemperatureScale = string
+type TemperatureScale string
 
 // ThermostatEco Presence-aware ThermostatEco trait fields; event updates may contain only changed fields. Unknown fields are retained.
 type ThermostatEco struct {
@@ -155,7 +155,7 @@ type ThermostatMode struct {
 }
 
 // ThermostatModeValue Known values; incoming values remain open for future service additions.
-type ThermostatModeValue = string
+type ThermostatModeValue string
 
 // ThermostatTemperatureSetpoint Presence-aware ThermostatTemperatureSetpoint trait fields; event updates may contain only changed fields. Unknown fields are retained.
 type ThermostatTemperatureSetpoint struct {
@@ -229,7 +229,7 @@ type Traits struct {
 }
 
 // VideoCodec Known values; incoming values remain open for future service additions.
-type VideoCodec = string
+type VideoCodec string
 
 // VideoResolution defines model for VideoResolution.
 type VideoResolution struct {

@@ -1,0 +1,72 @@
+{
+  "$comment": "Generated from api\\client-media.openapi.yaml; DO NOT EDIT.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "components": {
+    "schemas": {
+      "DownloadClipPreviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "./client-resources.openapi.yaml#/components/schemas/AuthContext"
+          },
+          "url": {
+            "description": "Trusted previewUrl from a ClipPreview event; provider chooses the host, path and query.",
+            "format": "uri",
+            "pattern": "^https://[^/?#]+/",
+            "type": "string",
+            "x-go-name": "URL"
+          }
+        },
+        "required": [
+          "auth",
+          "url"
+        ],
+        "type": "object"
+      },
+      "DownloadImageRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/ImageAuthContext"
+          },
+          "height": {
+            "description": "Requested pixel height; the provider scales width when width is absent.",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "url": {
+            "description": "Trusted URL returned by GenerateImage; provider determines the host and opaque image identifier.",
+            "format": "uri",
+            "pattern": "^https://[^/?#]+/sdm_event_snapshot/[^?#]+",
+            "type": "string",
+            "x-go-name": "URL"
+          },
+          "width": {
+            "description": "Requested pixel width; the provider scales height. Width takes precedence if both dimensions are supplied.",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "auth",
+          "url"
+        ],
+        "type": "object"
+      },
+      "ImageAuthContext": {
+        "additionalProperties": false,
+        "description": "Short-lived event image credentials from GenerateImage; distinct from OAuth credentials.",
+        "properties": {
+          "eventToken": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "eventToken"
+        ],
+        "type": "object"
+      }
+    }
+  }
+}

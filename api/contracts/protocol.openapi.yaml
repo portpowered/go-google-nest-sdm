@@ -1,0 +1,278 @@
+{
+  "$comment": "Generated from api\\protocol.openapi.yaml; DO NOT EDIT.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "components": {
+    "schemas": {
+      "ProtocolValues": {
+        "additionalProperties": false,
+        "properties": {
+          "BasicPrefix": {
+            "enum": [
+              "Basic "
+            ],
+            "type": "string"
+          },
+          "BearerPrefix": {
+            "enum": [
+              "Bearer "
+            ],
+            "type": "string"
+          },
+          "CollectionDevices": {
+            "enum": [
+              "devices"
+            ],
+            "type": "string"
+          },
+          "CollectionEnterprises": {
+            "enum": [
+              "enterprises"
+            ],
+            "type": "string"
+          },
+          "CollectionProjects": {
+            "enum": [
+              "projects"
+            ],
+            "type": "string"
+          },
+          "CollectionRooms": {
+            "enum": [
+              "rooms"
+            ],
+            "type": "string"
+          },
+          "CollectionStructures": {
+            "enum": [
+              "structures"
+            ],
+            "type": "string"
+          },
+          "CollectionSubscriptions": {
+            "enum": [
+              "subscriptions"
+            ],
+            "type": "string"
+          },
+          "FormClientID": {
+            "enum": [
+              "client_id"
+            ],
+            "type": "string"
+          },
+          "FormClientSecret": {
+            "enum": [
+              "client_secret"
+            ],
+            "type": "string"
+          },
+          "FormCode": {
+            "enum": [
+              "code"
+            ],
+            "type": "string"
+          },
+          "FormCodeVerifier": {
+            "enum": [
+              "code_verifier"
+            ],
+            "type": "string"
+          },
+          "FormGrantType": {
+            "enum": [
+              "grant_type"
+            ],
+            "type": "string"
+          },
+          "FormRedirectURI": {
+            "enum": [
+              "redirect_uri"
+            ],
+            "type": "string"
+          },
+          "FormRefreshToken": {
+            "enum": [
+              "refresh_token"
+            ],
+            "type": "string"
+          },
+          "HeaderAccept": {
+            "enum": [
+              "Accept"
+            ],
+            "type": "string"
+          },
+          "HeaderAuthorization": {
+            "enum": [
+              "Authorization"
+            ],
+            "type": "string"
+          },
+          "HeaderContentType": {
+            "enum": [
+              "Content-Type"
+            ],
+            "type": "string"
+          },
+          "HeaderPubSubMessageID": {
+            "enum": [
+              "x-goog-pubsub-message-id"
+            ],
+            "type": "string"
+          },
+          "HeaderPubSubOrderingKey": {
+            "enum": [
+              "x-goog-pubsub-ordering-key"
+            ],
+            "type": "string"
+          },
+          "HeaderPubSubPublishTime": {
+            "enum": [
+              "x-goog-pubsub-publish-time"
+            ],
+            "type": "string"
+          },
+          "HeaderPubSubSubscriptionName": {
+            "enum": [
+              "x-goog-pubsub-subscription-name"
+            ],
+            "type": "string"
+          },
+          "HeaderUserID": {
+            "enum": [
+              "userId"
+            ],
+            "type": "string"
+          },
+          "KeyDevices": {
+            "enum": [
+              "devices"
+            ],
+            "type": "string"
+          },
+          "KeyResults": {
+            "enum": [
+              "results"
+            ],
+            "type": "string"
+          },
+          "KeyRooms": {
+            "enum": [
+              "rooms"
+            ],
+            "type": "string"
+          },
+          "KeyStructures": {
+            "enum": [
+              "structures"
+            ],
+            "type": "string"
+          },
+          "MIMEApplicationJSON": {
+            "enum": [
+              "application/json"
+            ],
+            "type": "string"
+          },
+          "MIMEFormURLEncoded": {
+            "enum": [
+              "application/x-www-form-urlencoded"
+            ],
+            "type": "string"
+          },
+          "MediaClipURLPattern": {
+            "enum": [
+              "^https://[^/?#]+/"
+            ],
+            "type": "string"
+          },
+          "MediaImageURLPattern": {
+            "enum": [
+              "^https://[^/?#]+/sdm_event_snapshot/[^?#]+"
+            ],
+            "type": "string"
+          },
+          "OAuthGrantAuthorizationCode": {
+            "enum": [
+              "authorization_code"
+            ],
+            "type": "string"
+          },
+          "OAuthGrantRefreshToken": {
+            "enum": [
+              "refresh_token"
+            ],
+            "type": "string"
+          },
+          "QueryFilter": {
+            "enum": [
+              "filter"
+            ],
+            "type": "string"
+          },
+          "QueryHeight": {
+            "enum": [
+              "height"
+            ],
+            "type": "string"
+          },
+          "QueryWidth": {
+            "enum": [
+              "width"
+            ],
+            "type": "string"
+          },
+          "SDPApplicationPrefix": {
+            "enum": [
+              "m=application "
+            ],
+            "type": "string"
+          },
+          "SDPAudioPrefix": {
+            "enum": [
+              "m=audio "
+            ],
+            "type": "string"
+          },
+          "SDPCarriageReturn": {
+            "enum": [
+              "\r"
+            ],
+            "type": "string"
+          },
+          "SDPLineSeparator": {
+            "enum": [
+              "\n"
+            ],
+            "type": "string"
+          },
+          "SDPOpusCodec": {
+            "enum": [
+              "opus/48000"
+            ],
+            "type": "string"
+          },
+          "SDPReceiveOnlyLine": {
+            "enum": [
+              "a=recvonly"
+            ],
+            "type": "string"
+          },
+          "SDPSessionVersion": {
+            "enum": [
+              "v=0"
+            ],
+            "type": "string"
+          },
+          "SDPVideoPrefix": {
+            "enum": [
+              "m=video "
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
+}

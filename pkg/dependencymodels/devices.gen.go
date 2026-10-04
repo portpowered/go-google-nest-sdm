@@ -8,14 +8,6 @@ import (
 	"fmt"
 )
 
-// Defines values for DeviceType.
-const (
-	SdmDevicesTypesCAMERA     DeviceType = "sdm.devices.types.CAMERA"
-	SdmDevicesTypesDISPLAY    DeviceType = "sdm.devices.types.DISPLAY"
-	SdmDevicesTypesDOORBELL   DeviceType = "sdm.devices.types.DOORBELL"
-	SdmDevicesTypesTHERMOSTAT DeviceType = "sdm.devices.types.THERMOSTAT"
-)
-
 // Device defines model for Device.
 type Device struct {
 	Assignee        *string           `json:"assignee,omitempty"`

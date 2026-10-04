@@ -1,0 +1,12 @@
+package: sdm
+generate:
+  models: true
+output: pkg/sdm/resources.gen.go
+output-options:
+  skip-prune: true
+  user-templates:
+    typedef.tmpl: tools/generate/typedef.tmpl
+import-mapping:
+  ./traits.openapi.yaml: '-'
+  ./client-models.openapi.yaml: '-'
+  ./events.openapi.yaml: '-'

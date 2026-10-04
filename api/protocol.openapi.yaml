@@ -213,6 +213,66 @@
             "enum": [
               "x-goog-pubsub-ordering-key"
             ]
+          },
+          "SDPSessionVersion": {
+            "type": "string",
+            "enum": [
+              "v=0"
+            ]
+          },
+          "SDPAudioPrefix": {
+            "type": "string",
+            "enum": [
+              "m=audio "
+            ]
+          },
+          "SDPVideoPrefix": {
+            "type": "string",
+            "enum": [
+              "m=video "
+            ]
+          },
+          "SDPApplicationPrefix": {
+            "type": "string",
+            "enum": [
+              "m=application "
+            ]
+          },
+          "SDPReceiveOnlyLine": {
+            "type": "string",
+            "enum": [
+              "a=recvonly"
+            ]
+          },
+          "SDPOpusCodec": {
+            "type": "string",
+            "enum": [
+              "opus/48000"
+            ]
+          },
+          "SDPLineSeparator": {
+            "type": "string",
+            "enum": [
+              "\n"
+            ]
+          },
+          "SDPCarriageReturn": {
+            "type": "string",
+            "enum": [
+              "\r"
+            ]
+          },
+          "MediaImageURLPattern": {
+            "type": "string",
+            "enum": [
+              "^https://[^/?#]+/sdm_event_snapshot/[^?#]+"
+            ]
+          },
+          "MediaClipURLPattern": {
+            "type": "string",
+            "enum": [
+              "^https://[^/?#]+/"
+            ]
           }
         },
         "additionalProperties": false

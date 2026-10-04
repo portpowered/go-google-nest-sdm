@@ -1,0 +1,4 @@
+{{range .Types}}
+{{ if .Schema.Description }}{{ toGoComment .Schema.Description .TypeName }}{{ else }}// {{.TypeName}} defines model for {{.JsonName}}.{{ end }}
+type {{.TypeName}} {{if and .Schema.OAPISchema.AllOf (index .Schema.OAPISchema.Extensions "x-go-type")}}= {{index .Schema.OAPISchema.Extensions "x-go-type"}}{{else}}{{if and .IsAlias (ne .Schema.TypeDecl "string")}}={{end}} {{.Schema.TypeDecl}}{{end}}
+{{end}}

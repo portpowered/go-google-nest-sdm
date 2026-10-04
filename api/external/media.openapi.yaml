@@ -1,0 +1,33 @@
+{
+  "openapi": "3.0.3",
+  "info": {"title": "SDM event media follow-up downloads", "version": "1.0.0", "description": "Provider-issued media URLs have variable origins. Use only URLs received from trusted GenerateImage responses or ClipPreview events; neither operation follows redirects."},
+  "servers": [{"url": "https://{mediaHost}", "variables": {"mediaHost": {"default": "media.example.invalid", "description": "Host supplied by the provider; no stable host is documented."}}}],
+  "paths": {
+    "/sdm_event_snapshot/{imageId}": {"get": {
+      "operationId": "DownloadImage", "summary": "Download an event image", "description": "Retrieve the image bytes from the GenerateImage result URL using its short-lived event token.",
+      "parameters": [
+        {"in": "path", "name": "imageId", "required": true, "schema": {"type": "string", "minLength": 1}},
+        {"in": "query", "name": "width", "schema": {"type": "integer", "minimum": 1}, "description": "Pixel width; takes precedence over height."},
+        {"in": "query", "name": "height", "schema": {"type": "integer", "minimum": 1}, "description": "Pixel height when width is absent."}
+      ],
+      "security": [{"eventToken": []}],
+      "responses": {"200": {"description": "Encoded image bytes", "content": {"image/jpeg": {"schema": {"type": "string", "format": "binary"}}}}, "default": {"description": "Download failed; callers receive a typed status error."}}
+    }},
+    "/{mediaPath}": {"get": {
+      "operationId": "DownloadClipPreview", "summary": "Download a camera clip preview", "description": "Retrieve the ten-frame H264 MP4 from a trusted ClipPreview event URL. The provider chooses the opaque path and query.",
+      "parameters": [{"in": "path", "name": "mediaPath", "required": true, "description": "Opaque provider-issued path. This inventory template describes the URL; callers do not construct it.", "schema": {"type": "string", "minLength": 1}}],
+      "security": [{"oauthAccessToken": []}],
+      "responses": {"200": {"description": "Encoded clip preview bytes", "content": {"video/mp4": {"schema": {"type": "string", "format": "binary"}}}}, "default": {"description": "Download failed; callers receive a typed status error."}}
+    }}
+  },
+  "components": {
+    "securitySchemes": {
+      "eventToken": {"type": "apiKey", "in": "header", "name": "Authorization", "description": "Basic followed by one space and the literal event token; not RFC 7617 user/password encoding."},
+      "oauthAccessToken": {"type": "http", "scheme": "bearer"}
+    },
+    "schemas": {
+      "MediaImageURL": {"type": "string", "format": "uri", "pattern": "^https://[^/?#]+/sdm_event_snapshot/[^?#]+"},
+      "MediaClipURL": {"type": "string", "format": "uri", "pattern": "^https://[^/?#]+/"}
+    }
+  }
+}

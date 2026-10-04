@@ -1,0 +1,28 @@
+{
+  "openapi": "3.0.3",
+  "info": {"title": "SDM public media download requests", "version": "0.1.0"},
+  "paths": {},
+  "components": {"schemas": {
+    "ImageAuthContext": {
+      "type": "object", "description": "Short-lived event image credentials from GenerateImage; distinct from OAuth credentials.",
+      "required": ["eventToken"], "additionalProperties": false,
+      "properties": {"eventToken": {"type": "string", "minLength": 1}}
+    },
+    "DownloadImageRequest": {
+      "type": "object", "required": ["auth", "url"], "additionalProperties": false,
+      "properties": {
+        "auth": {"$ref": "#/components/schemas/ImageAuthContext"},
+        "url": {"type": "string", "format": "uri", "pattern": "^https://[^/?#]+/sdm_event_snapshot/[^?#]+", "x-go-name": "URL", "description": "Trusted URL returned by GenerateImage; provider determines the host and opaque image identifier."},
+        "width": {"type": "integer", "minimum": 1, "description": "Requested pixel width; the provider scales height. Width takes precedence if both dimensions are supplied."},
+        "height": {"type": "integer", "minimum": 1, "description": "Requested pixel height; the provider scales width when width is absent."}
+      }
+    },
+    "DownloadClipPreviewRequest": {
+      "type": "object", "required": ["auth", "url"], "additionalProperties": false,
+      "properties": {
+        "auth": {"$ref": "./client-resources.openapi.yaml#/components/schemas/AuthContext"},
+        "url": {"type": "string", "format": "uri", "pattern": "^https://[^/?#]+/", "x-go-name": "URL", "description": "Trusted previewUrl from a ClipPreview event; provider chooses the host, path and query."}
+      }
+    }
+  }}
+}

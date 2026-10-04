@@ -1,0 +1,482 @@
+{
+  "$comment": "Generated from api\\traits.openapi.yaml; DO NOT EDIT.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "components": {
+    "schemas": {
+      "AudioCodec": {
+        "description": "Known values; incoming values remain open for future service additions.",
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "OPUS"
+        ]
+      },
+      "CameraClipPreview": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware CameraClipPreview trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {},
+        "type": "object"
+      },
+      "CameraEventImage": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware CameraEventImage trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {},
+        "type": "object"
+      },
+      "CameraImage": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware CameraImage trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "maxImageResolution": {
+            "$ref": "#/components/schemas/ImageResolution"
+          }
+        },
+        "type": "object"
+      },
+      "CameraLiveStream": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware CameraLiveStream trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "audioCodecs": {
+            "items": {
+              "$ref": "#/components/schemas/AudioCodec"
+            },
+            "type": "array"
+          },
+          "maxVideoResolution": {
+            "$ref": "#/components/schemas/VideoResolution"
+          },
+          "supportedProtocols": {
+            "items": {
+              "$ref": "#/components/schemas/StreamProtocol"
+            },
+            "type": "array"
+          },
+          "videoCodecs": {
+            "items": {
+              "$ref": "#/components/schemas/VideoCodec"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "CameraMotion": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware CameraMotion trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {},
+        "type": "object"
+      },
+      "CameraPerson": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware CameraPerson trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {},
+        "type": "object"
+      },
+      "CameraSound": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware CameraSound trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {},
+        "type": "object"
+      },
+      "Connectivity": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware Connectivity trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ConnectivityStatus"
+          }
+        },
+        "type": "object"
+      },
+      "ConnectivityStatus": {
+        "description": "Known values; incoming values remain open for future service additions.",
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "ONLINE",
+          "OFFLINE"
+        ]
+      },
+      "DoorbellChime": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware DoorbellChime trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {},
+        "type": "object"
+      },
+      "EcoMode": {
+        "description": "Known values; incoming values remain open for future service additions.",
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "MANUAL_ECO",
+          "OFF"
+        ]
+      },
+      "Fan": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware Fan trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "timerMode": {
+            "$ref": "#/components/schemas/FanTimerMode"
+          },
+          "timerTimeout": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "FanTimerMode": {
+        "description": "Known values; incoming values remain open for future service additions.",
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "ON",
+          "OFF"
+        ]
+      },
+      "Humidity": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware Humidity trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "ambientHumidityPercent": {
+            "description": "Ambient relative humidity percent.",
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "HvacStatus": {
+        "description": "Known values; incoming values remain open for future service additions.",
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "OFF",
+          "HEATING",
+          "COOLING"
+        ]
+      },
+      "ImageResolution": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "height": {
+            "description": "Maximum image height in pixels.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "width": {
+            "description": "Maximum image width in pixels.",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "Info": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware Info trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "customName": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RoomInfo": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware RoomInfo trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "customName": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Settings": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware Settings trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "temperatureScale": {
+            "$ref": "#/components/schemas/TemperatureScale"
+          }
+        },
+        "type": "object"
+      },
+      "StreamProtocol": {
+        "description": "Known values; incoming values remain open for future service additions.",
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "RTSP",
+          "WEB_RTC"
+        ]
+      },
+      "StructureInfo": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware StructureInfo trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "customName": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Temperature": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware Temperature trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "ambientTemperatureCelsius": {
+            "description": "Ambient temperature in degrees Celsius.",
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "TemperatureScale": {
+        "description": "Known values; incoming values remain open for future service additions.",
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "CELSIUS",
+          "FAHRENHEIT"
+        ]
+      },
+      "ThermostatEco": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware ThermostatEco trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "availableModes": {
+            "items": {
+              "$ref": "#/components/schemas/EcoMode"
+            },
+            "type": "array"
+          },
+          "coolCelsius": {
+            "format": "double",
+            "type": "number"
+          },
+          "heatCelsius": {
+            "format": "double",
+            "type": "number"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/EcoMode"
+          }
+        },
+        "type": "object"
+      },
+      "ThermostatHvac": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware ThermostatHvac trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/HvacStatus"
+          }
+        },
+        "type": "object"
+      },
+      "ThermostatMode": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware ThermostatMode trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "availableModes": {
+            "items": {
+              "$ref": "#/components/schemas/ThermostatModeValue"
+            },
+            "type": "array"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/ThermostatModeValue"
+          }
+        },
+        "type": "object"
+      },
+      "ThermostatModeValue": {
+        "description": "Known values; incoming values remain open for future service additions.",
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "HEAT",
+          "COOL",
+          "HEATCOOL",
+          "OFF"
+        ]
+      },
+      "ThermostatTemperatureSetpoint": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Presence-aware ThermostatTemperatureSetpoint trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "properties": {
+          "coolCelsius": {
+            "format": "double",
+            "type": "number"
+          },
+          "heatCelsius": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "Traits": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "description": "Known trait keys with capability-marker presence and unknown future trait values preserved.",
+        "properties": {
+          "sdm.devices.traits.CameraClipPreview": {
+            "$ref": "#/components/schemas/CameraClipPreview",
+            "x-go-name": "CameraClipPreview"
+          },
+          "sdm.devices.traits.CameraEventImage": {
+            "$ref": "#/components/schemas/CameraEventImage",
+            "x-go-name": "CameraEventImage"
+          },
+          "sdm.devices.traits.CameraImage": {
+            "$ref": "#/components/schemas/CameraImage",
+            "x-go-name": "CameraImage"
+          },
+          "sdm.devices.traits.CameraLiveStream": {
+            "$ref": "#/components/schemas/CameraLiveStream",
+            "x-go-name": "CameraLiveStream"
+          },
+          "sdm.devices.traits.CameraMotion": {
+            "$ref": "#/components/schemas/CameraMotion",
+            "x-go-name": "CameraMotion"
+          },
+          "sdm.devices.traits.CameraPerson": {
+            "$ref": "#/components/schemas/CameraPerson",
+            "x-go-name": "CameraPerson"
+          },
+          "sdm.devices.traits.CameraSound": {
+            "$ref": "#/components/schemas/CameraSound",
+            "x-go-name": "CameraSound"
+          },
+          "sdm.devices.traits.Connectivity": {
+            "$ref": "#/components/schemas/Connectivity",
+            "x-go-name": "Connectivity"
+          },
+          "sdm.devices.traits.DoorbellChime": {
+            "$ref": "#/components/schemas/DoorbellChime",
+            "x-go-name": "DoorbellChime"
+          },
+          "sdm.devices.traits.Fan": {
+            "$ref": "#/components/schemas/Fan",
+            "x-go-name": "Fan"
+          },
+          "sdm.devices.traits.Humidity": {
+            "$ref": "#/components/schemas/Humidity",
+            "x-go-name": "Humidity"
+          },
+          "sdm.devices.traits.Info": {
+            "$ref": "#/components/schemas/Info",
+            "x-go-name": "Info"
+          },
+          "sdm.devices.traits.Settings": {
+            "$ref": "#/components/schemas/Settings",
+            "x-go-name": "Settings"
+          },
+          "sdm.devices.traits.Temperature": {
+            "$ref": "#/components/schemas/Temperature",
+            "x-go-name": "Temperature"
+          },
+          "sdm.devices.traits.ThermostatEco": {
+            "$ref": "#/components/schemas/ThermostatEco",
+            "x-go-name": "ThermostatEco"
+          },
+          "sdm.devices.traits.ThermostatHvac": {
+            "$ref": "#/components/schemas/ThermostatHvac",
+            "x-go-name": "ThermostatHvac"
+          },
+          "sdm.devices.traits.ThermostatMode": {
+            "$ref": "#/components/schemas/ThermostatMode",
+            "x-go-name": "ThermostatMode"
+          },
+          "sdm.devices.traits.ThermostatTemperatureSetpoint": {
+            "$ref": "#/components/schemas/ThermostatTemperatureSetpoint",
+            "x-go-name": "ThermostatTemperatureSetpoint"
+          },
+          "sdm.structures.traits.Info": {
+            "$ref": "#/components/schemas/StructureInfo",
+            "x-go-name": "StructureInfo"
+          },
+          "sdm.structures.traits.RoomInfo": {
+            "$ref": "#/components/schemas/RoomInfo",
+            "x-go-name": "RoomInfo"
+          }
+        },
+        "type": "object"
+      },
+      "VideoCodec": {
+        "description": "Known values; incoming values remain open for future service additions.",
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string",
+        "x-known-values": [
+          "H264"
+        ]
+      },
+      "VideoResolution": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage"
+        },
+        "properties": {
+          "height": {
+            "description": "Maximum video height in pixels.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "width": {
+            "description": "Maximum video width in pixels.",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
+}

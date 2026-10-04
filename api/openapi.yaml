@@ -54,7 +54,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Devices"
+        ]
       }
     },
     "/enterprises/{enterpriseId}/devices/{deviceId}": {
@@ -103,7 +106,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Devices"
+        ]
       }
     },
     "/enterprises/{enterpriseId}/devices/{deviceId}:executeCommand": {
@@ -162,7 +168,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Devices"
+        ]
       }
     },
     "/enterprises/{enterpriseId}/structures": {
@@ -201,7 +210,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Structures"
+        ]
       }
     },
     "/enterprises/{enterpriseId}/structures/{structureId}": {
@@ -250,7 +262,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Structures"
+        ]
       }
     },
     "/enterprises/{enterpriseId}/structures/{structureId}/rooms": {
@@ -299,7 +314,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Rooms"
+        ]
       }
     },
     "/enterprises/{enterpriseId}/structures/{structureId}/rooms/{roomId}": {
@@ -358,7 +376,10 @@
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Rooms"
+        ]
       }
     }
   },
@@ -366,13 +387,14 @@
     "schemas": {
       "DeviceType": {
         "type": "string",
-        "enum": [
+        "description": "Informational device type; use traits to infer capabilities.",
+        "x-known-values": [
           "sdm.devices.types.THERMOSTAT",
           "sdm.devices.types.CAMERA",
           "sdm.devices.types.DOORBELL",
           "sdm.devices.types.DISPLAY"
         ],
-        "description": "Informational device type; use traits to infer capabilities."
+        "pattern": "^sdm\\.devices\\.types\\.[A-Z][A-Z0-9_]*$"
       },
       "ParentRelation": {
         "type": "object",
@@ -561,5 +583,19 @@
         }
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Devices",
+      "description": "Authorized devices operations."
+    },
+    {
+      "name": "Rooms",
+      "description": "Authorized rooms operations."
+    },
+    {
+      "name": "Structures",
+      "description": "Authorized structures operations."
+    }
+  ]
 }

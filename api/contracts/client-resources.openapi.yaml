@@ -1,0 +1,1000 @@
+{
+  "$comment": "Generated from api\\client-resources.openapi.yaml; DO NOT EDIT.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "components": {
+    "schemas": {
+      "AckDeadlineRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "seconds": {
+            "maximum": 600,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "seconds"
+        ],
+        "type": "object"
+      },
+      "AuthContext": {
+        "additionalProperties": false,
+        "properties": {
+          "accessToken": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "accessToken"
+        ],
+        "type": "object"
+      },
+      "CheckCommandRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "command": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CommandName"
+          },
+          "device": {
+            "$ref": "#/components/schemas/Device"
+          }
+        },
+        "required": [
+          "device",
+          "command"
+        ],
+        "type": "object"
+      },
+      "Credentials": {
+        "additionalProperties": false,
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "expiresIn": {
+            "type": "integer"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "tokenType": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "accessToken",
+          "tokenType",
+          "expiresIn"
+        ],
+        "type": "object"
+      },
+      "DecodePushEventRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "body": {
+            "format": "byte",
+            "type": "string"
+          },
+          "unwrapped": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "body",
+          "unwrapped"
+        ],
+        "type": "object"
+      },
+      "DecodePushEventResult": {
+        "additionalProperties": false,
+        "properties": {
+          "event": {
+            "$ref": "./events.openapi.yaml#/components/schemas/EventEnvelope"
+          }
+        },
+        "required": [
+          "event"
+        ],
+        "type": "object"
+      },
+      "Device": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage",
+          "x-go-type-import": {
+            "name": "json",
+            "path": "encoding/json"
+          }
+        },
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "pattern": "^enterprises/[^/]+/devices/[^/]+$",
+            "type": "string"
+          },
+          "parentRelations": {
+            "items": {
+              "$ref": "#/components/schemas/ParentRelation"
+            },
+            "type": "array"
+          },
+          "traits": {
+            "$ref": "./traits.openapi.yaml#/components/schemas/Traits"
+          },
+          "type": {
+            "$ref": "#/components/schemas/DeviceType"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "DeviceState": {
+        "additionalProperties": false,
+        "properties": {
+          "deleted": {
+            "type": "boolean"
+          },
+          "device": {
+            "$ref": "#/components/schemas/Device"
+          },
+          "recentEventIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "device",
+          "updatedAt",
+          "recentEventIds",
+          "deleted"
+        ],
+        "type": "object"
+      },
+      "DeviceType": {
+        "description": "Open device category; capabilities come from returned traits.",
+        "pattern": "^sdm\\.devices\\.types\\.[A-Z][A-Z0-9_]*$",
+        "type": "string"
+      },
+      "ExchangeTokenRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "clientId": {
+            "type": "string"
+          },
+          "clientSecret": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "codeVerifier": {
+            "type": "string"
+          },
+          "redirectUri": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "clientId",
+          "clientSecret",
+          "code",
+          "redirectUri"
+        ],
+        "type": "object"
+      },
+      "ExchangeTokenResult": {
+        "additionalProperties": false,
+        "properties": {
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          }
+        },
+        "required": [
+          "credentials"
+        ],
+        "type": "object"
+      },
+      "ExtendRtspStreamRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CameraLiveStreamExtendRtspStreamParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "ExtendRtspStreamResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CameraLiveStreamExtendRtspStreamResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "ExtendWebRtcStreamRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CameraLiveStreamExtendWebRtcStreamParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "ExtendWebRtcStreamResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CameraLiveStreamExtendWebRtcStreamResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "GenerateImageRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CameraEventImageGenerateImageParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "GenerateImageResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CameraEventImageGenerateImageResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "GenerateRtspStreamRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CameraLiveStreamGenerateRtspStreamParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "GenerateRtspStreamResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CameraLiveStreamGenerateRtspStreamResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "GenerateWebRtcStreamRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CameraLiveStreamGenerateWebRtcStreamParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "GenerateWebRtcStreamResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CameraLiveStreamGenerateWebRtcStreamResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "GetDeviceRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "auth",
+          "name"
+        ],
+        "type": "object"
+      },
+      "GetDeviceResult": {
+        "additionalProperties": false,
+        "properties": {
+          "device": {
+            "$ref": "#/components/schemas/Device"
+          }
+        },
+        "required": [
+          "device"
+        ],
+        "type": "object"
+      },
+      "GetRoomRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "auth",
+          "name"
+        ],
+        "type": "object"
+      },
+      "GetRoomResult": {
+        "additionalProperties": false,
+        "properties": {
+          "room": {
+            "$ref": "#/components/schemas/Room"
+          }
+        },
+        "required": [
+          "room"
+        ],
+        "type": "object"
+      },
+      "GetStructureRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "auth",
+          "name"
+        ],
+        "type": "object"
+      },
+      "GetStructureResult": {
+        "additionalProperties": false,
+        "properties": {
+          "structure": {
+            "$ref": "#/components/schemas/Structure"
+          }
+        },
+        "required": [
+          "structure"
+        ],
+        "type": "object"
+      },
+      "HandleEventRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "HandleEventResult": {
+        "additionalProperties": false,
+        "properties": {
+          "event": {
+            "$ref": "./events.openapi.yaml#/components/schemas/EventEnvelope"
+          }
+        },
+        "required": [
+          "event"
+        ],
+        "type": "object"
+      },
+      "ListDevicesRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "filter": {
+            "type": "string"
+          },
+          "parent": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "auth",
+          "parent"
+        ],
+        "type": "object"
+      },
+      "ListDevicesResult": {
+        "additionalProperties": false,
+        "properties": {
+          "devices": {
+            "items": {
+              "$ref": "#/components/schemas/Device"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "devices"
+        ],
+        "type": "object"
+      },
+      "ListRoomsRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "parent": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "auth",
+          "parent"
+        ],
+        "type": "object"
+      },
+      "ListRoomsResult": {
+        "additionalProperties": false,
+        "properties": {
+          "rooms": {
+            "items": {
+              "$ref": "#/components/schemas/Room"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "rooms"
+        ],
+        "type": "object"
+      },
+      "ListStructuresRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "parent": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "auth",
+          "parent"
+        ],
+        "type": "object"
+      },
+      "ListStructuresResult": {
+        "additionalProperties": false,
+        "properties": {
+          "structures": {
+            "items": {
+              "$ref": "#/components/schemas/Structure"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "structures"
+        ],
+        "type": "object"
+      },
+      "OpenEventSessionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "maxMessages": {
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "subscription": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "auth",
+          "subscription"
+        ],
+        "type": "object"
+      },
+      "ParentRelation": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage",
+          "x-go-type-import": {
+            "name": "json",
+            "path": "encoding/json"
+          }
+        },
+        "properties": {
+          "displayName": {
+            "type": "string"
+          },
+          "parent": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ReconcileDisposition": {
+        "enum": [
+          "APPLIED",
+          "DUPLICATE",
+          "STALE",
+          "UNRELATED",
+          "UNSUPPORTED"
+        ],
+        "type": "string",
+        "x-enum-varnames": [
+          "ReconcileApplied",
+          "ReconcileDuplicate",
+          "ReconcileStale",
+          "ReconcileUnrelated",
+          "ReconcileUnsupported"
+        ]
+      },
+      "ReconcileRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "event": {
+            "$ref": "./events.openapi.yaml#/components/schemas/EventEnvelope"
+          },
+          "state": {
+            "$ref": "#/components/schemas/DeviceState"
+          }
+        },
+        "required": [
+          "state",
+          "event"
+        ],
+        "type": "object"
+      },
+      "ReconcileResult": {
+        "additionalProperties": false,
+        "properties": {
+          "disposition": {
+            "$ref": "#/components/schemas/ReconcileDisposition"
+          },
+          "state": {
+            "$ref": "#/components/schemas/DeviceState"
+          }
+        },
+        "required": [
+          "state",
+          "disposition"
+        ],
+        "type": "object"
+      },
+      "RefreshTokenRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "clientId": {
+            "type": "string"
+          },
+          "clientSecret": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "clientId",
+          "clientSecret",
+          "refreshToken"
+        ],
+        "type": "object"
+      },
+      "RefreshTokenResult": {
+        "additionalProperties": false,
+        "properties": {
+          "credentials": {
+            "$ref": "#/components/schemas/Credentials"
+          }
+        },
+        "required": [
+          "credentials"
+        ],
+        "type": "object"
+      },
+      "Room": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage",
+          "x-go-type-import": {
+            "name": "json",
+            "path": "encoding/json"
+          }
+        },
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "pattern": "^enterprises/[^/]+/structures/[^/]+/rooms/[^/]+$",
+            "type": "string"
+          },
+          "traits": {
+            "$ref": "./traits.openapi.yaml#/components/schemas/Traits"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "SetCoolRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetCoolParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "SetCoolResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/EmptyResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "SetFanTimerRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/FanSetTimerParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "SetFanTimerResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/EmptyResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "SetHeatRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetHeatParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "SetHeatResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/EmptyResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "SetRangeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetRangeParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "SetRangeResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/EmptyResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "SetThermostatEcoModeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/ThermostatEcoSetModeParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "SetThermostatEcoModeResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/EmptyResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "SetThermostatModeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/ThermostatModeSetModeParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "SetThermostatModeResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/EmptyResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "StopRtspStreamRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CameraLiveStreamStopRtspStreamParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "StopRtspStreamResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/EmptyResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "StopWebRtcStreamRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "params": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/CameraLiveStreamStopWebRtcStreamParams"
+          }
+        },
+        "required": [
+          "auth",
+          "deviceName",
+          "params"
+        ],
+        "type": "object"
+      },
+      "StopWebRtcStreamResult": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "$ref": "./client-models.openapi.yaml#/components/schemas/EmptyResults"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object"
+      },
+      "Structure": {
+        "additionalProperties": {
+          "x-go-type": "json.RawMessage",
+          "x-go-type-import": {
+            "name": "json",
+            "path": "encoding/json"
+          }
+        },
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "pattern": "^enterprises/[^/]+/structures/[^/]+$",
+            "type": "string"
+          },
+          "traits": {
+            "$ref": "./traits.openapi.yaml#/components/schemas/Traits"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      }
+    }
+  }
+}

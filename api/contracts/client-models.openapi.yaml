@@ -1,0 +1,191 @@
+{
+  "$comment": "Generated from api\\client-models.openapi.yaml; DO NOT EDIT.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "components": {
+    "schemas": {
+      "AudioCodec": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/AudioCodec"
+      },
+      "CameraClipPreview": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/CameraClipPreview"
+      },
+      "CameraEventImage": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/CameraEventImage"
+      },
+      "CameraEventImageGenerateImageParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraEventImageGenerateImageParams"
+      },
+      "CameraEventImageGenerateImageResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraEventImageGenerateImageResults"
+      },
+      "CameraImage": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/CameraImage"
+      },
+      "CameraLiveStream": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/CameraLiveStream"
+      },
+      "CameraLiveStreamExtendRtspStreamParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendRtspStreamParams"
+      },
+      "CameraLiveStreamExtendRtspStreamResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendRtspStreamResults"
+      },
+      "CameraLiveStreamExtendWebRtcStreamParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendWebRtcStreamParams"
+      },
+      "CameraLiveStreamExtendWebRtcStreamResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendWebRtcStreamResults"
+      },
+      "CameraLiveStreamGenerateRtspStreamParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateRtspStreamParams"
+      },
+      "CameraLiveStreamGenerateRtspStreamResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateRtspStreamResults"
+      },
+      "CameraLiveStreamGenerateWebRtcStreamParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateWebRtcStreamParams"
+      },
+      "CameraLiveStreamGenerateWebRtcStreamResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateWebRtcStreamResults"
+      },
+      "CameraLiveStreamStopRtspStreamParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopRtspStreamParams"
+      },
+      "CameraLiveStreamStopRtspStreamResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopRtspStreamResults"
+      },
+      "CameraLiveStreamStopWebRtcStreamParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopWebRtcStreamParams"
+      },
+      "CameraLiveStreamStopWebRtcStreamResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopWebRtcStreamResults"
+      },
+      "CameraMotion": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/CameraMotion"
+      },
+      "CameraPerson": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/CameraPerson"
+      },
+      "CameraSound": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/CameraSound"
+      },
+      "CommandName": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/CommandName"
+      },
+      "Connectivity": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/Connectivity"
+      },
+      "ConnectivityStatus": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/ConnectivityStatus"
+      },
+      "DoorbellChime": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/DoorbellChime"
+      },
+      "EcoMode": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/EcoMode"
+      },
+      "EmptyResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/EmptyResults"
+      },
+      "Fan": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/Fan"
+      },
+      "FanSetTimerParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/FanSetTimerParams"
+      },
+      "FanSetTimerResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/FanSetTimerResults"
+      },
+      "FanTimerMode": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/FanTimerMode"
+      },
+      "Humidity": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/Humidity"
+      },
+      "HvacStatus": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/HvacStatus"
+      },
+      "ImageResolution": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/ImageResolution"
+      },
+      "Info": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/Info"
+      },
+      "RoomInfo": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/RoomInfo"
+      },
+      "RtspStreamURLs": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/RtspStreamURLs"
+      },
+      "Settings": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/Settings"
+      },
+      "StreamProtocol": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/StreamProtocol"
+      },
+      "StructureInfo": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/StructureInfo"
+      },
+      "Temperature": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/Temperature"
+      },
+      "TemperatureScale": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/TemperatureScale"
+      },
+      "ThermostatEco": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/ThermostatEco"
+      },
+      "ThermostatEcoSetModeParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatEcoSetModeParams"
+      },
+      "ThermostatEcoSetModeResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatEcoSetModeResults"
+      },
+      "ThermostatHvac": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/ThermostatHvac"
+      },
+      "ThermostatMode": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/ThermostatMode"
+      },
+      "ThermostatModeSetModeParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatModeSetModeParams"
+      },
+      "ThermostatModeSetModeResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatModeSetModeResults"
+      },
+      "ThermostatModeValue": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/ThermostatModeValue"
+      },
+      "ThermostatTemperatureSetpoint": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/ThermostatTemperatureSetpoint"
+      },
+      "ThermostatTemperatureSetpointSetCoolParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetCoolParams"
+      },
+      "ThermostatTemperatureSetpointSetCoolResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetCoolResults"
+      },
+      "ThermostatTemperatureSetpointSetHeatParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetHeatParams"
+      },
+      "ThermostatTemperatureSetpointSetHeatResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetHeatResults"
+      },
+      "ThermostatTemperatureSetpointSetRangeParams": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetRangeParams"
+      },
+      "ThermostatTemperatureSetpointSetRangeResults": {
+        "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetRangeResults"
+      },
+      "Traits": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/Traits"
+      },
+      "VideoCodec": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/VideoCodec"
+      },
+      "VideoResolution": {
+        "$ref": "./traits.openapi.yaml#/components/schemas/VideoResolution"
+      }
+    }
+  }
+}
