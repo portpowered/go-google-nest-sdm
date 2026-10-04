@@ -28,6 +28,11 @@ await writeFile(resolve(root, 'api/events.openapi.yaml'), JSON.stringify({
 }, null, 2) + '\n');
 // Modelina consumes a Draft 7 schema projection of the signaling catalog.
 // Traits is generated separately by oapi-codegen from the canonical trait catalog.
+// Titles and descriptions only label presence alternatives for documentation.
+// Any validation-bearing keyword prevents this shape-only simplification.
+function requirementOnlyAlternative(branch) {
+  return Array.isArray(branch.required) && Object.keys(branch).every(key => ['required', 'title', 'description'].includes(key));
+}
 function project(value) {
   if (Array.isArray(value)) return value.map(project);
   if (!value || typeof value !== 'object') return value;
@@ -37,7 +42,7 @@ function project(value) {
   if (result['x-known-values']) result.enum = result['x-known-values'];
   // Requirement-only alternatives constrain object presence, not its Go shape.
   // The canonical schemas and generated codecs retain these constraints.
-  if (result.anyOf?.every(branch => Object.keys(branch).length === 1 && Array.isArray(branch.required))) delete result.anyOf;
+  if (result.anyOf?.every(requirementOnlyAlternative)) delete result.anyOf;
   return result;
 }
 const definitions = Object.fromEntries(Object.entries(schemas).map(([name, schema]) => [name, project(schema)]));
@@ -61,7 +66,7 @@ function codecs(model, fields) {
   const requireChecks = required.map(key => `if value, present := properties[${key}]; !present || string(value) == "null" { return fmt.Errorf("${name}: required field %s is missing or null", ${key}) }`).join('\n');
   const nullChecks = known.map(key => `if value, present := properties[${key}]; present && string(value) == "null" { return fmt.Errorf("${name}: field %s cannot be null", ${key}) }`).join('\n');
   const alternatives = schemas[name]?.anyOf;
-  const alternativeCheck = alternatives?.every(branch => Object.keys(branch).length === 1 && Array.isArray(branch.required))
+  const alternativeCheck = alternatives?.every(requirementOnlyAlternative)
     ? `if !(${alternatives.map(branch => '(' + branch.required.map(key => `len(properties[${JSON.stringify(key)}]) != 0`).join(' && ') + ')').join(' || ')}) { return fmt.Errorf("${name}: missing required update variant") }` : '';
   const deletes = known.map(key => `delete(properties, ${key})`).join('\n');
   // Required keys must win even if users insert a conflicting extension key.

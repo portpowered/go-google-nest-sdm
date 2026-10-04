@@ -476,7 +476,7 @@ func (value *EventEnvelope) UnmarshalJSON(data []byte) error {
 	if value, present := properties["resourceGroup"]; present && string(value) == "null" {
 		return fmt.Errorf("EventEnvelope: field %s cannot be null", "resourceGroup")
 	}
-	if !((len(properties["resourceUpdate"]) != 0) || (len(properties["relationUpdate"]) != 0)) {
+	if !((len(properties["eventId"]) != 0 && len(properties["timestamp"]) != 0 && len(properties["userId"]) != 0 && len(properties["resourceUpdate"]) != 0) || (len(properties["eventId"]) != 0 && len(properties["timestamp"]) != 0 && len(properties["userId"]) != 0 && len(properties["relationUpdate"]) != 0)) {
 		return fmt.Errorf("EventEnvelope: missing required update variant")
 	}
 	type known EventEnvelope

@@ -211,9 +211,19 @@ components:
         - timestamp
         - userId
       anyOf:
-        - required:
+        - title: Resource update
+          description: An event carrying trait changes or camera notifications for a resource.
+          required:
+            - eventId
+            - timestamp
+            - userId
             - resourceUpdate
-        - required:
+        - title: Relation update
+          description: An event carrying a CREATED, UPDATED or DELETED relationship change.
+          required:
+            - eventId
+            - timestamp
+            - userId
             - relationUpdate
       properties:
         eventId:
