@@ -47,6 +47,7 @@ jobs:
           diagnostics="$RUNNER_TEMP/verification-diagnostics"
           mkdir -p "$diagnostics"
           git status --porcelain=v1 --untracked-files=all > "$diagnostics/status.txt"
+          git ls-files --eol -- go.mod go.sum cmd/go-google-nest-sdm/go.mod cmd/go-google-nest-sdm/go.sum tests/consumer/go.mod tests/consumer/go.sum > "$diagnostics/module-line-endings.txt"
           git diff --no-ext-diff --binary HEAD -- api internal pkg docs/model-inventory.json docs/api-reference.openapi.json go.mod go.sum cmd/go-google-nest-sdm/go.mod cmd/go-google-nest-sdm/go.sum tests/consumer/go.mod tests/consumer/go.sum > "$diagnostics/generated-and-module.patch"
           cp docs/model-inventory.json "$diagnostics/model-inventory.checked-in.json"
           if go run ./tools/contractcheck -write-inventory "$diagnostics/model-inventory.regenerated.json" > "$diagnostics/inventory.log" 2>&1; then
