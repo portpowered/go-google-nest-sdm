@@ -27,7 +27,12 @@ func main() {
 }
 
 func audit(root string) error {
-	err := auditHelpers(root)
+	models, err := loadWireModels(root)
+	if err != nil {
+		return err
+	}
+
+	err = auditHelpers(root)
 	if err != nil {
 		return err
 	}
@@ -55,7 +60,7 @@ func audit(root string) error {
 			return nil
 		}
 
-		err = auditFile(file, filepath.ToSlash(path))
+		err = auditFile(file, filepath.ToSlash(path), models)
 		if err != nil {
 			return fmt.Errorf("%s: %w", path, err)
 		}
@@ -69,8 +74,18 @@ func audit(root string) error {
 	return nil
 }
 
-func auditFile(file *ast.File, path string) error {
+func auditFile(file *ast.File, path string, catalogs ...map[string]ast.Expr) error {
 	imports, err := auditImports(file)
+	if err != nil {
+		return err
+	}
+
+	models := map[string]ast.Expr{}
+	if len(catalogs) != 0 {
+		models = catalogs[0]
+	}
+
+	err = auditWireValues(file, imports, models)
 	if err != nil {
 		return err
 	}

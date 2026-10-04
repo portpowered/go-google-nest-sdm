@@ -56,7 +56,7 @@ func auditProtocol(root string) error {
 		}
 	}
 
-	return nil
+	return auditChannelInventory(constants, seen)
 }
 
 func protocolConstants(root string) (map[string]string, error) {
@@ -135,7 +135,13 @@ type schemaOperation struct {
 	OperationID string `yaml:"operationId"`
 }
 type routeSchema struct {
-	Paths map[string]map[string]schemaOperation `yaml:"paths"`
+	Paths    map[string]map[string]schemaOperation `yaml:"paths"`
+	Channels map[string]schemaChannel              `yaml:"channels"`
+}
+
+type schemaChannel struct {
+	GoName  string `yaml:"x-go-name"` //nolint:tagliatelle // AsyncAPI extension spelling is a wire schema key.
+	Address string `yaml:"address"`
 }
 
 func auditSchema(path string, constants map[string]string, seen map[string]bool) error {
@@ -170,6 +176,31 @@ func auditSchema(path string, constants map[string]string, seen map[string]bool)
 			}
 
 			seen[name] = true
+		}
+	}
+
+	return auditSchemaChannels(document.Channels, constants, seen)
+}
+
+func auditSchemaChannels(channels map[string]schemaChannel, constants map[string]string, seen map[string]bool) error {
+	for name, channel := range channels {
+		symbol := "Channel" + channel.GoName
+		if channel.GoName == "" || channel.Address == "" || constants[symbol] != channel.Address ||
+			constants[symbol+"Name"] != name {
+			return fmt.Errorf("%w: generated channel %s differs from schema", errRouteInvalid, name)
+		}
+
+		seen[symbol] = true
+		seen[symbol+"Name"] = true
+	}
+
+	return nil
+}
+
+func auditChannelInventory(constants map[string]string, seen map[string]bool) error {
+	for symbol := range constants {
+		if strings.HasPrefix(symbol, "Channel") && !seen[symbol] {
+			return fmt.Errorf("%w: generated channel %s absent from schema inventory", errRouteInvalid, symbol)
 		}
 	}
 

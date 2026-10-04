@@ -172,7 +172,9 @@ func handwrittenStruct(structure *ast.StructType, path string) error {
 }
 
 func registeredGeneratedPath(path string) bool {
-	for _, constantFile := range []string{"internal/protocol/routes.gen.go", "internal/protocol/media.gen.go"} {
+	for _, constantFile := range []string{
+		"internal/protocol/routes.gen.go", "internal/protocol/media.gen.go", "internal/protocol/channels.gen.go",
+	} {
 		if path == constantFile || strings.HasSuffix(path, "/"+constantFile) {
 			return true
 		}

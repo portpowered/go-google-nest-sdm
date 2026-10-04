@@ -96,6 +96,14 @@ func operationOwner(document contractDocument, name string) string {
 }
 
 func protocolOwner(name string) string {
+	if name == "ChannelSDMEvents" {
+		return "api/asyncapi.yaml#/channels/sdmEvents/address"
+	}
+
+	if name == "ChannelSDMEventsName" {
+		return "api/asyncapi.yaml#/channels/sdmEvents"
+	}
+
 	for _, prefix := range []string{"Method", "Path"} {
 		if after, ok := strings.CutPrefix(name, prefix); ok {
 			operation := after

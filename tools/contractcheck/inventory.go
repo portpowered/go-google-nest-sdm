@@ -8,12 +8,10 @@ import (
 	"go/format"
 	"go/parser"
 	"go/token"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"reflect"
 	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -26,6 +24,8 @@ type inventoryEntry struct {
 	Generator      string           `json:"generator"`
 	Uses           []string         `json:"uses"`
 	ProductionUses []string         `json:"productionUses"`
+	WireRoots      []string         `json:"wireRoots"`
+	Disposition    string           `json:"disposition"`
 	TypeExpression string           `json:"typeExpression"`
 	Value          string           `json:"value"`
 	Fields         []inventoryField `json:"fields"`
@@ -61,7 +61,8 @@ func writeInventory(root, output string) error {
 func modelInventory(root string) ([]inventoryEntry, error) {
 	entries := []inventoryEntry{}
 
-	files := append(generatedPaths(), "internal/protocol/routes.gen.go", "internal/protocol/media.gen.go")
+	files := append(generatedPaths(),
+		"internal/protocol/routes.gen.go", "internal/protocol/media.gen.go", "internal/protocol/channels.gen.go")
 	for _, path := range files {
 		fileSet := token.NewFileSet()
 
@@ -100,13 +101,6 @@ func modelInventory(root string) ([]inventoryEntry, error) {
 		entry.Schema, err = schemaOwner(root, strings.Split(entry.Source, ":")[0], ownerName, entry.Kind)
 		if err != nil {
 			return nil, err
-		}
-
-		entry.ProductionUses = []string{}
-		for _, use := range entry.Uses {
-			if !strings.Contains(use, ".gen.go:") {
-				entry.ProductionUses = append(entry.ProductionUses, use)
-			}
 		}
 	}
 
@@ -151,6 +145,7 @@ func inventoryDeclarations(path string, spec ast.Spec, fileSet *token.FileSet) [
 		Declaration: "", Kind: "",
 		Source: fmt.Sprintf("%s:%d", path, fileSet.Position(spec.Pos()).Line),
 		Schema: modelSchema(path), Generator: "go run ./tools/generate", Uses: []string{}, ProductionUses: []string{},
+		WireRoots: []string{}, Disposition: "",
 		TypeExpression: "", Value: "", Fields: []inventoryField{},
 	}
 	switch value := spec.(type) {
@@ -227,84 +222,4 @@ func inventoryFields(expression ast.Expr) []inventoryField {
 	}
 
 	return fields
-}
-
-func inventoryUses(root string, entries []inventoryEntry) error {
-	index := map[string]int{}
-	for position, entry := range entries {
-		index[entry.Package+"."+entry.Declaration] = position
-	}
-
-	err := filepath.WalkDir(filepath.Join(root, "pkg"), func(path string, entry fs.DirEntry, walkErr error) error {
-		if walkErr != nil {
-			return fmt.Errorf("scan inventory uses: %w", walkErr)
-		}
-
-		if entry.IsDir() || !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
-			return nil
-		}
-
-		return inspectUses(root, path, entries, index)
-	})
-	if err != nil {
-		return fmt.Errorf("inventory use tree: %w", err)
-	}
-
-	return nil
-}
-
-func inspectUses(root, path string, entries []inventoryEntry, index map[string]int) error {
-	fileSet := token.NewFileSet()
-
-	file, err := parser.ParseFile(fileSet, path, nil, 0)
-	if err != nil {
-		return fmt.Errorf("parse inventory use: %w", err)
-	}
-
-	imports := map[string]string{}
-
-	for _, imported := range file.Imports {
-		value, decodeErr := strconv.Unquote(imported.Path.Value)
-		if decodeErr != nil {
-			return fmt.Errorf("decode inventory import: %w", decodeErr)
-		}
-
-		name := filepath.Base(value)
-		if imported.Name != nil {
-			name = imported.Name.Name
-		}
-
-		imports[name] = value
-	}
-
-	relative, err := filepath.Rel(root, path)
-	if err != nil {
-		return fmt.Errorf("resolve inventory source: %w", err)
-	}
-
-	localPackage := "github.com/portpowered/go-google-nest-sdm/" + filepath.ToSlash(filepath.Dir(relative))
-
-	ast.Inspect(file, func(node ast.Node) bool {
-		key := ""
-
-		switch value := node.(type) {
-		case *ast.SelectorExpr:
-			if owner, ok := value.X.(*ast.Ident); ok && owner.Obj == nil {
-				key = imports[owner.Name] + "." + value.Sel.Name
-			}
-		case *ast.Ident:
-			if value.Obj != nil {
-				key = localPackage + "." + value.Name
-			}
-		}
-
-		if position, exists := index[key]; exists {
-			use := fmt.Sprintf("%s:%d", filepath.ToSlash(relative), fileSet.Position(node.Pos()).Line)
-			entries[position].Uses = append(entries[position].Uses, use)
-		}
-
-		return true
-	})
-
-	return nil
 }
