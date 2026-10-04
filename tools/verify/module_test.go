@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"runtime"
 	"slices"
 	"strings"
 	"testing"
@@ -142,6 +143,67 @@ func TestSelectedModuleMustBelongToRepository(t *testing.T) {
 
 	if len(got) != 1 || got[0] != filepath.FromSlash(cliModule) {
 		t.Fatalf("selected modules = %q", got)
+	}
+}
+
+func TestCLIWorkspaceResolvesSymlinkedCheckout(t *testing.T) {
+	t.Parallel()
+
+	root, original := setupLocalCLI(t)
+	alias := filepath.Join(t.TempDir(), "linked checkout")
+
+	err := os.Symlink(root, alias)
+	if err != nil {
+		if runtime.GOOS == "windows" {
+			t.Skipf("Windows does not permit this directory symlink: %v", err)
+		}
+
+		t.Fatal(err)
+	}
+
+	environment := append(os.Environ(), "GOWORK=off")
+
+	check, err := prepareModule(t.Context(), alias, cliModule, environment)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		closeErr := check.close()
+		if closeErr != nil {
+			t.Error(closeErr)
+		}
+	})
+
+	canonicalCLI, err := canonicalDirectory(filepath.Join(root, cliModule))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if check.directory != canonicalCLI {
+		t.Fatalf("CLI workspace directory = %q, want canonical %q", check.directory, canonicalCLI)
+	}
+
+	workspace, err := check.workspaceEnvironment(t.Context(), alias, environment)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Starting the child through the alias reproduces the lexical/physical
+	// directory mismatch even when the OS itself does not alias its temp root.
+	err = command(t.Context(), filepath.Join(alias, cliModule), workspace, "go", "test", "./...")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// #nosec G304 -- this test reads only the synthetic CLI metadata created under t.TempDir.
+	unchanged, err := os.ReadFile(filepath.Join(root, cliModule, moduleFilename))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !bytes.Equal(unchanged, original) {
+		t.Fatal("symlink workspace changed published CLI metadata")
 	}
 }
 
