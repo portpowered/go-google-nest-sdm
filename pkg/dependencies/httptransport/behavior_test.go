@@ -479,21 +479,6 @@ func TestOAuthInputValidation(t *testing.T) {
 func TestOtherBaseOriginsAndProviderErrorLimits(t *testing.T) {
 	t.Parallel()
 
-	for _, option := range []transport.Option{
-		transport.WithPubSubBaseURL("https://example.test/v1/"),
-		transport.WithOAuthBaseURL("https://example.test/"),
-		transport.WithPubSubBaseURL("%"),
-		transport.WithOAuthBaseURL("%"),
-	} {
-		_, err := transport.New(option)
-		if err != nil {
-			var failure *transport.Error
-			if !errors.As(err, &failure) || failure.Kind != transport.ErrorInvalidRequest {
-				t.Fatal(err)
-			}
-		}
-	}
-
 	for _, body := range []io.ReadCloser{nil, io.NopCloser(strings.NewReader(strings.Repeat("x", (8<<20)+1)))} {
 		client, err := transport.New(transport.WithHTTPClient(testDoer(func(*http.Request) (*http.Response, error) {
 			return testResponse(http.StatusBadRequest, body), nil
@@ -566,5 +551,77 @@ func checkDiscoveryBodies(t *testing.T, validBody string, call func(sdm.Client) 
 		} else if err != nil {
 			t.Fatal(err)
 		}
+	}
+}
+
+func TestConfiguredServiceOrigins(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		name              string
+		option            transport.Option
+		valid, pubSub     bool
+		endpoint, payload string
+	}{
+		{"pubsub valid", transport.WithPubSubBaseURL("https://example.test/v1/"), true, true,
+			"https://example.test/v1/projects/p/subscriptions/s:pull", `{}`},
+		{"oauth valid", transport.WithOAuthBaseURL("https://example.test/"), true, false,
+			"https://example.test/token", `{"access_token":"access","expires_in":3600,"token_type":"Bearer"}`},
+		{"pubsub invalid", transport.WithPubSubBaseURL("%"), false, true, "", ""},
+		{"oauth invalid", transport.WithOAuthBaseURL("%"), false, false, "", ""},
+	}
+	for _, test := range cases {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			calls := 0
+			client, err := transport.New(test.option, transport.WithHTTPClient(testDoer(
+				func(request *http.Request) (*http.Response, error) {
+					calls++
+
+					if request.URL.String() != test.endpoint || request.Method != http.MethodPost {
+						t.Errorf("request = %s %s; expected POST %s", request.Method, request.URL, test.endpoint)
+					}
+
+					return sdkResponse(http.StatusOK, test.payload), nil
+				},
+			)))
+
+			if !test.valid {
+				var failure *transport.Error
+
+				if !errors.As(err, &failure) || failure.Kind != transport.ErrorInvalidRequest || client != nil || calls != 0 {
+					t.Fatalf("invalid origin accepted: client=%v err=%v calls=%d", client, err, calls)
+				}
+
+				return
+			}
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if test.pubSub {
+				_, err = client.Pull(context.Background(), testAccountToken, "projects/p/subscriptions/s",
+					wire.PullRequest{MaxMessages: 1, ReturnImmediately: nil})
+			} else {
+				input := new(wire.OAuthTokenRequest)
+				refresh := "synthetic-refresh"
+				input.ClientId = "synthetic-client"
+				input.ClientSecret = "synthetic-secret"
+				input.RefreshToken = &refresh
+
+				result, oauthError := client.OAuthRefresh(context.Background(), *input)
+				err = oauthError
+
+				if err == nil && result.AccessToken != "access" {
+					t.Error("lost exchanged access token")
+				}
+			}
+
+			if err != nil || calls != 1 {
+				t.Fatalf("valid origin exchange: err=%v calls=%d", err, calls)
+			}
+		})
 	}
 }
