@@ -4,6 +4,10 @@ Apply these requirements when creating a library from this template:
 
 1. Keep the public client, examples, README, and site independent of any consuming application. Put application adapters and rollout plans in the consuming repository.
 2. Document supported operations, authentication, errors, and transport injection with examples that match the exported API. Add customer-facing operation guides for important workflows, and distinguish verified behavior from synthetic examples and historical references.
+   Put sanitized, schema-valid request, response and event examples in the canonical schemas,
+   including complete envelopes, nested payloads, resource updates, relation changes and failures.
+   Validate every example against its owning schema in CI and identify its evidence class in
+   contributor material. Never publish credentials or private captures as examples.
 3. Show Go version, CI, coverage, release, Go Reference, license, and documentation badges in the README. Replace every example repository value and point badges to live reports.
 4. Generate the API reference in CI with the shared Fumadocs action and publish it to GitHub Pages.
    Inventory **ALL** outbound wire endpoints and exchanges, including private, encrypted, event, and
@@ -12,6 +16,13 @@ Apply these requirements when creating a library from this template:
    wire request/response types from those schemas. Include nested event properties and payloads
    serialized inside strings or encrypted wrappers; use generated artifacts at every wire boundary,
    and do not sign off while a handwritten wire definition or model remains.
+   Correlate command or message identifiers with their named payload schemas using discriminated
+   variants or an equivalent explicit binding. The generated reference must expose each known
+   variant's required parameters and result shape, even when the transport uses a generic envelope.
+   An unknown or free-form payload does not document known variants. Keep future-value extensions
+   separate so they cannot accept malformed known payloads. Inspect actual rendered fields,
+   variant examples and generated request snippets; schema validity and HTTP 200 alone do not
+   establish that customers can discover the payload they must send.
    Inventory concrete payload variants and library-defined map keys, operation values, and skill
    or message identifiers as well as structs. Generate known nested payloads and their wire
    constants from schema; a generated outer envelope around a handwritten map does not satisfy
@@ -143,6 +154,14 @@ Apply these requirements when creating a library from this template:
     close or teardown; a startup notification or terminal read timeout is not cleanup proof.
 
 16. Provide an installable standalone CLI that consumes the public SDK so customers can test the library without a consuming application. Use a separate module under `cmd/go-<provider>`; keep CLI concerns out of the SDK. Cover authentication and explicit token exchange, device or endpoint discovery, important read/control workflows, and event/session lifecycles where supported. Include useful help, machine-readable output, nonzero failures, cancellation, and session cleanup. Accept credentials through documented environment, stdin, or explicit file inputs; keep secrets out of arguments and ordinary output, and make credential export an explicit action. Require explicit commands for device changes. Document installation and customer examples in an MDX guide. Test CLI commands offline through injected paired request/response transports, including authentication errors and lifecycle cleanup, and run blocking pinned all-linter, build, test, and module checks for the CLI in CI. Verify a separate consumer installation from the published CLI module and release its module tags with the SDK.
+    When supported by the provider, implement the complete interactive authorization flow,
+    including browser consent, a localhost callback and provider-required activation calls.
+    Expose composable SDK authorization mechanisms for caller-owned callback endpoints.
+    Validate callback state and PKCE when supported; bind the exact redirect to the exchange.
+    Keep listeners and temporary authorization state in an explicit cancellable lifecycle,
+    with offline browser, listener and transport injection and idempotent cleanup. Document
+    registered redirects, credential ownership and explicit export; manual code exchange alone
+    is not end-to-end authorization.
 
 See [verification](https://github.com/portpowered/go-third-party-template/blob/main/docs/verification.md), [client design](https://github.com/portpowered/go-third-party-template/blob/main/docs/client-design.md), and
 [website publishing](https://github.com/portpowered/go-third-party-template/blob/main/docs/website.md) for the implementation details.

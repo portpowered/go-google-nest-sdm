@@ -1,6 +1,6 @@
 # API schema standard
 
-- **SCHEMA-01** Describe Ring HTTP wire contracts in `api/openapi.yaml` and signaling contracts in `api/asyncapi.yaml`. Keep active third-party dependency routes in separate checked-in schemas under `api/external/`, and pin the source `.proto` for active binary exchanges.
+- **SCHEMA-01** Describe provider HTTP wire contracts in `api/openapi.yaml` and signaling contracts in `api/asyncapi.yaml`. Keep active third-party dependency routes in separate checked-in schemas under `api/external/`, and pin the source `.proto` for active binary exchanges.
 - **SCHEMA-02** Describe public model projections in `api/client-models.openapi.yaml`. Do not use that file as a store for internal wire payloads.
 - **SCHEMA-03** Give each observed request, response, event, and nested object a named schema. Use a free-form object only when the payload is truly unknown or extensible.
 - **SCHEMA-04** State required fields, nullability, formats, bounds, units, and defaults when evidence supports them.
@@ -16,3 +16,5 @@
 - **SCHEMA-14** Describe every OpenAPI path and operation in customer-facing terms.
 - **SCHEMA-15** Describe the allowed shape of open strings. Add a pattern when one is known.
 - **SCHEMA-16** Generate internal wire request, response, and event models from their checked-in schemas, including active dependency exchanges. Keep handwritten code for behavior and adaptation, and check regenerated output for drift in CI. A transport wrapper must reject dependency routes absent from the external schema.
+- **SCHEMA-17** Give each supported request, response and event variant a sanitized, schema-valid example in the canonical schema. Include complete envelopes and nested payloads, resource updates and relation changes, empty acknowledgements and meaningful failures. Validate examples against their owning schemas in CI; identify synthetic/reference provenance in contributor material and never publish credentials or private captures.
+- **SCHEMA-18** Correlate dispatch identifiers with their named payload schemas using discriminated variants or an equivalent explicit binding. A generic command envelope must expose every known command's required parameters and result shape in the generated reference; an unknown or free-form field does not document known variants. Keep any future-value extension separate so it cannot accept malformed known payloads. Inspect rendered fields and complete examples, including generated request snippets; schema validation or HTTP 200 alone does not prove customers can discover the payload.

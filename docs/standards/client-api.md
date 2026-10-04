@@ -17,3 +17,4 @@
 - **API-15** Use named request and result structs for public operations. Avoid bare booleans or integers when their meaning needs context.
 - **API-16** Prefer one device abstraction across device families.
 - **API-17** Model capabilities independently of device family or type.
+- **API-18** Expose interactive authorization as explicit caller-owned state or an authorization session. Return the consent URL and typed completion result, bind callbacks to the original redirect and state, use PKCE when supported, and expose cancellation and idempotent close. Keep credentials out of reusable client configuration and make any provider-required activation call visible in the documented completion contract.
