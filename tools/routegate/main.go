@@ -9,6 +9,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -26,7 +27,12 @@ func main() {
 }
 
 func audit(root string) error {
-	err := auditProtocol(root)
+	err := auditHelpers(root)
+	if err != nil {
+		return err
+	}
+
+	err = auditProtocol(root)
 	if err != nil {
 		return err
 	}
@@ -272,9 +278,9 @@ func isParameter(function *ast.FuncDecl, identifier *ast.Ident) bool {
 }
 
 func receiverField(expression ast.Expr, function *ast.FuncDecl, fields ...string) bool {
-	for index := len(fields) - 1; index >= 0; index-- {
+	for _, field := range slices.Backward(fields) {
 		selector, recognized := expression.(*ast.SelectorExpr)
-		if !recognized || selector.Sel.Name != fields[index] {
+		if !recognized || selector.Sel.Name != field {
 			return false
 		}
 
@@ -419,7 +425,7 @@ func pathConstructor(expression ast.Expr, function *ast.FuncDecl, method string,
 	}
 
 	helper, recognized := constructor.Fun.(*ast.Ident)
-	if !recognized || helper.Name != "resourcePath" {
+	if !recognized || !packageFunction(helper, "resourcePath") {
 		return false
 	}
 

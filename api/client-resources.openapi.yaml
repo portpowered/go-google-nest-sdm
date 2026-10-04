@@ -782,7 +782,7 @@
           "refreshTokenExpiresIn": {
             "type": "integer",
             "minimum": 0,
-            "description": "Remaining refresh-token lifetime in seconds when the service grants time-based access."
+            "description": "Nonnegative remaining refresh token lifetime in seconds when returned by the provider."
           },
           "scope": {
             "type": "string"

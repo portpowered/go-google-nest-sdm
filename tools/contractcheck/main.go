@@ -19,11 +19,13 @@ var errContract = errors.New("contract verification failed")
 
 func main() {
 	output := flag.String("write-inventory", "", "Write a complete generated declaration and source-use inventory")
+
 	flag.Parse()
 
 	err := auditModels(".")
 	if err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err)
+
 		os.Exit(1)
 	}
 
@@ -31,8 +33,18 @@ func main() {
 		err = writeInventory(".", *output)
 		if err != nil {
 			_, _ = fmt.Fprintln(os.Stderr, err)
+
 			os.Exit(1)
 		}
+
+		return
+	}
+
+	err = checkInventory(".")
+	if err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, err)
+
+		os.Exit(1)
 	}
 }
 
@@ -42,7 +54,18 @@ func auditModels(root string) error {
 		return err
 	}
 
-	err = filepath.WalkDir(filepath.Join(root, "pkg"), func(path string, entry fs.DirEntry, walkErr error) error {
+	for _, tree := range []string{"pkg", "internal", "api"} {
+		err = auditModelTree(filepath.Join(root, tree), components)
+		if err != nil {
+			return err
+		}
+	}
+
+	return verifyGeneratedFields(root)
+}
+
+func auditModelTree(root string, components map[string]bool) error {
+	err := filepath.WalkDir(root, func(path string, entry fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return fmt.Errorf("scan models: %w", walkErr)
 		}
@@ -57,7 +80,7 @@ func auditModels(root string) error {
 		return fmt.Errorf("audit model tree: %w", err)
 	}
 
-	return verifyGeneratedFields(root)
+	return nil
 }
 
 func checkModelPath(path string, components map[string]bool) error {
@@ -149,6 +172,12 @@ func handwrittenStruct(structure *ast.StructType, path string) error {
 }
 
 func registeredGeneratedPath(path string) bool {
+	for _, constantFile := range []string{"internal/protocol/routes.gen.go", "internal/protocol/media.gen.go"} {
+		if path == constantFile || strings.HasSuffix(path, "/"+constantFile) {
+			return true
+		}
+	}
+
 	for _, known := range generatedPaths() {
 		if path == known || strings.HasSuffix(path, "/"+known) {
 			return true

@@ -93,7 +93,8 @@
             "type": "string"
           },
           "refresh_token_expires_in": {
-            "description": "Remaining refresh token lifetime in seconds, returned for time-based access grants.",
+            "description": "Nonnegative remaining refresh token lifetime in seconds, returned for time-based access grants.",
+            "minimum": 0,
             "type": "integer"
           },
           "scope": {

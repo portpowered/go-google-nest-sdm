@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -104,11 +105,5 @@ func propertyEnum(property schemaProperty) bool {
 		return true
 	}
 
-	for _, member := range property.AllOf {
-		if propertyEnum(member) {
-			return true
-		}
-	}
-
-	return false
+	return slices.ContainsFunc(property.AllOf, propertyEnum)
 }

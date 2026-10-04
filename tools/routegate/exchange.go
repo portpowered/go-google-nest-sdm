@@ -114,7 +114,7 @@ func (state *exchangeAudit) constructorArgument(expression ast.Expr, name string
 		if name == "body" {
 			identifier, recognized := expression.(*ast.Ident)
 
-			return recognized && identifier.Name == "nil"
+			return recognized && identifier.Name == nilIdentifier
 		}
 	}
 

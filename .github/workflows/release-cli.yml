@@ -1,0 +1,55 @@
+name: CLI release
+
+on:
+  push:
+    tags: ['cmd/go-google-nest-sdm/v*']
+
+permissions:
+  contents: read
+
+jobs:
+  verify-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GOWORK: 'off'
+      GOTOOLCHAIN: auto
+      CLI_MODULE: github.com/portpowered/go-google-nest-sdm/cmd/go-google-nest-sdm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: cmd/go-google-nest-sdm/go.mod
+          cache: true
+          cache-dependency-path: '**/go.sum'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify the CLI and SDK checkout
+        run: make lint check
+      - name: Install the released CLI without local replacements or workspaces
+        env:
+          TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          version="${TAG#cmd/go-google-nest-sdm/}"
+          check_dir="$(mktemp -d)"
+          export GOBIN="$check_dir/bin"
+          cd "$check_dir"
+          module_ready=false
+          for attempt in {1..6}; do
+            if go install "${CLI_MODULE}@${version}"; then
+              module_ready=true
+              break
+            fi
+            echo "Waiting for the tagged CLI and its published SDK dependency (attempt ${attempt}/6)"
+            sleep 10
+          done
+          test "$module_ready" = true
+          "$GOBIN/go-google-nest-sdm" --help
+      - name: Publish CLI release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: gh release create "$TAG" --verify-tag --generate-notes

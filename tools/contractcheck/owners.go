@@ -3,12 +3,13 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"gopkg.in/yaml.v3"
 )
 
-func schemaOwner(path, name, kind string) (string, error) {
+func schemaOwner(root, path, name, kind string) (string, error) {
 	schemaPath := modelSchema(path)
 
 	if strings.Contains(path, "internal/protocol/") {
@@ -19,7 +20,7 @@ func schemaOwner(path, name, kind string) (string, error) {
 		return "", fmt.Errorf("%w: schema owner missing for %s", errContract, path)
 	}
 	// #nosec G304 -- schemaPath is from the fixed model generation manifest.
-	data, err := os.ReadFile(schemaPath)
+	data, err := os.ReadFile(filepath.Join(root, schemaPath))
 	if err != nil {
 		return "", fmt.Errorf("read inventory owner: %w", err)
 	}
@@ -96,8 +97,8 @@ func operationOwner(document contractDocument, name string) string {
 
 func protocolOwner(name string) string {
 	for _, prefix := range []string{"Method", "Path"} {
-		if strings.HasPrefix(name, prefix) {
-			operation := strings.TrimPrefix(name, prefix)
+		if after, ok := strings.CutPrefix(name, prefix); ok {
+			operation := after
 			schemaPath := sdmSchemaPath
 
 			switch operation {

@@ -5,5 +5,7 @@ output-options:
   skip-prune: true
   user-templates:
     typedef.tmpl: tools/generate/typedef.tmpl
+    imports.tmpl: tools/generate/imports.tmpl
 import-mapping:
   ../errors.openapi.yaml: '-'
+

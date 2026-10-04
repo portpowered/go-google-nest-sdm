@@ -51,6 +51,7 @@ func TestRealGeneratedModelMutation(t *testing.T) {
 	mutated := strings.Replace(string(data), "type FanSetTimerParams struct {",
 		"type FanSetTimerParams struct {\nNovel string `json:\"novel\"`", 1)
 
+	// #nosec G703 -- path is fixed to commands.gen.go inside the test's private temporary tree.
 	err = os.WriteFile(path, []byte(mutated), 0o600)
 	if err != nil {
 		t.Fatal(err)
@@ -84,7 +85,7 @@ func mirrorModelTree(t *testing.T) string {
 	t.Helper()
 	root := t.TempDir()
 
-	for _, tree := range []string{"api", "pkg"} {
+	for _, tree := range []string{"api", "pkg", "internal"} {
 		sourceRoot := filepath.Join("../..", tree)
 
 		err := filepath.WalkDir(sourceRoot, func(path string, entry fs.DirEntry, walkErr error) error {
@@ -102,12 +103,13 @@ func mirrorModelTree(t *testing.T) string {
 				return os.MkdirAll(destination, 0o750)
 			}
 
-			// #nosec G304 -- path is from the checked-in api/pkg tree walk.
+			// #nosec G304 G122 -- this read-only walk copies repository source to an isolated test tree.
 			data, err := os.ReadFile(path)
 			if err != nil {
 				return fmt.Errorf("read copied fixture: %w", err)
 			}
 
+			// #nosec G703 -- destination is the same walked relative path inside t.TempDir.
 			return os.WriteFile(destination, data, 0o600)
 		})
 		if err != nil {

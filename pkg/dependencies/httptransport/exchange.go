@@ -77,10 +77,6 @@ func (client *Client) exchange(
 		return fail(operation, ErrorInvalidResponse, nil)
 	}
 
-	if result == nil {
-		return nil
-	}
-
 	trimmed := bytes.TrimSpace(payload)
 	if len(trimmed) == 0 || trimmed[0] != '{' {
 		return fail(operation, ErrorInvalidResponse, nil)

@@ -5,6 +5,9 @@ import "errors"
 var errRouteInvalid = errors.New("route inventory violation")
 
 const (
+	nilIdentifier      = "nil"
+	imageOperation     = "DownloadImage"
+	clipOperation      = "DownloadClipPreview"
 	httpImport         = "net/http"
 	requestConstructor = "NewRequestWithContext"
 	exchangeHelper     = "exchange"

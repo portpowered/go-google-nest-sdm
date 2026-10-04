@@ -147,7 +147,7 @@ func pathTemplate(path string) string {
 func writeConstants(path, pkg string, values map[string]string) error {
 	var body strings.Builder
 
-	body.WriteString("// Code generated from checked-in API schemas. DO NOT EDIT.\npackage " + pkg + "\nconst (\n")
+	body.WriteString("// Code generated from checked-in API schemas. DO NOT EDIT.\n\npackage " + pkg + "\nconst (\n")
 
 	keys := sortedKeys(values)
 	for _, name := range keys {
@@ -173,7 +173,7 @@ func sortedKeys[T any](values map[string]T) []string {
 func writeEnums(path, pkg string, models map[string]any) error {
 	var body strings.Builder
 
-	body.WriteString("// Code generated from open enum inventories. DO NOT EDIT.\npackage " + pkg + "\nconst (\n")
+	body.WriteString("// Code generated from open enum inventories. DO NOT EDIT.\n\npackage " + pkg + "\nconst (\n")
 
 	for _, name := range sortedKeys(models) {
 		items, _ := object(models[name])["x-known-values"].([]any)

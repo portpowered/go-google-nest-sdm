@@ -7,37 +7,43 @@ import (
 	"testing"
 )
 
+const (
+	matcherAuthorization = "Bearer synthetic-token"
+	matcherTarget        = "https://example.invalid/items/a%2Fb?tag=one&tag=two"
+)
+
 func TestMatcherNegativeControls(t *testing.T) {
 	t.Parallel()
 
 	expected := requestExpectation{
-		Method: "POST", Origin: "https://example.invalid", Path: "/items/a%2Fb",
+		Method: http.MethodPost, Origin: "https://example.invalid", Path: "/items/a%2Fb",
 		Query:   url.Values{"tag": {"one", "two"}},
-		Headers: http.Header{"Authorization": {"Bearer synthetic-token"}, "Content-Type": {"application/json"}},
+		Headers: http.Header{"Authorization": {matcherAuthorization}, "Content-Type": {"application/json"}},
 		Body:    `{"name":"synthetic"}`,
 	}
 
 	cases := []struct{ name, target, method, body, authorization string }{
-		{"method", "https://example.invalid/items/a%2Fb?tag=one&tag=two", "GET", expected.Body, "Bearer synthetic-token"},
-		{"origin", "https://unlisted.invalid/items/a%2Fb?tag=one&tag=two", "POST", expected.Body, "Bearer synthetic-token"},
+		{"method", matcherTarget, http.MethodGet, expected.Body, matcherAuthorization},
+		{"origin", "https://unlisted.invalid/items/a%2Fb?tag=one&tag=two",
+			http.MethodPost, expected.Body, matcherAuthorization},
 		{"escaped path",
 			"https://example.invalid/items/a/b?tag=one&tag=two",
-			"POST",
+			http.MethodPost,
 			expected.Body,
-			"Bearer synthetic-token"},
+			matcherAuthorization},
 		{"missing repeated query",
 			"https://example.invalid/items/a%2Fb?tag=one",
-			"POST",
+			http.MethodPost,
 			expected.Body,
-			"Bearer synthetic-token"},
+			matcherAuthorization},
 		{"extra query",
 			"https://example.invalid/items/a%2Fb?tag=one&tag=two&extra=yes",
-			"POST",
+			http.MethodPost,
 			expected.Body,
-			"Bearer synthetic-token"},
-		{"header", "https://example.invalid/items/a%2Fb?tag=one&tag=two", "POST", expected.Body, "Bearer other-token"},
-		{"body", "https://example.invalid/items/a%2Fb?tag=one&tag=two", "POST",
-			`{"name":"changed"}`, "Bearer synthetic-token"},
+			matcherAuthorization},
+		{"header", matcherTarget, http.MethodPost, expected.Body, "Bearer other-token"},
+		{"body", matcherTarget, http.MethodPost,
+			`{"name":"changed"}`, matcherAuthorization},
 	}
 	for _, test := range cases {
 		t.Run(test.name, func(t *testing.T) {
@@ -79,7 +85,7 @@ func TestMatcherNegativeControls(t *testing.T) {
 func TestMatcherRejectsDuplicate(t *testing.T) {
 	t.Parallel()
 
-	expected := requestExpectation{Method: "GET",
+	expected := requestExpectation{Method: http.MethodGet,
 		Origin:  "https://example.invalid",
 		Path:    "/items",
 		Query:   nil,

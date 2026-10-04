@@ -1,4 +1,5 @@
 // Code generated from open enum inventories. DO NOT EDIT.
+
 package dependencymodels
 
 const (

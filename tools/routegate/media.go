@@ -12,7 +12,7 @@ func verifyMediaRoute(function *ast.FuncDecl, call *ast.CallExpr, imports map[st
 
 	operation, recognized := generated(call.Args[2], imports, "Method")
 
-	mediaOperation := operation == "DownloadImage" || operation == "DownloadClipPreview"
+	mediaOperation := operation == imageOperation || operation == clipOperation
 
 	if !recognized || operation != function.Name.Name || !mediaOperation {
 		return fmt.Errorf("%w: media method is not bound to its schema operation", errRouteInvalid)
@@ -71,7 +71,7 @@ func mediaAssignment(assignment *ast.AssignStmt, endpoint *ast.Ident, operation 
 			continue
 		}
 
-		valid = valid && operation == "DownloadImage" && selection.Sel.Name == "RawQuery" &&
+		valid = valid && operation == imageOperation && selection.Sel.Name == "RawQuery" &&
 			index < len(assignment.Rhs) && encodedQuery(assignment.Rhs[index])
 	}
 
@@ -85,18 +85,18 @@ func checkedMediaURL(expression ast.Expr, operation string) bool {
 	}
 
 	helper, recognized := constructor.Fun.(*ast.Ident)
-	if !recognized || helper.Name != "checkedURL" {
+	if !recognized || !packageFunction(helper, "checkedURL") {
 		return false
 	}
 
 	pattern, recognized := constructor.Args[1].(*ast.Ident)
 
 	expected := "imageURL"
-	if operation == "DownloadClipPreview" {
+	if operation == clipOperation {
 		expected = "clipURL"
 	}
 
-	return recognized && pattern.Name == expected
+	return recognized && pattern.Name == expected && validPatternObject(pattern, operation)
 }
 
 func encodedQuery(expression ast.Expr) bool {

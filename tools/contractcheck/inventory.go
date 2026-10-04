@@ -97,7 +97,7 @@ func modelInventory(root string) ([]inventoryEntry, error) {
 			ownerName = parts[len(parts)-1]
 		}
 
-		entry.Schema, err = schemaOwner(strings.Split(entry.Source, ":")[0], ownerName, entry.Kind)
+		entry.Schema, err = schemaOwner(root, strings.Split(entry.Source, ":")[0], ownerName, entry.Kind)
 		if err != nil {
 			return nil, err
 		}
@@ -115,6 +115,34 @@ func modelInventory(root string) ([]inventoryEntry, error) {
 	})
 
 	return entries, nil
+}
+
+func checkInventory(root string) error {
+	entries, err := modelInventory(root)
+	if err != nil {
+		return err
+	}
+
+	expected, err := json.MarshalIndent(entries, "", "  ")
+	if err != nil {
+		return fmt.Errorf("encode expected inventory: %w", err)
+	}
+	// #nosec G304 -- the inventory is a fixed repository-owned contributor artifact.
+	actual, err := os.ReadFile(filepath.Join(root, "docs/model-inventory.json"))
+	if err != nil {
+		return fmt.Errorf("read checked-in inventory: %w", err)
+	}
+
+	return compareInventory(append(expected, '\n'), actual)
+}
+
+func compareInventory(expected, actual []byte) error {
+	if !bytes.Equal(expected, actual) {
+		return fmt.Errorf("%w: model inventory drift; regenerate with -write-inventory docs/model-inventory.json",
+			errContract)
+	}
+
+	return nil
 }
 
 func inventoryDeclarations(path string, spec ast.Spec, fileSet *token.FileSet) []inventoryEntry {

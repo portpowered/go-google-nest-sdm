@@ -58,6 +58,11 @@
           "refreshToken": {
             "type": "string"
           },
+          "refreshTokenExpiresIn": {
+            "description": "Nonnegative remaining refresh token lifetime in seconds when returned by the provider.",
+            "minimum": 0,
+            "type": "integer"
+          },
           "scope": {
             "type": "string"
           },

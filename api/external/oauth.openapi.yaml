@@ -128,7 +128,8 @@
           },
           "refresh_token_expires_in": {
             "type": "integer",
-            "description": "Remaining refresh token lifetime in seconds, returned for time-based access grants."
+            "description": "Nonnegative remaining refresh token lifetime in seconds, returned for time-based access grants.",
+            "minimum": 0
           }
         },
         "additionalProperties": {

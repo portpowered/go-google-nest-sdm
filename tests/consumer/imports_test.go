@@ -15,8 +15,13 @@ func TestPublicImportPaths(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var publicClient sdm.Client = client
-	if publicClient == nil {
+	requireClient(t, client)
+}
+
+func requireClient(t *testing.T, client sdm.Client) {
+	t.Helper()
+
+	if client == nil {
 		t.Fatal("constructor returned a nil public client")
 	}
 }

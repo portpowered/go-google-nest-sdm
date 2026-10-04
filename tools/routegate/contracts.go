@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -18,18 +19,12 @@ import (
 func operationNames() []string {
 	return []string{
 		"ListDevices", "GetDevice", "ExecuteCommand", "ListStructures", "GetStructure", "ListRooms", "GetRoom",
-		"OAuthToken", "Pull", "Acknowledge", "ModifyAckDeadline", "DownloadImage", "DownloadClipPreview",
+		"OAuthToken", "Pull", "Acknowledge", "ModifyAckDeadline", imageOperation, clipOperation,
 	}
 }
 
 func knownOperation(name string) bool {
-	for _, operation := range operationNames() {
-		if operation == name {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(operationNames(), name)
 }
 
 func auditProtocol(root string) error {
