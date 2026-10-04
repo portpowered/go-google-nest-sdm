@@ -16,6 +16,7 @@ import (
 type objectContract struct {
 	Properties map[string]yaml.Node `yaml:"properties"`
 	Required   []string             `yaml:"required"`
+	OneOf      []yaml.Node          `yaml:"oneOf"`
 }
 
 type fieldContract struct {
@@ -93,7 +94,9 @@ func verifyFileFields(path string, file *ast.File, document contractDocument) er
 				return fmt.Errorf("decode model fields: %w", err)
 			}
 
-			err = matchFields(structure, expected)
+			wireStructure := unionWireFields(file, model, structure, expected)
+
+			err = matchFields(wireStructure, expected)
 			if err != nil {
 				return fmt.Errorf("%s %s: %w", path, model.Name.Name, err)
 			}

@@ -128,7 +128,7 @@ func testRootCopy(t *testing.T) string {
 
 	root := t.TempDir()
 
-	for _, tree := range []string{"api", "pkg", "internal", "tools/routegate", "docs"} {
+	for _, tree := range []string{"api", "pkg", "internal", "tools/routegate", "docs", cliRoot} {
 		err := filepath.WalkDir(filepath.Join("../..", tree), func(path string, entry fs.DirEntry, walkErr error) error {
 			if walkErr != nil {
 				return walkErr

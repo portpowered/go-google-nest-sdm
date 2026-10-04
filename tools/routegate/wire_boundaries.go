@@ -39,7 +39,14 @@ func (state *wireValueAudit) verifiedMapCall(call *ast.CallExpr, argumentIndex i
 	}
 
 	if selector.Sel.Name == exchangeHelper {
-		return true
+		for parent := state.parents[call]; parent != nil; parent = state.parents[parent] {
+			function, recognized := parent.(*ast.FuncDecl)
+			if recognized {
+				return verifyRoute(function, call, state.imports) == nil
+			}
+		}
+
+		return false
 	}
 
 	owner, recognized := selector.X.(*ast.Ident)

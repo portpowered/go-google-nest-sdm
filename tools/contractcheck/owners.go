@@ -119,7 +119,7 @@ func protocolOwner(name string) string {
 			switch operation {
 			case "Pull", "Acknowledge", "ModifyAckDeadline":
 				schemaPath = pubsubSchemaPath
-			case "OAuthToken":
+			case "OAuthToken", "PCMConsent":
 				schemaPath = oauthSchemaPath
 			case "DownloadImage", "DownloadClipPreview":
 				schemaPath = "api/external/media.openapi.yaml"

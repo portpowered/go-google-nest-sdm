@@ -182,7 +182,7 @@ func queryValue(expression ast.Expr, aliases map[ast.Node]bool, imports map[stri
 	}
 
 	owner, recognized := queryUnparen(kind.X).(*ast.Ident)
-	if !recognized || owner.Obj != nil || imports[owner.Name] != "net/url" {
+	if !recognized || owner.Obj != nil || imports[owner.Name] != urlImport {
 		return false
 	}
 
