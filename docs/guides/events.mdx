@@ -38,6 +38,23 @@ To maintain a caller-owned cache, use `sdm.Reconcile(sdm.ReconcileRequest{State:
 
 Resource trait updates are partial patches. Missing fields leave cached values intact; an empty capability trait is still meaningful. Known motion, person, sound, chime and clip-preview events have separate shapes. Clip preview uses `eventSessionId` and `previewUrl`; it does not require the camera event ID used by image generation. Relation updates are separate from resource updates and may contain an empty subject. Unknown event names/fields remain preserved; malformed known payloads remain errors.
 
+The [event reference](/docs/asyncapi/events/receiveEvents) includes named examples for a thermostat trait update, CREATED/UPDATED/DELETED relations, a relation with no structure access, and motion/person/sound/chime/clip-preview notifications. Each example shows the complete decoded envelope and its namespaced nested payload. They are sanitized synthetic illustrations; Pub/Sub `message.data` carries their JSON encoded as base64.
+
+For example, a relation deletion changes the device's relationship rather than its traits:
+
+```json
+{
+  "eventId": "envelope-event-example",
+  "timestamp": "2026-01-01T12:00:00Z",
+  "userId": "synthetic-user",
+  "relationUpdate": {
+    "type": "DELETED",
+    "subject": "enterprises/example-enterprise/structures/example-structure",
+    "object": "enterprises/example-enterprise/devices/example-device"
+  }
+}
+```
+
 An optional pull adapter consumes an existing subscription through REST:
 
 ```go

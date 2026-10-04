@@ -14,6 +14,10 @@ type authSummary struct {
 func (app application) authenticate(
 	ctx context.Context, operation string, options invocation, account credentials,
 ) (any, error) {
+	if operation == "login" {
+		return app.loginAccount(ctx, options, account)
+	}
+
 	if operation == "export" {
 		return account, nil
 	}

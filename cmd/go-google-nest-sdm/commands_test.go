@@ -18,4 +18,7 @@ const (
 	paramsFlag            = "--params"
 	thermostatGroup       = "thermostat"
 	cameraGroup           = "camera"
+	syntheticClientID     = "synthetic-client"
+	syntheticClientSecret = "synthetic-secret"
+	syntheticCode         = "synthetic-code"
 )

@@ -19,6 +19,8 @@ import (
 
 const defaultTimeout = 30 * time.Second
 
+const defaultLoginTimeout = 5 * time.Minute
+
 const commandParts = 2
 
 type invocation struct {
@@ -28,13 +30,17 @@ type invocation struct {
 	timeout         time.Duration
 	resource        string
 	count           int
+	project         string
+	redirect        string
 }
 
 type application struct {
-	client sdm.Client
-	in     io.Reader
-	out    io.Writer
-	lookup func(string) string
+	client   sdm.Client
+	in       io.Reader
+	out      io.Writer
+	lookup   func(string) string
+	progress io.Writer
+	login    loginDependencies
 }
 
 func main() {
@@ -42,7 +48,8 @@ func main() {
 
 	client, err := httptransport.NewClient()
 	if err == nil {
-		err = (application{client: client, in: os.Stdin, out: os.Stdout, lookup: os.Getenv}).run(ctx, os.Args[1:])
+		err = (application{client: client, in: os.Stdin, out: os.Stdout, lookup: os.Getenv,
+			progress: os.Stderr, login: defaultLoginDependencies()}).run(ctx, os.Args[1:])
 	}
 
 	stop()
@@ -97,6 +104,10 @@ func (app application) run(ctx context.Context, args []string) error {
 		return wrapError(err)
 	}
 
+	if args[0] == "auth" && args[1] == "login" && !hasTimeoutFlag(args[commandParts:]) {
+		options.timeout = defaultLoginTimeout
+	}
+
 	account, err := readCredentials(options.credentialsPath, app.in, app.lookup)
 	if err != nil {
 		return wrapError(err)
@@ -131,6 +142,9 @@ func parseInvocation(args []string, output io.Writer) (invocation, error) {
 		"explicitly include credentials and media access secrets in JSON output")
 	flags.DurationVar(&options.timeout, "timeout", defaultTimeout, "operation deadline")
 	flags.IntVar(&options.count, "count", 1, "number of events to process before closing the pull session")
+	flags.StringVar(&options.project, "project", "", "Device Access project ID for auth login; defaults to SDM_PROJECT_ID")
+	flags.StringVar(&options.redirect, "redirect", "",
+		"registered loopback redirect URI for auth login; defaults to SDM_REDIRECT_URI")
 
 	err := flags.Parse(args)
 	if err != nil {
@@ -197,7 +211,7 @@ func readParams[T any](path string, input io.Reader) (T, error) {
 
 const helpText = `go-google-nest-sdm GROUP OPERATION [flags]
 
-Authentication: auth exchange, refresh, export
+Authentication: auth login, exchange, refresh, export
 Discovery: devices list, get; structures list, get; rooms list, get
 Controls: fan timer; thermostat mode, eco, heat, cool, range
 Media: camera image, rtsp-start, rtsp-extend, rtsp-stop,
@@ -212,5 +226,9 @@ SDM_REFRESH_TOKEN, SDM_AUTHORIZATION_CODE, SDM_REDIRECT_URI; alternatively
 Secret values are never command arguments. --export explicitly includes
 credentials or media access secrets; ordinary results redact those values.
 --timeout 30s sets the deadline. Ctrl+C cancels and closes owned sessions.
+auth login --project PROJECT_ID opens Google consent and receives the registered
+http://127.0.0.1:PORT/PATH callback (SDM_REDIRECT_URI or --redirect).
+Login binds state and sends its S256 verifier, exchanges credentials and lists devices.
+Login defaults to a 5m deadline; --timeout overrides it. Progress uses stderr.
 Use GROUP OPERATION --help to display common flags.
 `
