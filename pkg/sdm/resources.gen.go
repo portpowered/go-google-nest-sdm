@@ -121,7 +121,7 @@ type ExtendRtspStreamRequest struct {
 
 // ExtendRtspStreamResult defines model for ExtendRtspStreamResult.
 type ExtendRtspStreamResult struct {
-	// Results Acknowledgement result for CameraLiveStream.ExtendRtspStream; physical action may complete later.
+	// Results Updated RTSP streamToken and streamExtensionToken, plus expiration time expiresAt. Use the returned extension token for subsequent extension or stop commands.
 	Results CameraLiveStreamExtendRtspStreamResults `json:"results"`
 }
 
@@ -136,7 +136,7 @@ type ExtendWebRtcStreamRequest struct {
 
 // ExtendWebRtcStreamResult defines model for ExtendWebRtcStreamResult.
 type ExtendWebRtcStreamResult struct {
-	// Results Acknowledgement result for CameraLiveStream.ExtendWebRtcStream; physical action may complete later.
+	// Results WebRTC mediaSessionId and updated expiration time expiresAt. Retain the returned session identifier for subsequent extension or stop commands.
 	Results CameraLiveStreamExtendWebRtcStreamResults `json:"results"`
 }
 
@@ -151,7 +151,7 @@ type GenerateImageRequest struct {
 
 // GenerateImageResult defines model for GenerateImageResult.
 type GenerateImageResult struct {
-	// Results Acknowledgement result for CameraEventImage.GenerateImage; physical action may complete later.
+	// Results Image URL and event token returned by CameraEventImage.GenerateImage. Download the image from url using token; this event token is distinct from the account OAuth access token.
 	Results CameraEventImageGenerateImageResults `json:"results"`
 }
 
@@ -166,7 +166,7 @@ type GenerateRtspStreamRequest struct {
 
 // GenerateRtspStreamResult defines model for GenerateRtspStreamResult.
 type GenerateRtspStreamResult struct {
-	// Results Acknowledgement result for CameraLiveStream.GenerateRtspStream; physical action may complete later.
+	// Results RTSP playback URL in streamUrls.rtspUrl, current streamToken, streamExtensionToken for extension or stop commands, and expiration time expiresAt.
 	Results CameraLiveStreamGenerateRtspStreamResults `json:"results"`
 }
 
@@ -181,7 +181,7 @@ type GenerateWebRtcStreamRequest struct {
 
 // GenerateWebRtcStreamResult defines model for GenerateWebRtcStreamResult.
 type GenerateWebRtcStreamResult struct {
-	// Results Acknowledgement result for CameraLiveStream.GenerateWebRtcStream; physical action may complete later.
+	// Results WebRTC answerSdp for the caller's offer, mediaSessionId for extension or stop commands, and session expiration time expiresAt.
 	Results CameraLiveStreamGenerateWebRtcStreamResults `json:"results"`
 }
 

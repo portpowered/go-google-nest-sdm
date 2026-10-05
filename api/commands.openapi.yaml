@@ -286,7 +286,7 @@
           "url",
           "token"
         ],
-        "description": "Acknowledgement result for CameraEventImage.GenerateImage; physical action may complete later.",
+        "description": "Image URL and event token returned by CameraEventImage.GenerateImage. Download the image from url using token; this event token is distinct from the account OAuth access token.",
         "example": {
           "url": "https://media.example.invalid/image",
           "token": "synthetic-image-token"
@@ -327,7 +327,7 @@
           "expiresAt",
           "streamUrls"
         ],
-        "description": "Acknowledgement result for CameraLiveStream.GenerateRtspStream; physical action may complete later.",
+        "description": "RTSP playback URL in streamUrls.rtspUrl, current streamToken, streamExtensionToken for extension or stop commands, and expiration time expiresAt.",
         "example": {
           "streamExtensionToken": "synthetic-extension-token",
           "streamToken": "synthetic-stream-token",
@@ -375,7 +375,7 @@
           "streamToken",
           "expiresAt"
         ],
-        "description": "Acknowledgement result for CameraLiveStream.ExtendRtspStream; physical action may complete later.",
+        "description": "Updated RTSP streamToken and streamExtensionToken, plus expiration time expiresAt. Use the returned extension token for subsequent extension or stop commands.",
         "example": {
           "streamExtensionToken": "synthetic-extension-token",
           "streamToken": "synthetic-stream-token",
@@ -446,7 +446,7 @@
           "mediaSessionId",
           "answerSdp"
         ],
-        "description": "Acknowledgement result for CameraLiveStream.GenerateWebRtcStream; physical action may complete later.",
+        "description": "WebRTC answerSdp for the caller's offer, mediaSessionId for extension or stop commands, and session expiration time expiresAt.",
         "example": {
           "expiresAt": "2026-01-01T12:05:00Z",
           "mediaSessionId": "synthetic-media-session",
@@ -487,7 +487,7 @@
           "expiresAt",
           "mediaSessionId"
         ],
-        "description": "Acknowledgement result for CameraLiveStream.ExtendWebRtcStream; physical action may complete later.",
+        "description": "WebRTC mediaSessionId and updated expiration time expiresAt. Retain the returned session identifier for subsequent extension or stop commands.",
         "example": {
           "expiresAt": "2026-01-01T12:10:00Z",
           "mediaSessionId": "synthetic-media-session"
