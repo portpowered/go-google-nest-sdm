@@ -3,9 +3,259 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "components": {
     "schemas": {
+      "CameraEventImageGenerateImageRequest": {
+        "additionalProperties": false,
+        "description": "Request for CameraEventImage.GenerateImage.",
+        "example": {
+          "command": "sdm.devices.commands.CameraEventImage.GenerateImage",
+          "params": {
+            "eventId": "camera-image-event-example"
+          }
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.CameraEventImage.GenerateImage"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraEventImageGenerateImageParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "CameraEventImage.GenerateImage",
+        "type": "object"
+      },
+      "CameraLiveStreamExtendRtspStreamRequest": {
+        "additionalProperties": false,
+        "description": "Request for CameraLiveStream.ExtendRtspStream.",
+        "example": {
+          "command": "sdm.devices.commands.CameraLiveStream.ExtendRtspStream",
+          "params": {
+            "streamExtensionToken": "synthetic-extension-token"
+          }
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.CameraLiveStream.ExtendRtspStream"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendRtspStreamParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "CameraLiveStream.ExtendRtspStream",
+        "type": "object"
+      },
+      "CameraLiveStreamExtendWebRtcStreamRequest": {
+        "additionalProperties": false,
+        "description": "Request for CameraLiveStream.ExtendWebRtcStream.",
+        "example": {
+          "command": "sdm.devices.commands.CameraLiveStream.ExtendWebRtcStream",
+          "params": {
+            "mediaSessionId": "synthetic-media-session"
+          }
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.CameraLiveStream.ExtendWebRtcStream"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendWebRtcStreamParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "CameraLiveStream.ExtendWebRtcStream",
+        "type": "object"
+      },
+      "CameraLiveStreamGenerateRtspStreamRequest": {
+        "additionalProperties": false,
+        "description": "Request for CameraLiveStream.GenerateRtspStream.",
+        "example": {
+          "command": "sdm.devices.commands.CameraLiveStream.GenerateRtspStream",
+          "params": {}
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.CameraLiveStream.GenerateRtspStream"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateRtspStreamParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "CameraLiveStream.GenerateRtspStream",
+        "type": "object"
+      },
+      "CameraLiveStreamGenerateWebRtcStreamRequest": {
+        "additionalProperties": false,
+        "description": "Request for CameraLiveStream.GenerateWebRtcStream.",
+        "example": {
+          "command": "sdm.devices.commands.CameraLiveStream.GenerateWebRtcStream",
+          "params": {
+            "offerSdp": "v=0\r\no=- 12345 1 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\nm=video 9 UDP/TLS/RTP/SAVPF 96\r\na=mid:0\r\na=ice-ufrag:synthetic\r\na=ice-pwd:syntheticIcePasswordExampleOnly\r\na=fingerprint:sha-256 00:01:02:03:04:05:06:07:08:09:0A:0B:0C:0D:0E:0F:10:11:12:13:14:15:16:17:18:19:1A:1B:1C:1D:1E:1F\r\na=setup:actpass\r\na=rtcp-mux\r\na=recvonly\r\na=rtpmap:96 H264/90000\r\n"
+          }
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.CameraLiveStream.GenerateWebRtcStream"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateWebRtcStreamParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "CameraLiveStream.GenerateWebRtcStream",
+        "type": "object"
+      },
+      "CameraLiveStreamStopRtspStreamRequest": {
+        "additionalProperties": false,
+        "description": "Request for CameraLiveStream.StopRtspStream.",
+        "example": {
+          "command": "sdm.devices.commands.CameraLiveStream.StopRtspStream",
+          "params": {
+            "streamExtensionToken": "synthetic-extension-token"
+          }
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.CameraLiveStream.StopRtspStream"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopRtspStreamParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "CameraLiveStream.StopRtspStream",
+        "type": "object"
+      },
+      "CameraLiveStreamStopWebRtcStreamRequest": {
+        "additionalProperties": false,
+        "description": "Request for CameraLiveStream.StopWebRtcStream.",
+        "example": {
+          "command": "sdm.devices.commands.CameraLiveStream.StopWebRtcStream",
+          "params": {
+            "mediaSessionId": "synthetic-media-session"
+          }
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.CameraLiveStream.StopWebRtcStream"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopWebRtcStreamParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "CameraLiveStream.StopWebRtcStream",
+        "type": "object"
+      },
       "Device": {
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "name": "enterprises/example-enterprise/devices/example-thermostat",
+          "parentRelations": [
+            {
+              "displayName": "Living room",
+              "parent": "enterprises/example-enterprise/structures/example-structure/rooms/example-room"
+            }
+          ],
+          "traits": {
+            "sdm.devices.traits.Connectivity": {
+              "status": "ONLINE"
+            },
+            "sdm.devices.traits.Fan": {
+              "timerMode": "ON",
+              "timerTimeout": "2026-01-01T12:15:00Z"
+            },
+            "sdm.devices.traits.Humidity": {
+              "ambientHumidityPercent": 45
+            },
+            "sdm.devices.traits.Info": {
+              "customName": "Living room thermostat"
+            },
+            "sdm.devices.traits.Settings": {
+              "temperatureScale": "CELSIUS"
+            },
+            "sdm.devices.traits.Temperature": {
+              "ambientTemperatureCelsius": 21.5
+            },
+            "sdm.devices.traits.ThermostatEco": {
+              "availableModes": [
+                "MANUAL_ECO",
+                "OFF"
+              ],
+              "coolCelsius": 27,
+              "heatCelsius": 18,
+              "mode": "OFF"
+            },
+            "sdm.devices.traits.ThermostatHvac": {
+              "status": "HEATING"
+            },
+            "sdm.devices.traits.ThermostatMode": {
+              "availableModes": [
+                "HEAT",
+                "COOL",
+                "HEATCOOL",
+                "OFF"
+              ],
+              "mode": "HEAT"
+            },
+            "sdm.devices.traits.ThermostatTemperatureSetpoint": {
+              "coolCelsius": 25,
+              "heatCelsius": 20
+            }
+          },
+          "type": "sdm.devices.types.THERMOSTAT"
         },
         "properties": {
           "assignee": {
@@ -46,11 +296,68 @@
       },
       "ExecuteCommandRequest": {
         "additionalProperties": false,
+        "description": "Select a command variant to see its required parameters. Examples are sanitized synthetic illustrations of the published SDM contracts. Future command names have an explicit open branch; known commands must use their matching parameter schema.",
+        "example": {
+          "command": "sdm.devices.commands.Fan.SetTimer",
+          "params": {
+            "duration": "900s",
+            "timerMode": "ON"
+          }
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FanSetTimerRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ThermostatEcoSetModeRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ThermostatModeSetModeRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ThermostatTemperatureSetpointSetHeatRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ThermostatTemperatureSetpointSetCoolRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ThermostatTemperatureSetpointSetRangeRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraEventImageGenerateImageRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraLiveStreamGenerateRtspStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraLiveStreamExtendRtspStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraLiveStreamStopRtspStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraLiveStreamGenerateWebRtcStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraLiveStreamExtendWebRtcStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraLiveStreamStopWebRtcStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/FutureCommandRequest"
+          }
+        ],
         "properties": {
           "command": {
-            "$ref": "./commands.openapi.yaml#/components/schemas/CommandName"
+            "description": "Fully qualified command name. The selected request variant determines the allowed params.",
+            "pattern": "^sdm\\.devices\\.commands\\.[A-Za-z][A-Za-z0-9]*\\.[A-Za-z][A-Za-z0-9]*$",
+            "type": "string",
+            "x-go-type": "CommandName"
           },
           "params": {
+            "description": "Parameters are defined by the selected command variant below.",
+            "type": "object",
             "x-go-type": "json.RawMessage"
           }
         },
@@ -64,16 +371,218 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
+        "description": "Command-specific result object. Select the response example with the same command name as the request. Empty acknowledgement schemas overlap, so results use anyOf.",
+        "example": {
+          "results": {
+            "token": "synthetic-image-token",
+            "url": "https://media.example.invalid/image"
+          }
+        },
         "properties": {
           "results": {
+            "anyOf": [
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/FanSetTimerResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatEcoSetModeResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatModeSetModeResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetHeatResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetCoolResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetRangeResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraEventImageGenerateImageResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateRtspStreamResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendRtspStreamResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopRtspStreamResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateWebRtcStreamResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendWebRtcStreamResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopWebRtcStreamResults"
+              }
+            ],
+            "type": "object",
             "x-go-type": "json.RawMessage"
           }
         },
         "type": "object"
       },
+      "FanSetTimerRequest": {
+        "additionalProperties": false,
+        "description": "Request for Fan.SetTimer.",
+        "example": {
+          "command": "sdm.devices.commands.Fan.SetTimer",
+          "params": {
+            "duration": "900s",
+            "timerMode": "ON"
+          }
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.Fan.SetTimer"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/FanSetTimerParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "Fan.SetTimer",
+        "type": "object"
+      },
+      "FutureCommandRequest": {
+        "additionalProperties": false,
+        "description": "Compatibility shape for a future command absent from this catalog. Its parameters are caller defined; this branch does not permit malformed parameters for the known commands.",
+        "properties": {
+          "command": {
+            "not": {
+              "enum": [
+                "sdm.devices.commands.Fan.SetTimer",
+                "sdm.devices.commands.ThermostatEco.SetMode",
+                "sdm.devices.commands.ThermostatMode.SetMode",
+                "sdm.devices.commands.ThermostatTemperatureSetpoint.SetHeat",
+                "sdm.devices.commands.ThermostatTemperatureSetpoint.SetCool",
+                "sdm.devices.commands.ThermostatTemperatureSetpoint.SetRange",
+                "sdm.devices.commands.CameraEventImage.GenerateImage",
+                "sdm.devices.commands.CameraLiveStream.GenerateRtspStream",
+                "sdm.devices.commands.CameraLiveStream.ExtendRtspStream",
+                "sdm.devices.commands.CameraLiveStream.StopRtspStream",
+                "sdm.devices.commands.CameraLiveStream.GenerateWebRtcStream",
+                "sdm.devices.commands.CameraLiveStream.ExtendWebRtcStream",
+                "sdm.devices.commands.CameraLiveStream.StopWebRtcStream"
+              ]
+            },
+            "pattern": "^sdm\\.devices\\.commands\\.[A-Za-z][A-Za-z0-9]*\\.[A-Za-z][A-Za-z0-9]*$",
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "additionalProperties": {
+              "x-go-type": "json.RawMessage"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "Future command (caller supplied)",
+        "type": "object"
+      },
       "ListDevicesResponse": {
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "devices": [
+            {
+              "name": "enterprises/example-enterprise/devices/example-thermostat",
+              "parentRelations": [
+                {
+                  "displayName": "Living room",
+                  "parent": "enterprises/example-enterprise/structures/example-structure/rooms/example-room"
+                }
+              ],
+              "traits": {
+                "sdm.devices.traits.Connectivity": {
+                  "status": "ONLINE"
+                },
+                "sdm.devices.traits.Fan": {
+                  "timerMode": "ON",
+                  "timerTimeout": "2026-01-01T12:15:00Z"
+                },
+                "sdm.devices.traits.Humidity": {
+                  "ambientHumidityPercent": 45
+                },
+                "sdm.devices.traits.Info": {
+                  "customName": "Living room thermostat"
+                },
+                "sdm.devices.traits.Settings": {
+                  "temperatureScale": "CELSIUS"
+                },
+                "sdm.devices.traits.Temperature": {
+                  "ambientTemperatureCelsius": 21.5
+                },
+                "sdm.devices.traits.ThermostatEco": {
+                  "availableModes": [
+                    "MANUAL_ECO",
+                    "OFF"
+                  ],
+                  "coolCelsius": 27,
+                  "heatCelsius": 18,
+                  "mode": "OFF"
+                },
+                "sdm.devices.traits.ThermostatHvac": {
+                  "status": "HEATING"
+                },
+                "sdm.devices.traits.ThermostatMode": {
+                  "availableModes": [
+                    "HEAT",
+                    "COOL",
+                    "HEATCOOL",
+                    "OFF"
+                  ],
+                  "mode": "HEAT"
+                },
+                "sdm.devices.traits.ThermostatTemperatureSetpoint": {
+                  "coolCelsius": 25,
+                  "heatCelsius": 20
+                }
+              },
+              "type": "sdm.devices.types.THERMOSTAT"
+            },
+            {
+              "name": "enterprises/example-enterprise/devices/example-camera",
+              "traits": {
+                "sdm.devices.traits.CameraClipPreview": {},
+                "sdm.devices.traits.CameraLiveStream": {
+                  "audioCodecs": [
+                    "OPUS"
+                  ],
+                  "maxVideoResolution": {
+                    "height": 1080,
+                    "width": 1920
+                  },
+                  "supportedProtocols": [
+                    "WEB_RTC"
+                  ],
+                  "videoCodecs": [
+                    "H264"
+                  ]
+                },
+                "sdm.devices.traits.CameraMotion": {},
+                "sdm.devices.traits.CameraPerson": {}
+              },
+              "type": "sdm.devices.types.CAMERA"
+            }
+          ]
         },
         "properties": {
           "devices": {
@@ -89,6 +598,18 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
+        "example": {
+          "rooms": [
+            {
+              "name": "enterprises/example-enterprise/structures/example-structure/rooms/example-room",
+              "traits": {
+                "sdm.structures.traits.RoomInfo": {
+                  "customName": "Living room"
+                }
+              }
+            }
+          ]
+        },
         "properties": {
           "rooms": {
             "items": {
@@ -102,6 +623,18 @@
       "ListStructuresResponse": {
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "structures": [
+            {
+              "name": "enterprises/example-enterprise/structures/example-structure",
+              "traits": {
+                "sdm.structures.traits.Info": {
+                  "customName": "Example home"
+                }
+              }
+            }
+          ]
         },
         "properties": {
           "structures": {
@@ -117,6 +650,10 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
+        "example": {
+          "displayName": "Living room",
+          "parent": "enterprises/example-enterprise/structures/example-structure/rooms/example-room"
+        },
         "properties": {
           "displayName": {
             "type": "string"
@@ -130,6 +667,14 @@
       "Room": {
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "name": "enterprises/example-enterprise/structures/example-structure/rooms/example-room",
+          "traits": {
+            "sdm.structures.traits.RoomInfo": {
+              "customName": "Living room"
+            }
+          }
         },
         "properties": {
           "name": {
@@ -149,6 +694,14 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
+        "example": {
+          "name": "enterprises/example-enterprise/structures/example-structure",
+          "traits": {
+            "sdm.structures.traits.Info": {
+              "customName": "Example home"
+            }
+          }
+        },
         "properties": {
           "name": {
             "pattern": "^enterprises/[^/]+/structures/[^/]+$",
@@ -161,6 +714,147 @@
         "required": [
           "name"
         ],
+        "type": "object"
+      },
+      "ThermostatEcoSetModeRequest": {
+        "additionalProperties": false,
+        "description": "Request for ThermostatEco.SetMode.",
+        "example": {
+          "command": "sdm.devices.commands.ThermostatEco.SetMode",
+          "params": {
+            "mode": "MANUAL_ECO"
+          }
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.ThermostatEco.SetMode"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatEcoSetModeParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "ThermostatEco.SetMode",
+        "type": "object"
+      },
+      "ThermostatModeSetModeRequest": {
+        "additionalProperties": false,
+        "description": "Request for ThermostatMode.SetMode.",
+        "example": {
+          "command": "sdm.devices.commands.ThermostatMode.SetMode",
+          "params": {
+            "mode": "HEAT"
+          }
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.ThermostatMode.SetMode"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatModeSetModeParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "ThermostatMode.SetMode",
+        "type": "object"
+      },
+      "ThermostatTemperatureSetpointSetCoolRequest": {
+        "additionalProperties": false,
+        "description": "Request for ThermostatTemperatureSetpoint.SetCool.",
+        "example": {
+          "command": "sdm.devices.commands.ThermostatTemperatureSetpoint.SetCool",
+          "params": {
+            "coolCelsius": 25
+          }
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.ThermostatTemperatureSetpoint.SetCool"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetCoolParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "ThermostatTemperatureSetpoint.SetCool",
+        "type": "object"
+      },
+      "ThermostatTemperatureSetpointSetHeatRequest": {
+        "additionalProperties": false,
+        "description": "Request for ThermostatTemperatureSetpoint.SetHeat.",
+        "example": {
+          "command": "sdm.devices.commands.ThermostatTemperatureSetpoint.SetHeat",
+          "params": {
+            "heatCelsius": 20
+          }
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.ThermostatTemperatureSetpoint.SetHeat"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetHeatParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "ThermostatTemperatureSetpoint.SetHeat",
+        "type": "object"
+      },
+      "ThermostatTemperatureSetpointSetRangeRequest": {
+        "additionalProperties": false,
+        "description": "Request for ThermostatTemperatureSetpoint.SetRange.",
+        "example": {
+          "command": "sdm.devices.commands.ThermostatTemperatureSetpoint.SetRange",
+          "params": {
+            "coolCelsius": 25,
+            "heatCelsius": 20
+          }
+        },
+        "properties": {
+          "command": {
+            "enum": [
+              "sdm.devices.commands.ThermostatTemperatureSetpoint.SetRange"
+            ],
+            "type": "string",
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetRangeParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "title": "ThermostatTemperatureSetpoint.SetRange",
         "type": "object"
       }
     },

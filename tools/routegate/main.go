@@ -45,6 +45,16 @@ func audit(root string) error {
 		return err
 	}
 
+	err = auditAuthorization(root)
+	if err != nil {
+		return err
+	}
+
+	err = auditCLI(root)
+	if err != nil {
+		return err
+	}
+
 	return auditSourcePackages(root, models)
 }
 
@@ -64,6 +74,7 @@ func auditFilePolicy(file *ast.File, path string, models map[string]ast.Expr, sk
 	}
 
 	bindGeneratedConstants(imports, models)
+	bindLocalMethods(file, imports)
 
 	if !skipWire {
 		err = auditWireValues(file, imports, models)
@@ -110,7 +121,7 @@ func auditImports(file *ast.File) (map[string]string, error) {
 		}
 
 		imports[name] = value
-		rawSocket := value == "net" || value == "crypto/tls"
+		rawSocket := value == "crypto/tls"
 
 		extraTransport := strings.Contains(value, "websocket") || strings.Contains(value, "cloud.google.com")
 
@@ -162,10 +173,18 @@ func auditFunction(function *ast.FuncDecl, imports map[string]string, path strin
 
 func auditSelector(function *ast.FuncDecl, selector *ast.SelectorExpr, imports map[string]string, path string) error {
 	owner, ownerOK := selector.X.(*ast.Ident)
+	if ownerOK && owner.Obj == nil && imports[owner.Name] == netImport && selector.Sel.Name != "ParseIP" {
+		return fmt.Errorf("%w: uninventoried network primitive %s", errRouteInvalid, selector.Sel.Name)
+	}
+
 	if ownerOK && imports[owner.Name] == httpImport && networkPrimitive(selector.Sel.Name) {
 		if !verifiedHelper(function, path) || selector.Sel.Name != requestConstructor {
 			return fmt.Errorf("%w: uninventoried HTTP primitive %s", errRouteInvalid, selector.Sel.Name)
 		}
+	}
+
+	if localBehaviorMethod(function, selector, imports, path) {
+		return nil
 	}
 
 	switch selector.Sel.Name {
@@ -198,7 +217,7 @@ func auditSelector(function *ast.FuncDecl, selector *ast.SelectorExpr, imports m
 		if path == "pkg/dependencies/httptransport/sdk_resources.go" {
 			return verifyResourceCall(findCall(function.Body, selector), imports)
 		}
-	case "Do", "RoundTrip":
+	case "Do", roundTripMethod:
 		if !verifiedHelper(function, path) {
 			return fmt.Errorf("%w: uninventoried HTTP send", errRouteInvalid)
 		}
@@ -225,7 +244,7 @@ func verifyResourceCall(call *ast.CallExpr, imports map[string]string) error {
 
 func networkPrimitive(name string) bool {
 	switch name {
-	case "Get", "Post", "PostForm", "Head", "NewRequest", requestConstructor, "Do", "RoundTrip":
+	case "Get", "Post", "PostForm", "Head", "NewRequest", requestConstructor, "Do", roundTripMethod:
 		return true
 	default:
 		return false
@@ -460,6 +479,10 @@ func auditGlobal(group *ast.GenDecl, imports map[string]string) error {
 		}
 
 		owner, recognized := selector.X.(*ast.Ident)
+		if recognized && owner.Obj == nil && imports[owner.Name] == netImport && selector.Sel.Name != "ParseIP" {
+			failure = fmt.Errorf("%w: file-scope network primitive %s", errRouteInvalid, selector.Sel.Name)
+		}
+
 		if recognized && imports[owner.Name] == httpImport && networkPrimitive(selector.Sel.Name) {
 			failure = fmt.Errorf("%w: file-scope HTTP primitive %s", errRouteInvalid, selector.Sel.Name)
 		}

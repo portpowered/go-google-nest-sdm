@@ -21,7 +21,7 @@
       "get": {
         "operationId": "DownloadImage",
         "summary": "Download an event image",
-        "description": "Retrieve the image bytes from the GenerateImage result URL using its short-lived event token.",
+        "description": "Retrieve the image bytes from the GenerateImage result URL using its short-lived event token. Synthetic authorization header illustration: `Authorization: Basic synthetic-event-token`. Replace the illustrative value with the corresponding current credential.",
         "parameters": [
           {
             "in": "path",
@@ -30,7 +30,8 @@
             "schema": {
               "type": "string",
               "minLength": 1
-            }
+            },
+            "example": "synthetic-image"
           },
           {
             "in": "query",
@@ -39,7 +40,8 @@
               "type": "integer",
               "minimum": 1
             },
-            "description": "Pixel width; takes precedence over height."
+            "description": "Pixel width; takes precedence over height.",
+            "example": 640
           },
           {
             "in": "query",
@@ -48,7 +50,8 @@
               "type": "integer",
               "minimum": 1
             },
-            "description": "Pixel height when width is absent."
+            "description": "Pixel height when width is absent.",
+            "example": 480
           }
         ],
         "security": [
@@ -58,7 +61,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Encoded image bytes",
+            "description": "Encoded image bytes; opaque binary bytes are consumed as a stream. No synthetic byte string is presented as a real downloaded or verified media file.",
             "content": {
               "image/jpeg": {
                 "schema": {
@@ -69,7 +72,7 @@
             }
           },
           "default": {
-            "description": "Download failed; callers receive a typed status error."
+            "description": "Download failed; callers receive a typed status error. Example status: HTTP 403 when authorization is rejected. Provider error bodies and content types vary, so this contract does not fabricate a JSON media error payload."
           }
         },
         "tags": [
@@ -81,7 +84,7 @@
       "get": {
         "operationId": "DownloadClipPreview",
         "summary": "Download a camera clip preview",
-        "description": "Retrieve the ten-frame H264 MP4 from a trusted ClipPreview event URL. The provider chooses the opaque path and query.",
+        "description": "Retrieve the ten-frame H264 MP4 from a trusted ClipPreview event URL. The provider chooses the opaque path and query. Synthetic authorization header illustration: `Authorization: Bearer synthetic-access-token`. Replace the illustrative value with the corresponding current credential.",
         "parameters": [
           {
             "in": "path",
@@ -91,7 +94,8 @@
             "schema": {
               "type": "string",
               "minLength": 1
-            }
+            },
+            "example": "synthetic-clip.mp4"
           }
         ],
         "security": [
@@ -101,7 +105,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Encoded clip preview bytes",
+            "description": "Encoded clip preview bytes; opaque binary bytes are consumed as a stream. No synthetic byte string is presented as a real downloaded or verified media file.",
             "content": {
               "video/mp4": {
                 "schema": {
@@ -112,7 +116,7 @@
             }
           },
           "default": {
-            "description": "Download failed; callers receive a typed status error."
+            "description": "Download failed; callers receive a typed status error. Example status: HTTP 403 when authorization is rejected. Provider error bodies and content types vary, so this contract does not fabricate a JSON media error payload."
           }
         },
         "tags": [
@@ -138,12 +142,14 @@
       "MediaImageURL": {
         "type": "string",
         "format": "uri",
-        "pattern": "^https://[^/?#]+/sdm_event_snapshot/[^?#]+"
+        "pattern": "^https://[^/?#]+/sdm_event_snapshot/[^?#]+",
+        "example": "https://media.example.invalid/sdm_event_snapshot/synthetic-image?width=640"
       },
       "MediaClipURL": {
         "type": "string",
         "format": "uri",
-        "pattern": "^https://[^/?#]+/"
+        "pattern": "^https://[^/?#]+/",
+        "example": "https://media.example.invalid/synthetic-clip.mp4"
       }
     }
   },

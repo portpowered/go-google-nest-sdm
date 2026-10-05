@@ -1,6 +1,6 @@
 GO ?= go
 PUBLIC_MODULE ?= github.com/portpowered/go-google-nest-sdm
-PUBLIC_PACKAGES ?= pkg/sdm,pkg/dependencies/httptransport,pkg/dependencies/media,pkg/dependencymodels
+PUBLIC_PACKAGES ?= pkg/sdm,pkg/dependencies/authorization,pkg/dependencies/httptransport,pkg/dependencies/media,pkg/dependencymodels
 export GOWORK := off
 
 .DEFAULT_GOAL := check
@@ -28,6 +28,7 @@ fmt:
 test-contracts:
 	npm ci --prefix tools/generate --ignore-scripts
 	node tools/generate/validate.mjs
+	$(GO) run ./tools/examplecheck
 	$(GO) run ./tools/contractcheck
 
 routegate:

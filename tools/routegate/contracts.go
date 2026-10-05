@@ -19,7 +19,7 @@ import (
 func operationNames() []string {
 	return []string{
 		"ListDevices", "GetDevice", "ExecuteCommand", "ListStructures", "GetStructure", "ListRooms", "GetRoom",
-		"OAuthToken", "Pull", "Acknowledge", "ModifyAckDeadline", imageOperation, clipOperation,
+		"OAuthToken", "PCMConsent", "Pull", "Acknowledge", "ModifyAckDeadline", imageOperation, clipOperation,
 	}
 }
 

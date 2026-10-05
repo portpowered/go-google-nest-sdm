@@ -51,6 +51,11 @@
         },
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "code": 403,
+          "status": "PERMISSION_DENIED",
+          "message": "The caller does not have permission for this resource."
         }
       },
       "GoogleErrorResponse": {
@@ -65,7 +70,14 @@
         },
         "required": [
           "error"
-        ]
+        ],
+        "example": {
+          "error": {
+            "code": 403,
+            "status": "PERMISSION_DENIED",
+            "message": "The caller does not have permission for this resource."
+          }
+        }
       },
       "GoogleErrorDetail": {
         "type": "object",
@@ -77,6 +89,11 @@
         },
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+          "reason": "PERMISSION_DENIED",
+          "domain": "example.invalid"
         }
       }
     }

@@ -15,6 +15,7 @@ type jsonExchangeAudit struct {
 	parents    map[ast.Node]ast.Node
 	marshal    *ast.CallExpr
 	reader     *ast.CallExpr
+	readerName *ast.Ident
 	send       *ast.CallExpr
 	body       *ast.Ident
 }
@@ -63,7 +64,7 @@ func auditJSONHelper(root string, models map[string]ast.Expr) error {
 
 func verifyJSONHelper(function *ast.FuncDecl, imports map[string]string) error {
 	state := jsonExchangeAudit{function: function, imports: imports, parameters: map[string]*ast.Ident{},
-		parents: nodeParents(function.Body), marshal: nil, reader: nil, send: nil, body: nil}
+		parents: nodeParents(function.Body), marshal: nil, reader: nil, readerName: nil, send: nil, body: nil}
 
 	for _, field := range function.Type.Params.List {
 		for _, name := range field.Names {
@@ -88,7 +89,11 @@ func verifyJSONHelper(function *ast.FuncDecl, imports map[string]string) error {
 			state.marshal = call
 		}
 
-		if _, recognized = importedCall(call, imports, "bytes", "NewReader"); recognized {
+		_, mutableReader := importedCall(call, imports, "bytes", "NewReader")
+
+		_, immutableReader := importedCall(call, imports, "strings", "NewReader")
+
+		if mutableReader || immutableReader {
 			valid = valid && state.reader == nil
 			state.reader = call
 		}
@@ -131,14 +136,38 @@ func (state *jsonExchangeAudit) bindBody() bool {
 	}
 
 	state.body = body
-	input, recognized := state.reader.Args[0].(*ast.Ident)
+	input := state.readerBody()
 
-	return recognized && input.Obj == body.Obj && state.marshal.Pos() < state.send.Pos() &&
+	return input != nil && input.Obj == body.Obj && state.marshal.Pos() < state.send.Pos() &&
 		state.parents[assignment] == state.function.Body
 }
 
+func (state *jsonExchangeAudit) readerBody() *ast.Ident {
+	input := state.reader.Args[0]
+	if _, immutable := importedCall(state.reader, state.imports, "strings", "NewReader"); immutable {
+		conversion, recognized := input.(*ast.CallExpr)
+		if !recognized || len(conversion.Args) != 1 {
+			return nil
+		}
+
+		kind, recognized := conversion.Fun.(*ast.Ident)
+		if !recognized || kind.Obj != nil || kind.Name != "string" {
+			return nil
+		}
+
+		input = conversion.Args[0]
+	}
+
+	identifier, recognized := input.(*ast.Ident)
+	if !recognized {
+		return nil
+	}
+
+	return identifier
+}
+
 func (state *jsonExchangeAudit) forwardedCall() bool {
-	if len(state.send.Args) != exchangeArguments || state.send.Args[6] != state.reader ||
+	if len(state.send.Args) != exchangeArguments || !state.forwardedReader(state.send.Args[6]) ||
 		!state.parameter(state.send.Args[7], "result") {
 		return false
 	}
@@ -166,6 +195,28 @@ func (state *jsonExchangeAudit) forwardedCall() bool {
 		state.parents[statement] == state.function.Body
 }
 
+func (state *jsonExchangeAudit) forwardedReader(expression ast.Expr) bool {
+	if expression == state.reader {
+		return true
+	}
+
+	identifier, recognized := expression.(*ast.Ident)
+	if !recognized || identifier.Obj == nil {
+		return false
+	}
+
+	assignment, recognized := identifier.Obj.Decl.(*ast.AssignStmt)
+	if !recognized || assignment.Tok != token.DEFINE || len(assignment.Lhs) != 1 || len(assignment.Rhs) != 1 ||
+		assignment.Rhs[0] != state.reader || state.parents[assignment] != state.function.Body ||
+		assignment.Pos() <= state.marshal.Pos() || assignment.End() >= state.send.Pos() {
+		return false
+	}
+
+	state.readerName = identifier
+
+	return true
+}
+
 func (state *jsonExchangeAudit) safeUses() bool {
 	valid := true
 
@@ -176,13 +227,16 @@ func (state *jsonExchangeAudit) safeUses() bool {
 		}
 
 		parent := state.parents[identifier]
+		valid = valid && state.safeReaderName(identifier, parent)
+
 		if actual := receiver(state.function); actual != nil && identifier.Obj == actual.Obj {
 			selector, isSelector := parent.(*ast.SelectorExpr)
 			valid = valid && isSelector && state.send.Fun == selector
 		}
 
 		if identifier.Obj == state.body.Obj {
-			valid = valid && (parent == state.parents[state.marshal] || parent == state.reader)
+			valid = valid && (parent == state.parents[state.marshal] || parent == state.reader ||
+				state.immutableConversion(parent))
 		}
 
 		for name, parameter := range state.parameters {
@@ -207,4 +261,23 @@ func (state *jsonExchangeAudit) safeUses() bool {
 	})
 
 	return valid
+}
+
+func (state *jsonExchangeAudit) safeReaderName(identifier *ast.Ident, parent ast.Node) bool {
+	if state.readerName == nil || identifier.Obj != state.readerName.Obj {
+		return true
+	}
+
+	return parent == state.parents[state.reader] || parent == state.send
+}
+
+func (state *jsonExchangeAudit) immutableConversion(node ast.Node) bool {
+	conversion, recognized := node.(*ast.CallExpr)
+	if !recognized || state.parents[conversion] != state.reader {
+		return false
+	}
+
+	_, immutable := importedCall(state.reader, state.imports, "strings", "NewReader")
+
+	return immutable && state.readerBody() != nil
 }

@@ -17,7 +17,7 @@ Provider contracts follow published Google documentation with synthetic offline 
 go get github.com/portpowered/go-google-nest-sdm
 ```
 
-Complete [Device Access authorization](https://developers.google.com/nest/device-access/authorize), then supply the account token on each request:
+Use the [account authorization session](https://portpowered.github.io/go-google-nest-sdm/docs/guides/authentication/) or [CLI browser login](https://portpowered.github.io/go-google-nest-sdm/docs/guides/cli/) to complete Google consent, validate the callback, exchange tokens and make Google's required first device-list call. Then supply the account token on each request:
 
 ```go
 package main
@@ -50,6 +50,8 @@ The following fragments use `ctx`, `auth`, `name` (a returned device name), `ent
 
 | Authentication | Inline example |
 | --- | --- |
+| Browser consent session | `session, err := authorization.NewSession(ctx, client, sdm.OpenAuthorizationSessionRequest{ProjectId: projectID, ClientId: id, ClientSecret: secret, RedirectUri: redirectURI})` |
+| Complete validated callback | `authorized, err := session.Complete(ctx, sdm.CompleteAuthorizationRequest{CallbackURL: callbackURL})` |
 | Exchange authorization code | `client.ExchangeToken(ctx, sdm.ExchangeTokenRequest{ClientId: id, ClientSecret: secret, Code: code, RedirectUri: redirectURI})` |
 | Refresh credentials | `client.RefreshToken(ctx, sdm.RefreshTokenRequest{ClientId: id, ClientSecret: secret, RefreshToken: refreshToken})` |
 
@@ -99,6 +101,6 @@ A shared client holds configuration; callers own credential storage and explicit
 
 Discover capabilities through `device.SupportsCommand(command)` and optionally preflight with `sdm.CheckCommand(sdm.CheckCommandRequest{Device: device, Command: command})`; these inspect returned traits and stream protocols without network calls. Apply partial event updates without replacing omitted values. Unknown incoming values remain preserved; invalid known payloads remain errors. Commands acknowledge acceptance and are never implicitly retried. Use `media.New(media.WithHTTPClient(myMediaHTTPDoer))` from `pkg/dependencies/media` for image/clip downloads and close returned bodies. Only supply trusted SDM HTTPS URLs and reject redirects in injected media transports. Callers own RTSP/WebRTC connections, renewal and explicit stop. For push/message integration, your application owns delivery authentication and acknowledgement after successful handling; `DecodePushEvent` is stateless. Optional pull sessions require explicit close and acknowledgements.
 
-Read the [customer guides](https://portpowered.github.io/go-google-nest-sdm/docs/guides), [generated REST reference](https://portpowered.github.io/go-google-nest-sdm/docs) and [event reference](https://portpowered.github.io/go-google-nest-sdm/docs/asyncapi/events/receiveEvents). Install the separate [CLI](https://portpowered.github.io/go-google-nest-sdm/docs/guides/cli) with `go install github.com/portpowered/go-google-nest-sdm/cmd/go-google-nest-sdm@v0.1.0`.
+Read the [customer guides](https://portpowered.github.io/go-google-nest-sdm/docs/guides), [generated REST reference](https://portpowered.github.io/go-google-nest-sdm/docs) and [event reference](https://portpowered.github.io/go-google-nest-sdm/docs/asyncapi/events/receiveEvents). Install the separate [CLI](https://portpowered.github.io/go-google-nest-sdm/docs/guides/cli) with `go install github.com/portpowered/go-google-nest-sdm/cmd/go-google-nest-sdm@v0.2.0`.
 
 Contributor evidence, generation and release acceptance live in [contributor verification](docs/contributing.md), [the checklist](docs/checklist.md) and [independent review](docs/review.md).

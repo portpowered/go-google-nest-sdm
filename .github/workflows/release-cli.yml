@@ -28,6 +28,12 @@ jobs:
           node-version: '22'
       - name: Verify the CLI and SDK checkout
         run: make lint check
+      - name: Verify published SDK dependency metadata without a local replacement
+        working-directory: cmd/go-google-nest-sdm
+        env:
+          GOWORK: 'off'
+          GOFLAGS: ''
+        run: go mod tidy -diff
       - name: Install the released CLI without local replacements or workspaces
         env:
           TAG: ${{ github.ref_name }}

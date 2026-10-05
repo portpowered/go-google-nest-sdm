@@ -3,7 +3,28 @@ title: Authentication and errors
 description: Exchange and refresh credentials explicitly, then supply account tokens per call.
 ---
 
-Complete Google's [Device Access authorization](https://developers.google.com/nest/device-access/authorize) in your application. The application owns the browser redirect, OAuth state binding, user consent and any PKCE verifier. An authorization-code exchange alone does not validate a callback's state.
+Complete Google's [Device Access authorization](https://developers.google.com/nest/device-access/authorize) with an explicit account authorization session. Configure a Google OAuth Web application client and register your exact redirect URI. Use the Device Access project ID for `ProjectId`. Your application owns opening the browser and receiving the callback; the session owns the one-use state and PKCE verifier.
+
+```go
+// import "github.com/portpowered/go-google-nest-sdm/pkg/dependencies/authorization"
+client, err := httptransport.NewClient()
+// Check err before using client.
+session, err := authorization.NewSession(ctx, client, sdm.OpenAuthorizationSessionRequest{
+    ProjectId: projectID, ClientId: clientID, ClientSecret: clientSecret,
+    RedirectUri: "http://127.0.0.1:8080/oauth/callback",
+})
+// Check err, then defer session.Close().
+consentURL := session.AuthorizationURL() // Open in the user's browser.
+// Receive the browser redirect at your registered callback endpoint.
+authorized, err := session.Complete(ctx, sdm.CompleteAuthorizationRequest{
+    CallbackURL: callbackURL,
+})
+// Check err before using authorized.Credentials or authorized.Devices.
+```
+
+`Complete` validates the callback origin, path, state and code, exchanges the code using the session's PKCE verifier, and performs Google's required initial `devices.list` call. That call completes authorization and enables configured Pub/Sub events. The session generates an S256 challenge and keeps its bound verifier; Google's authorization server enforces PKCE. The PCM forwarding behavior is covered by synthetic offline tests and has not been qualified against a live account. A session accepts one validated callback; invalid state does not consume it. Denial, exchange failure and device-list failure end the attempt. Close the session on success, failure or cancellation. The SDK starts no browser, listener or background refresh loop. The [CLI](/docs/guides/cli) provides the complete browser-to-localhost flow.
+
+For an application that already owns OAuth state and PKCE validation, lower-level exchange remains available. An authorization-code exchange alone does not validate a callback's state or make the required initial device-list call:
 
 ```go
 // import "github.com/portpowered/go-google-nest-sdm/pkg/dependencies/httptransport"
@@ -35,7 +56,7 @@ client, err := httptransport.NewClient(
 )
 ```
 
-The same injected `HTTPDoer` handles SDM, OAuth and Pub/Sub requests. It must support concurrent requests and context cancellation. The caller owns the HTTP client and its connections. Set request deadlines using `context.WithTimeout`; choose production timeout and retry policy explicitly. Base URL options are available for controlled testing.
+The same injected `HTTPDoer` handles SDM, OAuth and Pub/Sub requests. It must support concurrent requests, context cancellation and account isolation. Concrete `*http.Client` values must have a nil cookie jar; the SDK rejects shared jars with an inspectable configuration error. Custom doers must not retain account cookies or credentials between requests. The caller owns the HTTP client and its connections. Set request deadlines using `context.WithTimeout`; choose production timeout and retry policy explicitly. Base URL options are available for controlled testing.
 
 Use `errors.As(err, &clientError)` with `var clientError *sdm.Error` and inspect `Kind`. Classes include invalid request/response, unauthorized, not found, unsupported, rate limited, server, transport, timeout and cancellation. Outgoing validation errors occur before transmission. An uncertain command transport failure does not prove the command was rejected; inspect device state before repeating it.
 

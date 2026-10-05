@@ -23,6 +23,41 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OAuthTokenResponse"
+                },
+                "examples": {
+                  "AuthorizationCode": {
+                    "summary": "Initial access and refresh credentials",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "access_token": "synthetic-access-token",
+                      "expires_in": 3600,
+                      "refresh_token": "synthetic-refresh-token",
+                      "scope": "https://www.googleapis.com/auth/sdm.service",
+                      "token_type": "Bearer"
+                    }
+                  },
+                  "RefreshToken": {
+                    "summary": "Refreshed access credentials",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "access_token": "synthetic-renewed-access-token",
+                      "expires_in": 3600,
+                      "scope": "https://www.googleapis.com/auth/sdm.service",
+                      "token_type": "Bearer"
+                    }
+                  },
+                  "TimeBasedGrant": {
+                    "summary": "Credentials with refresh lifetime",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "access_token": "synthetic-access-token",
+                      "expires_in": 3600,
+                      "refresh_token": "synthetic-refresh-token",
+                      "scope": "https://www.googleapis.com/auth/sdm.service",
+                      "token_type": "Bearer",
+                      "refresh_token_expires_in": 604800
+                    }
+                  }
                 }
               }
             }
@@ -33,6 +68,24 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OAuthErrorResponse"
+                },
+                "examples": {
+                  "InvalidGrant": {
+                    "summary": "Expired or invalid grant",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": "invalid_grant",
+                      "error_description": "The authorization code or refresh token is invalid or expired."
+                    }
+                  },
+                  "InvalidClient": {
+                    "summary": "Rejected client credentials",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": "invalid_client",
+                      "error_description": "The OAuth client credentials were rejected."
+                    }
+                  }
                 }
               }
             }
@@ -44,8 +97,145 @@
             "application/x-www-form-urlencoded": {
               "schema": {
                 "$ref": "#/components/schemas/OAuthTokenRequest"
+              },
+              "examples": {
+                "AuthorizationCode": {
+                  "summary": "Exchange callback code with PKCE verifier",
+                  "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                  "value": {
+                    "client_id": "synthetic-client.apps.googleusercontent.com",
+                    "client_secret": "synthetic-client-secret",
+                    "code": "synthetic-authorization-code",
+                    "redirect_uri": "http://localhost:8080/oauth/callback",
+                    "grant_type": "authorization_code",
+                    "code_verifier": "synthetic_verifier_example_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                  }
+                },
+                "RefreshToken": {
+                  "summary": "Explicit refresh grant",
+                  "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                  "value": {
+                    "client_id": "synthetic-client.apps.googleusercontent.com",
+                    "client_secret": "synthetic-client-secret",
+                    "refresh_token": "synthetic-refresh-token",
+                    "grant_type": "refresh_token"
+                  }
+                }
               }
             }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/partnerconnections/{projectId}/auth": {
+      "get": {
+        "operationId": "PCMConsent",
+        "summary": "Authorize Nest account access",
+        "description": "Browser navigation to Partner Connections Manager; consent redirects to the caller-owned endpoint. After token exchange, devices.list is required to complete account linking.",
+        "servers": [
+          {
+            "url": "https://nestservices.google.com"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "example": "example-enterprise"
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "http://localhost:8080/oauth/callback"
+          },
+          {
+            "name": "client_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "synthetic-client.apps.googleusercontent.com"
+          },
+          {
+            "name": "response_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/OAuthResponseType"
+            },
+            "example": "code"
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/OAuthScope"
+            },
+            "example": "https://www.googleapis.com/auth/sdm.service"
+          },
+          {
+            "name": "access_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/OAuthAccessType"
+            },
+            "example": "offline"
+          },
+          {
+            "name": "prompt",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/OAuthPrompt"
+            },
+            "example": "consent"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "synthetic_state_example_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+          },
+          {
+            "name": "code_challenge",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Z35Iiv-U03YdQhKshrvMwqRhoj7Q4apjRVFK67aCq0w"
+          },
+          {
+            "name": "code_challenge_method",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/OAuthPKCEMethod"
+            },
+            "example": "S256"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirects to the exact registered callback with code and state, or error and state.\n\nSynthetic successful callback query:\n\n```json\n{\n  \"code\": \"synthetic-authorization-code\",\n  \"state\": \"synthetic_state_example_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n}\n```\n\nSynthetic denied callback query:\n\n```json\n{\n  \"error\": \"access_denied\",\n  \"error_description\": \"The user declined authorization.\",\n  \"state\": \"synthetic_state_example_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n}\n```\n\nThese values are query parameters on the registered redirect URI, not a JSON response body. The callback owner must verify state before exchanging the code."
           }
         },
         "tags": [
@@ -95,7 +285,15 @@
           "client_id",
           "client_secret",
           "grant_type"
-        ]
+        ],
+        "example": {
+          "client_id": "synthetic-client.apps.googleusercontent.com",
+          "client_secret": "synthetic-client-secret",
+          "code": "synthetic-authorization-code",
+          "redirect_uri": "http://localhost:8080/oauth/callback",
+          "grant_type": "authorization_code",
+          "code_verifier": "synthetic_verifier_example_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        }
       },
       "OAuthTokenResponse": {
         "type": "object",
@@ -131,7 +329,14 @@
           "access_token",
           "expires_in",
           "token_type"
-        ]
+        ],
+        "example": {
+          "access_token": "synthetic-access-token",
+          "expires_in": 3600,
+          "refresh_token": "synthetic-refresh-token",
+          "scope": "https://www.googleapis.com/auth/sdm.service",
+          "token_type": "Bearer"
+        }
       },
       "OAuthErrorResponse": {
         "type": "object",
@@ -148,7 +353,11 @@
         },
         "required": [
           "error"
-        ]
+        ],
+        "example": {
+          "error": "invalid_grant",
+          "error_description": "The authorization code or refresh token is invalid or expired."
+        }
       },
       "OAuthErrorCode": {
         "type": "string",
@@ -163,6 +372,62 @@
           "invalid_scope"
         ],
         "description": "Open OAuth token error code."
+      },
+      "OAuthAuthorizationCallback": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "error_description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "additionalProperties": true,
+        "description": "Exactly one code or error is returned; state must match the authorization session. Other provider query values remain extensible.",
+        "example": {
+          "code": "synthetic-authorization-code",
+          "state": "synthetic_state_example_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        }
+      },
+      "OAuthResponseType": {
+        "type": "string",
+        "enum": [
+          "code"
+        ]
+      },
+      "OAuthScope": {
+        "type": "string",
+        "enum": [
+          "https://www.googleapis.com/auth/sdm.service"
+        ]
+      },
+      "OAuthAccessType": {
+        "type": "string",
+        "enum": [
+          "offline"
+        ]
+      },
+      "OAuthPrompt": {
+        "type": "string",
+        "enum": [
+          "consent"
+        ]
+      },
+      "OAuthPKCEMethod": {
+        "type": "string",
+        "enum": [
+          "S256"
+        ]
       }
     }
   },

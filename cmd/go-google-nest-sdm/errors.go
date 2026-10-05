@@ -57,4 +57,7 @@ var (
 	errResourceRequired          = errors.New("this operation requires --resource")
 	errUnknownCommand            = errors.New("unknown command; use help")
 	errThermostatOperation       = errors.New("unknown thermostat operation; use help")
+	errLoginProjectRequired      = errors.New("auth login requires --project or SDM_PROJECT_ID")
+	errLoginRedirect             = errors.New("login requires a registered http loopback URI with a fixed port and path")
+	errLoginBrowser              = errors.New("could not open consent in the browser; verify the system browser launcher")
 )

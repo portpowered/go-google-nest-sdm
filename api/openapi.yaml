@@ -24,15 +24,17 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-enterprise"
           },
           {
             "name": "filter",
             "in": "query",
-            "description": "Requested device filter; service-defined expression.",
+            "description": "Optional device custom-name substring filter, for example customName=Living.",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "customName=Living"
           }
         ],
         "responses": {
@@ -43,13 +45,111 @@
                 "description": "Obfuscated user identity.",
                 "schema": {
                   "type": "string"
-                }
+                },
+                "example": "synthetic-user"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ListDevicesResponse"
+                },
+                "examples": {
+                  "ThermostatAndCamera": {
+                    "summary": "Authorized thermostat and camera",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "devices": [
+                        {
+                          "name": "enterprises/example-enterprise/devices/example-thermostat",
+                          "type": "sdm.devices.types.THERMOSTAT",
+                          "traits": {
+                            "sdm.devices.traits.Connectivity": {
+                              "status": "ONLINE"
+                            },
+                            "sdm.devices.traits.Fan": {
+                              "timerMode": "ON",
+                              "timerTimeout": "2026-01-01T12:15:00Z"
+                            },
+                            "sdm.devices.traits.Humidity": {
+                              "ambientHumidityPercent": 45
+                            },
+                            "sdm.devices.traits.Info": {
+                              "customName": "Living room thermostat"
+                            },
+                            "sdm.devices.traits.Settings": {
+                              "temperatureScale": "CELSIUS"
+                            },
+                            "sdm.devices.traits.Temperature": {
+                              "ambientTemperatureCelsius": 21.5
+                            },
+                            "sdm.devices.traits.ThermostatEco": {
+                              "availableModes": [
+                                "MANUAL_ECO",
+                                "OFF"
+                              ],
+                              "mode": "OFF",
+                              "heatCelsius": 18,
+                              "coolCelsius": 27
+                            },
+                            "sdm.devices.traits.ThermostatHvac": {
+                              "status": "HEATING"
+                            },
+                            "sdm.devices.traits.ThermostatMode": {
+                              "availableModes": [
+                                "HEAT",
+                                "COOL",
+                                "HEATCOOL",
+                                "OFF"
+                              ],
+                              "mode": "HEAT"
+                            },
+                            "sdm.devices.traits.ThermostatTemperatureSetpoint": {
+                              "heatCelsius": 20,
+                              "coolCelsius": 25
+                            }
+                          },
+                          "parentRelations": [
+                            {
+                              "parent": "enterprises/example-enterprise/structures/example-structure/rooms/example-room",
+                              "displayName": "Living room"
+                            }
+                          ]
+                        },
+                        {
+                          "name": "enterprises/example-enterprise/devices/example-camera",
+                          "type": "sdm.devices.types.CAMERA",
+                          "traits": {
+                            "sdm.devices.traits.CameraLiveStream": {
+                              "maxVideoResolution": {
+                                "width": 1920,
+                                "height": 1080
+                              },
+                              "videoCodecs": [
+                                "H264"
+                              ],
+                              "audioCodecs": [
+                                "OPUS"
+                              ],
+                              "supportedProtocols": [
+                                "WEB_RTC"
+                              ]
+                            },
+                            "sdm.devices.traits.CameraMotion": {},
+                            "sdm.devices.traits.CameraPerson": {},
+                            "sdm.devices.traits.CameraClipPreview": {}
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "NoAuthorizedDevices": {
+                    "summary": "No authorized devices",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "devices": []
+                    }
+                  }
                 }
               }
             }
@@ -60,6 +160,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                },
+                "examples": {
+                  "PermissionDenied": {
+                    "summary": "Missing permission",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 403,
+                        "status": "PERMISSION_DENIED",
+                        "message": "The caller does not have permission for this resource."
+                      }
+                    }
+                  },
+                  "NotFound": {
+                    "summary": "Unknown or unauthorized resource",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 404,
+                        "status": "NOT_FOUND",
+                        "message": "The requested resource was not found."
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -84,7 +208,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-enterprise"
           },
           {
             "name": "deviceId",
@@ -94,7 +219,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-thermostat"
           }
         ],
         "responses": {
@@ -105,13 +231,104 @@
                 "description": "Obfuscated user identity.",
                 "schema": {
                   "type": "string"
-                }
+                },
+                "example": "synthetic-user"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Device"
+                },
+                "examples": {
+                  "Thermostat": {
+                    "summary": "Thermostat snapshot",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "name": "enterprises/example-enterprise/devices/example-thermostat",
+                      "type": "sdm.devices.types.THERMOSTAT",
+                      "traits": {
+                        "sdm.devices.traits.Connectivity": {
+                          "status": "ONLINE"
+                        },
+                        "sdm.devices.traits.Fan": {
+                          "timerMode": "ON",
+                          "timerTimeout": "2026-01-01T12:15:00Z"
+                        },
+                        "sdm.devices.traits.Humidity": {
+                          "ambientHumidityPercent": 45
+                        },
+                        "sdm.devices.traits.Info": {
+                          "customName": "Living room thermostat"
+                        },
+                        "sdm.devices.traits.Settings": {
+                          "temperatureScale": "CELSIUS"
+                        },
+                        "sdm.devices.traits.Temperature": {
+                          "ambientTemperatureCelsius": 21.5
+                        },
+                        "sdm.devices.traits.ThermostatEco": {
+                          "availableModes": [
+                            "MANUAL_ECO",
+                            "OFF"
+                          ],
+                          "mode": "OFF",
+                          "heatCelsius": 18,
+                          "coolCelsius": 27
+                        },
+                        "sdm.devices.traits.ThermostatHvac": {
+                          "status": "HEATING"
+                        },
+                        "sdm.devices.traits.ThermostatMode": {
+                          "availableModes": [
+                            "HEAT",
+                            "COOL",
+                            "HEATCOOL",
+                            "OFF"
+                          ],
+                          "mode": "HEAT"
+                        },
+                        "sdm.devices.traits.ThermostatTemperatureSetpoint": {
+                          "heatCelsius": 20,
+                          "coolCelsius": 25
+                        }
+                      },
+                      "parentRelations": [
+                        {
+                          "parent": "enterprises/example-enterprise/structures/example-structure/rooms/example-room",
+                          "displayName": "Living room"
+                        }
+                      ]
+                    }
+                  },
+                  "Camera": {
+                    "summary": "Camera capability snapshot",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "name": "enterprises/example-enterprise/devices/example-camera",
+                      "type": "sdm.devices.types.CAMERA",
+                      "traits": {
+                        "sdm.devices.traits.CameraLiveStream": {
+                          "maxVideoResolution": {
+                            "width": 1920,
+                            "height": 1080
+                          },
+                          "videoCodecs": [
+                            "H264"
+                          ],
+                          "audioCodecs": [
+                            "OPUS"
+                          ],
+                          "supportedProtocols": [
+                            "WEB_RTC"
+                          ]
+                        },
+                        "sdm.devices.traits.CameraMotion": {},
+                        "sdm.devices.traits.CameraPerson": {},
+                        "sdm.devices.traits.CameraClipPreview": {}
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -122,6 +339,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                },
+                "examples": {
+                  "PermissionDenied": {
+                    "summary": "Missing permission",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 403,
+                        "status": "PERMISSION_DENIED",
+                        "message": "The caller does not have permission for this resource."
+                      }
+                    }
+                  },
+                  "NotFound": {
+                    "summary": "Unknown or unauthorized resource",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 404,
+                        "status": "NOT_FOUND",
+                        "message": "The requested resource was not found."
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -136,7 +377,7 @@
       "post": {
         "operationId": "ExecuteCommand",
         "summary": "ExecuteCommand",
-        "description": "Use the caller authorization to ExecuteCommand.",
+        "description": "Execute an explicit device command. Select the request variant matching command to inspect required params, then select its complete request example. Responses depend on the same command; empty results acknowledge controls, while camera commands return image or stream credentials.",
         "parameters": [
           {
             "name": "enterpriseId",
@@ -146,7 +387,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-enterprise"
           },
           {
             "name": "deviceId",
@@ -156,7 +398,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-thermostat"
           }
         ],
         "responses": {
@@ -167,13 +410,128 @@
                 "description": "Obfuscated user identity.",
                 "schema": {
                   "type": "string"
-                }
+                },
+                "example": "synthetic-user"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ExecuteCommandResponse"
+                },
+                "examples": {
+                  "FanSetTimer": {
+                    "summary": "Fan.SetTimer",
+                    "description": "Synthetic Fan.SetTimer response.",
+                    "value": {
+                      "results": {}
+                    }
+                  },
+                  "ThermostatEcoSetMode": {
+                    "summary": "ThermostatEco.SetMode",
+                    "description": "Synthetic ThermostatEco.SetMode response.",
+                    "value": {
+                      "results": {}
+                    }
+                  },
+                  "ThermostatModeSetMode": {
+                    "summary": "ThermostatMode.SetMode",
+                    "description": "Synthetic ThermostatMode.SetMode response.",
+                    "value": {
+                      "results": {}
+                    }
+                  },
+                  "ThermostatTemperatureSetpointSetHeat": {
+                    "summary": "ThermostatTemperatureSetpoint.SetHeat",
+                    "description": "Synthetic ThermostatTemperatureSetpoint.SetHeat response.",
+                    "value": {
+                      "results": {}
+                    }
+                  },
+                  "ThermostatTemperatureSetpointSetCool": {
+                    "summary": "ThermostatTemperatureSetpoint.SetCool",
+                    "description": "Synthetic ThermostatTemperatureSetpoint.SetCool response.",
+                    "value": {
+                      "results": {}
+                    }
+                  },
+                  "ThermostatTemperatureSetpointSetRange": {
+                    "summary": "ThermostatTemperatureSetpoint.SetRange",
+                    "description": "Synthetic ThermostatTemperatureSetpoint.SetRange response.",
+                    "value": {
+                      "results": {}
+                    }
+                  },
+                  "CameraEventImageGenerateImage": {
+                    "summary": "CameraEventImage.GenerateImage",
+                    "description": "Synthetic CameraEventImage.GenerateImage response.",
+                    "value": {
+                      "results": {
+                        "url": "https://media.example.invalid/image",
+                        "token": "synthetic-image-token"
+                      }
+                    }
+                  },
+                  "CameraLiveStreamGenerateRtspStream": {
+                    "summary": "CameraLiveStream.GenerateRtspStream",
+                    "description": "Synthetic CameraLiveStream.GenerateRtspStream response.",
+                    "value": {
+                      "results": {
+                        "streamExtensionToken": "synthetic-extension-token",
+                        "streamToken": "synthetic-stream-token",
+                        "expiresAt": "2026-01-01T12:05:00Z",
+                        "streamUrls": {
+                          "rtspUrl": "rtsp://media.example.invalid/live"
+                        }
+                      }
+                    }
+                  },
+                  "CameraLiveStreamExtendRtspStream": {
+                    "summary": "CameraLiveStream.ExtendRtspStream",
+                    "description": "Synthetic CameraLiveStream.ExtendRtspStream response.",
+                    "value": {
+                      "results": {
+                        "streamExtensionToken": "synthetic-extension-token",
+                        "streamToken": "synthetic-stream-token",
+                        "expiresAt": "2026-01-01T12:05:00Z"
+                      }
+                    }
+                  },
+                  "CameraLiveStreamStopRtspStream": {
+                    "summary": "CameraLiveStream.StopRtspStream",
+                    "description": "Synthetic CameraLiveStream.StopRtspStream response.",
+                    "value": {
+                      "results": {}
+                    }
+                  },
+                  "CameraLiveStreamGenerateWebRtcStream": {
+                    "summary": "CameraLiveStream.GenerateWebRtcStream",
+                    "description": "Synthetic CameraLiveStream.GenerateWebRtcStream response.",
+                    "value": {
+                      "results": {
+                        "expiresAt": "2026-01-01T12:05:00Z",
+                        "mediaSessionId": "synthetic-media-session",
+                        "answerSdp": "v=0\r\no=- 12345 1 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\nm=video 9 UDP/TLS/RTP/SAVPF 96\r\na=mid:0\r\na=ice-ufrag:synthetic\r\na=ice-pwd:syntheticIcePasswordExampleOnly\r\na=fingerprint:sha-256 00:01:02:03:04:05:06:07:08:09:0A:0B:0C:0D:0E:0F:10:11:12:13:14:15:16:17:18:19:1A:1B:1C:1D:1E:1F\r\na=setup:active\r\na=rtcp-mux\r\na=sendonly\r\na=rtpmap:96 H264/90000\r\n"
+                      }
+                    }
+                  },
+                  "CameraLiveStreamExtendWebRtcStream": {
+                    "summary": "CameraLiveStream.ExtendWebRtcStream",
+                    "description": "Synthetic CameraLiveStream.ExtendWebRtcStream response.",
+                    "value": {
+                      "results": {
+                        "expiresAt": "2026-01-01T12:10:00Z",
+                        "mediaSessionId": "synthetic-media-session"
+                      }
+                    }
+                  },
+                  "CameraLiveStreamStopWebRtcStream": {
+                    "summary": "CameraLiveStream.StopWebRtcStream",
+                    "description": "Synthetic CameraLiveStream.StopWebRtcStream response.",
+                    "value": {
+                      "results": {}
+                    }
+                  }
                 }
               }
             }
@@ -184,6 +542,52 @@
               "application/json": {
                 "schema": {
                   "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                },
+                "examples": {
+                  "PermissionDenied": {
+                    "summary": "Missing permission",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 403,
+                        "status": "PERMISSION_DENIED",
+                        "message": "The caller does not have permission for this resource."
+                      }
+                    }
+                  },
+                  "NotFound": {
+                    "summary": "Unknown or unauthorized resource",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 404,
+                        "status": "NOT_FOUND",
+                        "message": "The requested resource was not found."
+                      }
+                    }
+                  },
+                  "InvalidArgument": {
+                    "summary": "Invalid command parameters",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 400,
+                        "status": "INVALID_ARGUMENT",
+                        "message": "The command parameters are invalid."
+                      }
+                    }
+                  },
+                  "FailedPrecondition": {
+                    "summary": "Current device state prevents command",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 400,
+                        "status": "FAILED_PRECONDITION",
+                        "message": "The thermostat mode does not permit this setpoint command."
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -195,6 +599,138 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ExecuteCommandRequest"
+              },
+              "examples": {
+                "FanSetTimer": {
+                  "summary": "Fan.SetTimer",
+                  "description": "Synthetic complete Fan.SetTimer request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.Fan.SetTimer",
+                    "params": {
+                      "timerMode": "ON",
+                      "duration": "900s"
+                    }
+                  }
+                },
+                "ThermostatEcoSetMode": {
+                  "summary": "ThermostatEco.SetMode",
+                  "description": "Synthetic complete ThermostatEco.SetMode request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.ThermostatEco.SetMode",
+                    "params": {
+                      "mode": "MANUAL_ECO"
+                    }
+                  }
+                },
+                "ThermostatModeSetMode": {
+                  "summary": "ThermostatMode.SetMode",
+                  "description": "Synthetic complete ThermostatMode.SetMode request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.ThermostatMode.SetMode",
+                    "params": {
+                      "mode": "HEAT"
+                    }
+                  }
+                },
+                "ThermostatTemperatureSetpointSetHeat": {
+                  "summary": "ThermostatTemperatureSetpoint.SetHeat",
+                  "description": "Synthetic complete ThermostatTemperatureSetpoint.SetHeat request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.ThermostatTemperatureSetpoint.SetHeat",
+                    "params": {
+                      "heatCelsius": 20
+                    }
+                  }
+                },
+                "ThermostatTemperatureSetpointSetCool": {
+                  "summary": "ThermostatTemperatureSetpoint.SetCool",
+                  "description": "Synthetic complete ThermostatTemperatureSetpoint.SetCool request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.ThermostatTemperatureSetpoint.SetCool",
+                    "params": {
+                      "coolCelsius": 25
+                    }
+                  }
+                },
+                "ThermostatTemperatureSetpointSetRange": {
+                  "summary": "ThermostatTemperatureSetpoint.SetRange",
+                  "description": "Synthetic complete ThermostatTemperatureSetpoint.SetRange request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.ThermostatTemperatureSetpoint.SetRange",
+                    "params": {
+                      "heatCelsius": 20,
+                      "coolCelsius": 25
+                    }
+                  }
+                },
+                "CameraEventImageGenerateImage": {
+                  "summary": "CameraEventImage.GenerateImage",
+                  "description": "Synthetic complete CameraEventImage.GenerateImage request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.CameraEventImage.GenerateImage",
+                    "params": {
+                      "eventId": "camera-image-event-example"
+                    }
+                  }
+                },
+                "CameraLiveStreamGenerateRtspStream": {
+                  "summary": "CameraLiveStream.GenerateRtspStream",
+                  "description": "Synthetic complete CameraLiveStream.GenerateRtspStream request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.CameraLiveStream.GenerateRtspStream",
+                    "params": {}
+                  }
+                },
+                "CameraLiveStreamExtendRtspStream": {
+                  "summary": "CameraLiveStream.ExtendRtspStream",
+                  "description": "Synthetic complete CameraLiveStream.ExtendRtspStream request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.CameraLiveStream.ExtendRtspStream",
+                    "params": {
+                      "streamExtensionToken": "synthetic-extension-token"
+                    }
+                  }
+                },
+                "CameraLiveStreamStopRtspStream": {
+                  "summary": "CameraLiveStream.StopRtspStream",
+                  "description": "Synthetic complete CameraLiveStream.StopRtspStream request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.CameraLiveStream.StopRtspStream",
+                    "params": {
+                      "streamExtensionToken": "synthetic-extension-token"
+                    }
+                  }
+                },
+                "CameraLiveStreamGenerateWebRtcStream": {
+                  "summary": "CameraLiveStream.GenerateWebRtcStream",
+                  "description": "Synthetic complete CameraLiveStream.GenerateWebRtcStream request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.CameraLiveStream.GenerateWebRtcStream",
+                    "params": {
+                      "offerSdp": "v=0\r\no=- 12345 1 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\nm=video 9 UDP/TLS/RTP/SAVPF 96\r\na=mid:0\r\na=ice-ufrag:synthetic\r\na=ice-pwd:syntheticIcePasswordExampleOnly\r\na=fingerprint:sha-256 00:01:02:03:04:05:06:07:08:09:0A:0B:0C:0D:0E:0F:10:11:12:13:14:15:16:17:18:19:1A:1B:1C:1D:1E:1F\r\na=setup:actpass\r\na=rtcp-mux\r\na=recvonly\r\na=rtpmap:96 H264/90000\r\n"
+                    }
+                  }
+                },
+                "CameraLiveStreamExtendWebRtcStream": {
+                  "summary": "CameraLiveStream.ExtendWebRtcStream",
+                  "description": "Synthetic complete CameraLiveStream.ExtendWebRtcStream request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.CameraLiveStream.ExtendWebRtcStream",
+                    "params": {
+                      "mediaSessionId": "synthetic-media-session"
+                    }
+                  }
+                },
+                "CameraLiveStreamStopWebRtcStream": {
+                  "summary": "CameraLiveStream.StopWebRtcStream",
+                  "description": "Synthetic complete CameraLiveStream.StopWebRtcStream request. Replace illustrative identifiers, tokens and SDP with caller values.",
+                  "value": {
+                    "command": "sdm.devices.commands.CameraLiveStream.StopWebRtcStream",
+                    "params": {
+                      "mediaSessionId": "synthetic-media-session"
+                    }
+                  }
+                }
               }
             }
           }
@@ -218,7 +754,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-enterprise"
           }
         ],
         "responses": {
@@ -229,13 +766,39 @@
                 "description": "Obfuscated user identity.",
                 "schema": {
                   "type": "string"
-                }
+                },
+                "example": "synthetic-user"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ListStructuresResponse"
+                },
+                "examples": {
+                  "AuthorizedStructure": {
+                    "summary": "Authorized structure",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "structures": [
+                        {
+                          "name": "enterprises/example-enterprise/structures/example-structure",
+                          "traits": {
+                            "sdm.structures.traits.Info": {
+                              "customName": "Example home"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "NoAuthorizedStructures": {
+                    "summary": "No authorized structures",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "structures": []
+                    }
+                  }
                 }
               }
             }
@@ -246,6 +809,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                },
+                "examples": {
+                  "PermissionDenied": {
+                    "summary": "Missing permission",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 403,
+                        "status": "PERMISSION_DENIED",
+                        "message": "The caller does not have permission for this resource."
+                      }
+                    }
+                  },
+                  "NotFound": {
+                    "summary": "Unknown or unauthorized resource",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 404,
+                        "status": "NOT_FOUND",
+                        "message": "The requested resource was not found."
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -270,7 +857,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-enterprise"
           },
           {
             "name": "structureId",
@@ -280,7 +868,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-structure"
           }
         ],
         "responses": {
@@ -291,13 +880,28 @@
                 "description": "Obfuscated user identity.",
                 "schema": {
                   "type": "string"
-                }
+                },
+                "example": "synthetic-user"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Structure"
+                },
+                "examples": {
+                  "Home": {
+                    "summary": "Structure snapshot",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "name": "enterprises/example-enterprise/structures/example-structure",
+                      "traits": {
+                        "sdm.structures.traits.Info": {
+                          "customName": "Example home"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -308,6 +912,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                },
+                "examples": {
+                  "PermissionDenied": {
+                    "summary": "Missing permission",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 403,
+                        "status": "PERMISSION_DENIED",
+                        "message": "The caller does not have permission for this resource."
+                      }
+                    }
+                  },
+                  "NotFound": {
+                    "summary": "Unknown or unauthorized resource",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 404,
+                        "status": "NOT_FOUND",
+                        "message": "The requested resource was not found."
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -332,7 +960,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-enterprise"
           },
           {
             "name": "structureId",
@@ -342,7 +971,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-structure"
           }
         ],
         "responses": {
@@ -353,13 +983,39 @@
                 "description": "Obfuscated user identity.",
                 "schema": {
                   "type": "string"
-                }
+                },
+                "example": "synthetic-user"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ListRoomsResponse"
+                },
+                "examples": {
+                  "AuthorizedRoom": {
+                    "summary": "Authorized room",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "rooms": [
+                        {
+                          "name": "enterprises/example-enterprise/structures/example-structure/rooms/example-room",
+                          "traits": {
+                            "sdm.structures.traits.RoomInfo": {
+                              "customName": "Living room"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "NoAuthorizedRooms": {
+                    "summary": "No authorized rooms",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "rooms": []
+                    }
+                  }
                 }
               }
             }
@@ -370,6 +1026,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                },
+                "examples": {
+                  "PermissionDenied": {
+                    "summary": "Missing permission",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 403,
+                        "status": "PERMISSION_DENIED",
+                        "message": "The caller does not have permission for this resource."
+                      }
+                    }
+                  },
+                  "NotFound": {
+                    "summary": "Unknown or unauthorized resource",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 404,
+                        "status": "NOT_FOUND",
+                        "message": "The requested resource was not found."
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -394,7 +1074,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-enterprise"
           },
           {
             "name": "structureId",
@@ -404,7 +1085,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-structure"
           },
           {
             "name": "roomId",
@@ -414,7 +1096,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-room"
           }
         ],
         "responses": {
@@ -425,13 +1108,28 @@
                 "description": "Obfuscated user identity.",
                 "schema": {
                   "type": "string"
-                }
+                },
+                "example": "synthetic-user"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Room"
+                },
+                "examples": {
+                  "Room": {
+                    "summary": "Room snapshot",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "name": "enterprises/example-enterprise/structures/example-structure/rooms/example-room",
+                      "traits": {
+                        "sdm.structures.traits.RoomInfo": {
+                          "customName": "Living room"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -442,6 +1140,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "./errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                },
+                "examples": {
+                  "PermissionDenied": {
+                    "summary": "Missing permission",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 403,
+                        "status": "PERMISSION_DENIED",
+                        "message": "The caller does not have permission for this resource."
+                      }
+                    }
+                  },
+                  "NotFound": {
+                    "summary": "Unknown or unauthorized resource",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 404,
+                        "status": "NOT_FOUND",
+                        "message": "The requested resource was not found."
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -478,6 +1200,10 @@
         },
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "parent": "enterprises/example-enterprise/structures/example-structure/rooms/example-room",
+          "displayName": "Living room"
         }
       },
       "Device": {
@@ -508,7 +1234,63 @@
         },
         "required": [
           "name"
-        ]
+        ],
+        "example": {
+          "name": "enterprises/example-enterprise/devices/example-thermostat",
+          "type": "sdm.devices.types.THERMOSTAT",
+          "traits": {
+            "sdm.devices.traits.Connectivity": {
+              "status": "ONLINE"
+            },
+            "sdm.devices.traits.Fan": {
+              "timerMode": "ON",
+              "timerTimeout": "2026-01-01T12:15:00Z"
+            },
+            "sdm.devices.traits.Humidity": {
+              "ambientHumidityPercent": 45
+            },
+            "sdm.devices.traits.Info": {
+              "customName": "Living room thermostat"
+            },
+            "sdm.devices.traits.Settings": {
+              "temperatureScale": "CELSIUS"
+            },
+            "sdm.devices.traits.Temperature": {
+              "ambientTemperatureCelsius": 21.5
+            },
+            "sdm.devices.traits.ThermostatEco": {
+              "availableModes": [
+                "MANUAL_ECO",
+                "OFF"
+              ],
+              "mode": "OFF",
+              "heatCelsius": 18,
+              "coolCelsius": 27
+            },
+            "sdm.devices.traits.ThermostatHvac": {
+              "status": "HEATING"
+            },
+            "sdm.devices.traits.ThermostatMode": {
+              "availableModes": [
+                "HEAT",
+                "COOL",
+                "HEATCOOL",
+                "OFF"
+              ],
+              "mode": "HEAT"
+            },
+            "sdm.devices.traits.ThermostatTemperatureSetpoint": {
+              "heatCelsius": 20,
+              "coolCelsius": 25
+            }
+          },
+          "parentRelations": [
+            {
+              "parent": "enterprises/example-enterprise/structures/example-structure/rooms/example-room",
+              "displayName": "Living room"
+            }
+          ]
+        }
       },
       "Structure": {
         "type": "object",
@@ -526,7 +1308,15 @@
         },
         "required": [
           "name"
-        ]
+        ],
+        "example": {
+          "name": "enterprises/example-enterprise/structures/example-structure",
+          "traits": {
+            "sdm.structures.traits.Info": {
+              "customName": "Example home"
+            }
+          }
+        }
       },
       "Room": {
         "type": "object",
@@ -544,33 +1334,147 @@
         },
         "required": [
           "name"
-        ]
+        ],
+        "example": {
+          "name": "enterprises/example-enterprise/structures/example-structure/rooms/example-room",
+          "traits": {
+            "sdm.structures.traits.RoomInfo": {
+              "customName": "Living room"
+            }
+          }
+        }
       },
       "ExecuteCommandRequest": {
         "type": "object",
         "properties": {
           "command": {
-            "$ref": "./commands.openapi.yaml#/components/schemas/CommandName"
+            "type": "string",
+            "pattern": "^sdm\\.devices\\.commands\\.[A-Za-z][A-Za-z0-9]*\\.[A-Za-z][A-Za-z0-9]*$",
+            "x-go-type": "CommandName",
+            "description": "Fully qualified command name. The selected request variant determines the allowed params."
           },
           "params": {
-            "x-go-type": "json.RawMessage"
+            "type": "object",
+            "x-go-type": "json.RawMessage",
+            "description": "Parameters are defined by the selected command variant below."
           }
         },
         "additionalProperties": false,
         "required": [
           "command",
           "params"
-        ]
+        ],
+        "description": "Select a command variant to see its required parameters. Examples are sanitized synthetic illustrations of the published SDM contracts. Future command names have an explicit open branch; known commands must use their matching parameter schema.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FanSetTimerRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ThermostatEcoSetModeRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ThermostatModeSetModeRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ThermostatTemperatureSetpointSetHeatRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ThermostatTemperatureSetpointSetCoolRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ThermostatTemperatureSetpointSetRangeRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraEventImageGenerateImageRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraLiveStreamGenerateRtspStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraLiveStreamExtendRtspStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraLiveStreamStopRtspStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraLiveStreamGenerateWebRtcStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraLiveStreamExtendWebRtcStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/CameraLiveStreamStopWebRtcStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/FutureCommandRequest"
+          }
+        ],
+        "example": {
+          "command": "sdm.devices.commands.Fan.SetTimer",
+          "params": {
+            "timerMode": "ON",
+            "duration": "900s"
+          }
+        }
       },
       "ExecuteCommandResponse": {
         "type": "object",
         "properties": {
           "results": {
-            "x-go-type": "json.RawMessage"
+            "type": "object",
+            "x-go-type": "json.RawMessage",
+            "anyOf": [
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/FanSetTimerResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatEcoSetModeResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatModeSetModeResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetHeatResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetCoolResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetRangeResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraEventImageGenerateImageResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateRtspStreamResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendRtspStreamResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopRtspStreamResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateWebRtcStreamResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendWebRtcStreamResults"
+              },
+              {
+                "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopWebRtcStreamResults"
+              }
+            ]
           }
         },
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "description": "Command-specific result object. Select the response example with the same command name as the request. Empty acknowledgement schemas overlap, so results use anyOf.",
+        "example": {
+          "results": {
+            "url": "https://media.example.invalid/image",
+            "token": "synthetic-image-token"
+          }
         }
       },
       "ListDevicesResponse": {
@@ -585,6 +1489,90 @@
         },
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "devices": [
+            {
+              "name": "enterprises/example-enterprise/devices/example-thermostat",
+              "type": "sdm.devices.types.THERMOSTAT",
+              "traits": {
+                "sdm.devices.traits.Connectivity": {
+                  "status": "ONLINE"
+                },
+                "sdm.devices.traits.Fan": {
+                  "timerMode": "ON",
+                  "timerTimeout": "2026-01-01T12:15:00Z"
+                },
+                "sdm.devices.traits.Humidity": {
+                  "ambientHumidityPercent": 45
+                },
+                "sdm.devices.traits.Info": {
+                  "customName": "Living room thermostat"
+                },
+                "sdm.devices.traits.Settings": {
+                  "temperatureScale": "CELSIUS"
+                },
+                "sdm.devices.traits.Temperature": {
+                  "ambientTemperatureCelsius": 21.5
+                },
+                "sdm.devices.traits.ThermostatEco": {
+                  "availableModes": [
+                    "MANUAL_ECO",
+                    "OFF"
+                  ],
+                  "mode": "OFF",
+                  "heatCelsius": 18,
+                  "coolCelsius": 27
+                },
+                "sdm.devices.traits.ThermostatHvac": {
+                  "status": "HEATING"
+                },
+                "sdm.devices.traits.ThermostatMode": {
+                  "availableModes": [
+                    "HEAT",
+                    "COOL",
+                    "HEATCOOL",
+                    "OFF"
+                  ],
+                  "mode": "HEAT"
+                },
+                "sdm.devices.traits.ThermostatTemperatureSetpoint": {
+                  "heatCelsius": 20,
+                  "coolCelsius": 25
+                }
+              },
+              "parentRelations": [
+                {
+                  "parent": "enterprises/example-enterprise/structures/example-structure/rooms/example-room",
+                  "displayName": "Living room"
+                }
+              ]
+            },
+            {
+              "name": "enterprises/example-enterprise/devices/example-camera",
+              "type": "sdm.devices.types.CAMERA",
+              "traits": {
+                "sdm.devices.traits.CameraLiveStream": {
+                  "maxVideoResolution": {
+                    "width": 1920,
+                    "height": 1080
+                  },
+                  "videoCodecs": [
+                    "H264"
+                  ],
+                  "audioCodecs": [
+                    "OPUS"
+                  ],
+                  "supportedProtocols": [
+                    "WEB_RTC"
+                  ]
+                },
+                "sdm.devices.traits.CameraMotion": {},
+                "sdm.devices.traits.CameraPerson": {},
+                "sdm.devices.traits.CameraClipPreview": {}
+              }
+            }
+          ]
         }
       },
       "ListStructuresResponse": {
@@ -599,6 +1587,18 @@
         },
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "structures": [
+            {
+              "name": "enterprises/example-enterprise/structures/example-structure",
+              "traits": {
+                "sdm.structures.traits.Info": {
+                  "customName": "Example home"
+                }
+              }
+            }
+          ]
         }
       },
       "ListRoomsResponse": {
@@ -613,7 +1613,423 @@
         },
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "rooms": [
+            {
+              "name": "enterprises/example-enterprise/structures/example-structure/rooms/example-room",
+              "traits": {
+                "sdm.structures.traits.RoomInfo": {
+                  "customName": "Living room"
+                }
+              }
+            }
+          ]
         }
+      },
+      "FanSetTimerRequest": {
+        "title": "Fan.SetTimer",
+        "type": "object",
+        "description": "Request for Fan.SetTimer.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.Fan.SetTimer"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/FanSetTimerParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.Fan.SetTimer",
+          "params": {
+            "timerMode": "ON",
+            "duration": "900s"
+          }
+        }
+      },
+      "ThermostatEcoSetModeRequest": {
+        "title": "ThermostatEco.SetMode",
+        "type": "object",
+        "description": "Request for ThermostatEco.SetMode.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.ThermostatEco.SetMode"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatEcoSetModeParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.ThermostatEco.SetMode",
+          "params": {
+            "mode": "MANUAL_ECO"
+          }
+        }
+      },
+      "ThermostatModeSetModeRequest": {
+        "title": "ThermostatMode.SetMode",
+        "type": "object",
+        "description": "Request for ThermostatMode.SetMode.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.ThermostatMode.SetMode"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatModeSetModeParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.ThermostatMode.SetMode",
+          "params": {
+            "mode": "HEAT"
+          }
+        }
+      },
+      "ThermostatTemperatureSetpointSetHeatRequest": {
+        "title": "ThermostatTemperatureSetpoint.SetHeat",
+        "type": "object",
+        "description": "Request for ThermostatTemperatureSetpoint.SetHeat.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.ThermostatTemperatureSetpoint.SetHeat"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetHeatParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.ThermostatTemperatureSetpoint.SetHeat",
+          "params": {
+            "heatCelsius": 20
+          }
+        }
+      },
+      "ThermostatTemperatureSetpointSetCoolRequest": {
+        "title": "ThermostatTemperatureSetpoint.SetCool",
+        "type": "object",
+        "description": "Request for ThermostatTemperatureSetpoint.SetCool.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.ThermostatTemperatureSetpoint.SetCool"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetCoolParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.ThermostatTemperatureSetpoint.SetCool",
+          "params": {
+            "coolCelsius": 25
+          }
+        }
+      },
+      "ThermostatTemperatureSetpointSetRangeRequest": {
+        "title": "ThermostatTemperatureSetpoint.SetRange",
+        "type": "object",
+        "description": "Request for ThermostatTemperatureSetpoint.SetRange.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.ThermostatTemperatureSetpoint.SetRange"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/ThermostatTemperatureSetpointSetRangeParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.ThermostatTemperatureSetpoint.SetRange",
+          "params": {
+            "heatCelsius": 20,
+            "coolCelsius": 25
+          }
+        }
+      },
+      "CameraEventImageGenerateImageRequest": {
+        "title": "CameraEventImage.GenerateImage",
+        "type": "object",
+        "description": "Request for CameraEventImage.GenerateImage.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.CameraEventImage.GenerateImage"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraEventImageGenerateImageParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.CameraEventImage.GenerateImage",
+          "params": {
+            "eventId": "camera-image-event-example"
+          }
+        }
+      },
+      "CameraLiveStreamGenerateRtspStreamRequest": {
+        "title": "CameraLiveStream.GenerateRtspStream",
+        "type": "object",
+        "description": "Request for CameraLiveStream.GenerateRtspStream.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.CameraLiveStream.GenerateRtspStream"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateRtspStreamParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.CameraLiveStream.GenerateRtspStream",
+          "params": {}
+        }
+      },
+      "CameraLiveStreamExtendRtspStreamRequest": {
+        "title": "CameraLiveStream.ExtendRtspStream",
+        "type": "object",
+        "description": "Request for CameraLiveStream.ExtendRtspStream.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.CameraLiveStream.ExtendRtspStream"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendRtspStreamParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.CameraLiveStream.ExtendRtspStream",
+          "params": {
+            "streamExtensionToken": "synthetic-extension-token"
+          }
+        }
+      },
+      "CameraLiveStreamStopRtspStreamRequest": {
+        "title": "CameraLiveStream.StopRtspStream",
+        "type": "object",
+        "description": "Request for CameraLiveStream.StopRtspStream.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.CameraLiveStream.StopRtspStream"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopRtspStreamParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.CameraLiveStream.StopRtspStream",
+          "params": {
+            "streamExtensionToken": "synthetic-extension-token"
+          }
+        }
+      },
+      "CameraLiveStreamGenerateWebRtcStreamRequest": {
+        "title": "CameraLiveStream.GenerateWebRtcStream",
+        "type": "object",
+        "description": "Request for CameraLiveStream.GenerateWebRtcStream.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.CameraLiveStream.GenerateWebRtcStream"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamGenerateWebRtcStreamParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.CameraLiveStream.GenerateWebRtcStream",
+          "params": {
+            "offerSdp": "v=0\r\no=- 12345 1 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\nm=video 9 UDP/TLS/RTP/SAVPF 96\r\na=mid:0\r\na=ice-ufrag:synthetic\r\na=ice-pwd:syntheticIcePasswordExampleOnly\r\na=fingerprint:sha-256 00:01:02:03:04:05:06:07:08:09:0A:0B:0C:0D:0E:0F:10:11:12:13:14:15:16:17:18:19:1A:1B:1C:1D:1E:1F\r\na=setup:actpass\r\na=rtcp-mux\r\na=recvonly\r\na=rtpmap:96 H264/90000\r\n"
+          }
+        }
+      },
+      "CameraLiveStreamExtendWebRtcStreamRequest": {
+        "title": "CameraLiveStream.ExtendWebRtcStream",
+        "type": "object",
+        "description": "Request for CameraLiveStream.ExtendWebRtcStream.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.CameraLiveStream.ExtendWebRtcStream"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamExtendWebRtcStreamParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.CameraLiveStream.ExtendWebRtcStream",
+          "params": {
+            "mediaSessionId": "synthetic-media-session"
+          }
+        }
+      },
+      "CameraLiveStreamStopWebRtcStreamRequest": {
+        "title": "CameraLiveStream.StopWebRtcStream",
+        "type": "object",
+        "description": "Request for CameraLiveStream.StopWebRtcStream.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": [
+              "sdm.devices.commands.CameraLiveStream.StopWebRtcStream"
+            ],
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "$ref": "./commands.openapi.yaml#/components/schemas/CameraLiveStreamStopWebRtcStreamParams"
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false,
+        "example": {
+          "command": "sdm.devices.commands.CameraLiveStream.StopWebRtcStream",
+          "params": {
+            "mediaSessionId": "synthetic-media-session"
+          }
+        }
+      },
+      "FutureCommandRequest": {
+        "title": "Future command (caller supplied)",
+        "type": "object",
+        "description": "Compatibility shape for a future command absent from this catalog. Its parameters are caller defined; this branch does not permit malformed parameters for the known commands.",
+        "properties": {
+          "command": {
+            "type": "string",
+            "pattern": "^sdm\\.devices\\.commands\\.[A-Za-z][A-Za-z0-9]*\\.[A-Za-z][A-Za-z0-9]*$",
+            "not": {
+              "enum": [
+                "sdm.devices.commands.Fan.SetTimer",
+                "sdm.devices.commands.ThermostatEco.SetMode",
+                "sdm.devices.commands.ThermostatMode.SetMode",
+                "sdm.devices.commands.ThermostatTemperatureSetpoint.SetHeat",
+                "sdm.devices.commands.ThermostatTemperatureSetpoint.SetCool",
+                "sdm.devices.commands.ThermostatTemperatureSetpoint.SetRange",
+                "sdm.devices.commands.CameraEventImage.GenerateImage",
+                "sdm.devices.commands.CameraLiveStream.GenerateRtspStream",
+                "sdm.devices.commands.CameraLiveStream.ExtendRtspStream",
+                "sdm.devices.commands.CameraLiveStream.StopRtspStream",
+                "sdm.devices.commands.CameraLiveStream.GenerateWebRtcStream",
+                "sdm.devices.commands.CameraLiveStream.ExtendWebRtcStream",
+                "sdm.devices.commands.CameraLiveStream.StopWebRtcStream"
+              ]
+            },
+            "x-go-type": "CommandName"
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": {
+              "x-go-type": "json.RawMessage"
+            }
+          }
+        },
+        "required": [
+          "command",
+          "params"
+        ],
+        "additionalProperties": false
       }
     },
     "securitySchemes": {

@@ -7,6 +7,11 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
+        "example": {
+          "code": 403,
+          "message": "The caller does not have permission for this resource.",
+          "status": "PERMISSION_DENIED"
+        },
         "properties": {
           "code": {
             "type": "integer"
@@ -31,6 +36,11 @@
           "x-go-type": "json.RawMessage"
         },
         "description": "Extensible provider error detail. The @type URL identifies its provider-defined payload. Unknown fields remain unchanged.",
+        "example": {
+          "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+          "domain": "example.invalid",
+          "reason": "PERMISSION_DENIED"
+        },
         "properties": {
           "@type": {
             "type": "string"
@@ -41,6 +51,13 @@
       "GoogleErrorResponse": {
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "error": {
+            "code": 403,
+            "message": "The caller does not have permission for this resource.",
+            "status": "PERMISSION_DENIED"
+          }
         },
         "properties": {
           "error": {

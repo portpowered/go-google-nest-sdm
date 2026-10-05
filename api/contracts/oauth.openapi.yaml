@@ -3,6 +3,38 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "components": {
     "schemas": {
+      "OAuthAccessType": {
+        "enum": [
+          "offline"
+        ],
+        "type": "string"
+      },
+      "OAuthAuthorizationCallback": {
+        "additionalProperties": true,
+        "description": "Exactly one code or error is returned; state must match the authorization session. Other provider query values remain extensible.",
+        "example": {
+          "code": "synthetic-authorization-code",
+          "state": "synthetic_state_example_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        },
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "error_description": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "type": "object"
+      },
       "OAuthErrorCode": {
         "description": "Open OAuth token error code.",
         "pattern": "^[a-z][a-z0-9_]*$",
@@ -20,6 +52,10 @@
       "OAuthErrorResponse": {
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "error": "invalid_grant",
+          "error_description": "The authorization code or refresh token is invalid or expired."
         },
         "properties": {
           "error": {
@@ -41,8 +77,40 @@
         ],
         "type": "string"
       },
+      "OAuthPKCEMethod": {
+        "enum": [
+          "S256"
+        ],
+        "type": "string"
+      },
+      "OAuthPrompt": {
+        "enum": [
+          "consent"
+        ],
+        "type": "string"
+      },
+      "OAuthResponseType": {
+        "enum": [
+          "code"
+        ],
+        "type": "string"
+      },
+      "OAuthScope": {
+        "enum": [
+          "https://www.googleapis.com/auth/sdm.service"
+        ],
+        "type": "string"
+      },
       "OAuthTokenRequest": {
         "additionalProperties": false,
+        "example": {
+          "client_id": "synthetic-client.apps.googleusercontent.com",
+          "client_secret": "synthetic-client-secret",
+          "code": "synthetic-authorization-code",
+          "code_verifier": "synthetic_verifier_example_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          "grant_type": "authorization_code",
+          "redirect_uri": "http://localhost:8080/oauth/callback"
+        },
         "properties": {
           "client_id": {
             "type": "string"
@@ -78,6 +146,13 @@
       "OAuthTokenResponse": {
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "access_token": "synthetic-access-token",
+          "expires_in": 3600,
+          "refresh_token": "synthetic-refresh-token",
+          "scope": "https://www.googleapis.com/auth/sdm.service",
+          "token_type": "Bearer"
         },
         "properties": {
           "access_token": {

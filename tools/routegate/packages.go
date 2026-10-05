@@ -28,13 +28,9 @@ func bindGeneratedConstants(imports map[string]string, models map[string]ast.Exp
 func auditSourcePackages(root string, models map[string]ast.Expr) error {
 	packages := map[string][]packageSource{}
 
-	err := filepath.WalkDir(filepath.Join(root, "pkg"), func(path string, entry fs.DirEntry, walkErr error) error {
+	err := filepath.WalkDir(root, func(path string, entry fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
-		}
-
-		if entry.IsDir() || !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
-			return nil
 		}
 
 		relative, relativeErr := filepath.Rel(root, path)
@@ -43,6 +39,18 @@ func auditSourcePackages(root string, models map[string]ast.Expr) error {
 		}
 
 		relative = filepath.ToSlash(relative)
+		if entry.IsDir() {
+			if excludedSourceTree(relative) {
+				return filepath.SkipDir
+			}
+
+			return nil
+		}
+
+		if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
+			return nil
+		}
+
 		if strings.HasSuffix(path, ".gen.go") && models["approved-source:"+relative] != nil {
 			return nil
 		}
@@ -80,4 +88,23 @@ func auditSourcePackages(root string, models map[string]ast.Expr) error {
 	}
 
 	return nil
+}
+
+func excludedSourceTree(relative string) bool {
+	if relative == cliRoot {
+		return true
+	}
+
+	first, _, _ := strings.Cut(relative, "/")
+	if strings.HasPrefix(first, ".") && first != "." {
+		return true
+	}
+	// CLI production is independently inventoried by auditCLI. Verification,
+	// fixtures and documentation tooling are not shipped provider modules.
+	switch first {
+	case "tools", "tests", "docs", "node_modules", "vendor":
+		return true
+	default:
+		return false
+	}
 }

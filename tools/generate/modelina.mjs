@@ -8,14 +8,31 @@ import { parse } from 'yaml';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const document = parse(await readFile(resolve(root, 'api/asyncapi.yaml'), 'utf8'));
 const schemas = structuredClone(document.components.schemas);
+// OpenAPI 3.0 uses one schema example; the AsyncAPI message retains the complete
+// named example catalog. Keep that dialect conversion in the generated view.
+function openapiProjection(value) {
+  if (Array.isArray(value)) return value.map(openapiProjection);
+  if (!value || typeof value !== 'object') return value;
+  const result = Object.fromEntries(Object.entries(value).map(([key, child]) => [key, openapiProjection(child)]));
+  if (Array.isArray(result.examples)) {
+    result.example = result.examples[0];
+    delete result.examples;
+  }
+  return result;
+}
 // A generated OpenAPI view lets public operation schemas reference event types
 // without teaching the REST generator the AsyncAPI document dialect.
 await writeFile(resolve(root, 'api/events.openapi.yaml'), JSON.stringify({
   openapi: '3.0.3', info: { title: 'Generated SDM event projection', version: document.info.version },
-  paths: {}, components: { schemas },
+  paths: {}, components: { schemas: openapiProjection(schemas) },
 }, null, 2) + '\n');
 // Modelina consumes a Draft 7 schema projection of the signaling catalog.
 // Traits is generated separately by oapi-codegen from the canonical trait catalog.
+// Titles and descriptions only label presence alternatives for documentation.
+// Any validation-bearing keyword prevents this shape-only simplification.
+function requirementOnlyAlternative(branch) {
+  return Array.isArray(branch.required) && Object.keys(branch).every(key => ['required', 'title', 'description'].includes(key));
+}
 function project(value) {
   if (Array.isArray(value)) return value.map(project);
   if (!value || typeof value !== 'object') return value;
@@ -25,7 +42,7 @@ function project(value) {
   if (result['x-known-values']) result.enum = result['x-known-values'];
   // Requirement-only alternatives constrain object presence, not its Go shape.
   // The canonical schemas and generated codecs retain these constraints.
-  if (result.anyOf?.every(branch => Object.keys(branch).length === 1 && Array.isArray(branch.required))) delete result.anyOf;
+  if (result.anyOf?.every(requirementOnlyAlternative)) delete result.anyOf;
   return result;
 }
 const definitions = Object.fromEntries(Object.entries(schemas).map(([name, schema]) => [name, project(schema)]));
@@ -49,7 +66,7 @@ function codecs(model, fields) {
   const requireChecks = required.map(key => `if value, present := properties[${key}]; !present || string(value) == "null" { return fmt.Errorf("${name}: required field %s is missing or null", ${key}) }`).join('\n');
   const nullChecks = known.map(key => `if value, present := properties[${key}]; present && string(value) == "null" { return fmt.Errorf("${name}: field %s cannot be null", ${key}) }`).join('\n');
   const alternatives = schemas[name]?.anyOf;
-  const alternativeCheck = alternatives?.every(branch => Object.keys(branch).length === 1 && Array.isArray(branch.required))
+  const alternativeCheck = alternatives?.every(requirementOnlyAlternative)
     ? `if !(${alternatives.map(branch => '(' + branch.required.map(key => `len(properties[${JSON.stringify(key)}]) != 0`).join(' && ') + ')').join(' || ')}) { return fmt.Errorf("${name}: missing required update variant") }` : '';
   const deletes = known.map(key => `delete(properties, ${key})`).join('\n');
   // Required keys must win even if users insert a conflicting extension key.

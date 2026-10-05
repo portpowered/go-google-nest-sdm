@@ -31,6 +31,17 @@ For optional snapshot preflight, call `sdm.CheckCommand(sdm.CheckCommandRequest{
 
 Outgoing enum values and known payload shapes are validated. Do not add fields to a command through an unknown-payload fallback. No command is automatically retried: a connection failure can leave acceptance uncertain. Re-read state before deciding what to send next.
 
-See the [command reference](/docs/openapi/devices/ExecuteCommand) and [Google trait documentation](https://developers.google.com/nest/device-access/traits).
+In the [command reference](/docs/openapi/devices/ExecuteCommand), select the request variant matching the command name to inspect its required `params` fields. The named request and response examples cover all thirteen commands, including image generation and RTSP/WebRTC stream creation, extension and stop. Select the same command name for its response example; control acknowledgements contain an empty `results` object.
+
+For example, the full wire request for a heat setpoint is:
+
+```json
+{
+  "command": "sdm.devices.commands.ThermostatTemperatureSetpoint.SetHeat",
+  "params": { "heatCelsius": 20 }
+}
+```
+
+These examples are synthetic illustrations. Replace resource identifiers, stream credentials and SDP with caller values. The explicit future-command schema branch keeps future values open without accepting invalid parameters for the known commands. See [Google trait documentation](https://developers.google.com/nest/device-access/traits) for device support and service preconditions.
 
 

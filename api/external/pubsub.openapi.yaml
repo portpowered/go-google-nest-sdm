@@ -24,7 +24,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-cloud-project"
           },
           {
             "name": "subscriptionId",
@@ -34,7 +35,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-subscription"
           }
         ],
         "responses": {
@@ -44,6 +46,33 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PullResponse"
+                },
+                "examples": {
+                  "Delivery": {
+                    "summary": "One decoded delivery wrapper",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "receivedMessages": [
+                        {
+                          "ackId": "synthetic-ack-id",
+                          "message": {
+                            "data": "eyJldmVudElkIjoiZW52ZWxvcGUtZXZlbnQtZXhhbXBsZSIsInRpbWVzdGFtcCI6IjIwMjYtMDEtMDFUMTI6MDA6MDBaIiwidXNlcklkIjoic3ludGhldGljLXVzZXIiLCJyZXNvdXJjZVVwZGF0ZSI6eyJuYW1lIjoiZW50ZXJwcmlzZXMvZXhhbXBsZS1lbnRlcnByaXNlL2RldmljZXMvZXhhbXBsZS10aGVybW9zdGF0IiwidHJhaXRzIjp7InNkbS5kZXZpY2VzLnRyYWl0cy5UZW1wZXJhdHVyZSI6eyJhbWJpZW50VGVtcGVyYXR1cmVDZWxzaXVzIjoyMS41fX19fQ==",
+                            "messageId": "synthetic-message-id",
+                            "publishTime": "2026-01-01T12:00:01Z",
+                            "attributes": {
+                              "example": "synthetic"
+                            }
+                          },
+                          "deliveryAttempt": 1
+                        }
+                      ]
+                    }
+                  },
+                  "NoMessages": {
+                    "summary": "No pending messages",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {}
+                  }
                 }
               }
             }
@@ -54,6 +83,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "../errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                },
+                "examples": {
+                  "PermissionDenied": {
+                    "summary": "Subscription consumption permission missing",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 403,
+                        "status": "PERMISSION_DENIED",
+                        "message": "The principal lacks pubsub.subscriptions.consume for this subscription."
+                      }
+                    }
+                  },
+                  "InvalidArgument": {
+                    "summary": "Invalid delivery request",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 400,
+                        "status": "INVALID_ARGUMENT",
+                        "message": "The acknowledgement identifiers or deadline are invalid."
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -65,6 +118,15 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/PullRequest"
+              },
+              "examples": {
+                "Request": {
+                  "summary": "Pull request",
+                  "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                  "value": {
+                    "maxMessages": 10
+                  }
+                }
               }
             }
           }
@@ -88,7 +150,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-cloud-project"
           },
           {
             "name": "subscriptionId",
@@ -98,7 +161,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-subscription"
           }
         ],
         "responses": {
@@ -108,6 +172,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EmptyResponse"
+                },
+                "examples": {
+                  "Acknowledged": {
+                    "summary": "Successful empty acknowledgement",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {}
+                  }
                 }
               }
             }
@@ -118,6 +189,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "../errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                },
+                "examples": {
+                  "PermissionDenied": {
+                    "summary": "Subscription consumption permission missing",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 403,
+                        "status": "PERMISSION_DENIED",
+                        "message": "The principal lacks pubsub.subscriptions.consume for this subscription."
+                      }
+                    }
+                  },
+                  "InvalidArgument": {
+                    "summary": "Invalid delivery request",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 400,
+                        "status": "INVALID_ARGUMENT",
+                        "message": "The acknowledgement identifiers or deadline are invalid."
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -129,6 +224,17 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/AcknowledgeRequest"
+              },
+              "examples": {
+                "Request": {
+                  "summary": "Acknowledge request",
+                  "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                  "value": {
+                    "ackIds": [
+                      "synthetic-ack-id"
+                    ]
+                  }
+                }
               }
             }
           }
@@ -152,7 +258,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-cloud-project"
           },
           {
             "name": "subscriptionId",
@@ -162,7 +269,8 @@
             "schema": {
               "type": "string",
               "pattern": "^[^/]+$"
-            }
+            },
+            "example": "example-subscription"
           }
         ],
         "responses": {
@@ -172,6 +280,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EmptyResponse"
+                },
+                "examples": {
+                  "Acknowledged": {
+                    "summary": "Successful empty acknowledgement",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {}
+                  }
                 }
               }
             }
@@ -182,6 +297,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "../errors.openapi.yaml#/components/schemas/GoogleErrorResponse"
+                },
+                "examples": {
+                  "PermissionDenied": {
+                    "summary": "Subscription consumption permission missing",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 403,
+                        "status": "PERMISSION_DENIED",
+                        "message": "The principal lacks pubsub.subscriptions.consume for this subscription."
+                      }
+                    }
+                  },
+                  "InvalidArgument": {
+                    "summary": "Invalid delivery request",
+                    "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                    "value": {
+                      "error": {
+                        "code": 400,
+                        "status": "INVALID_ARGUMENT",
+                        "message": "The acknowledgement identifiers or deadline are invalid."
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -193,6 +332,28 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ModifyAckDeadlineRequest"
+              },
+              "examples": {
+                "Request": {
+                  "summary": "ModifyAckDeadline request",
+                  "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                  "value": {
+                    "ackIds": [
+                      "synthetic-ack-id"
+                    ],
+                    "ackDeadlineSeconds": 60
+                  }
+                },
+                "ReleaseForRedelivery": {
+                  "summary": "Release immediately for redelivery",
+                  "description": "Sanitized synthetic illustration; replace example identifiers and credentials with caller values.",
+                  "value": {
+                    "ackIds": [
+                      "synthetic-ack-id"
+                    ],
+                    "ackDeadlineSeconds": 0
+                  }
+                }
               }
             }
           }
@@ -231,6 +392,14 @@
         },
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "data": "eyJldmVudElkIjoiZW52ZWxvcGUtZXZlbnQtZXhhbXBsZSIsInRpbWVzdGFtcCI6IjIwMjYtMDEtMDFUMTI6MDA6MDBaIiwidXNlcklkIjoic3ludGhldGljLXVzZXIiLCJyZXNvdXJjZVVwZGF0ZSI6eyJuYW1lIjoiZW50ZXJwcmlzZXMvZXhhbXBsZS1lbnRlcnByaXNlL2RldmljZXMvZXhhbXBsZS10aGVybW9zdGF0IiwidHJhaXRzIjp7InNkbS5kZXZpY2VzLnRyYWl0cy5UZW1wZXJhdHVyZSI6eyJhbWJpZW50VGVtcGVyYXR1cmVDZWxzaXVzIjoyMS41fX19fQ==",
+          "messageId": "synthetic-message-id",
+          "publishTime": "2026-01-01T12:00:01Z",
+          "attributes": {
+            "example": "synthetic"
+          }
         }
       },
       "ReceivedMessage": {
@@ -248,6 +417,18 @@
         },
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "ackId": "synthetic-ack-id",
+          "message": {
+            "data": "eyJldmVudElkIjoiZW52ZWxvcGUtZXZlbnQtZXhhbXBsZSIsInRpbWVzdGFtcCI6IjIwMjYtMDEtMDFUMTI6MDA6MDBaIiwidXNlcklkIjoic3ludGhldGljLXVzZXIiLCJyZXNvdXJjZVVwZGF0ZSI6eyJuYW1lIjoiZW50ZXJwcmlzZXMvZXhhbXBsZS1lbnRlcnByaXNlL2RldmljZXMvZXhhbXBsZS10aGVybW9zdGF0IiwidHJhaXRzIjp7InNkbS5kZXZpY2VzLnRyYWl0cy5UZW1wZXJhdHVyZSI6eyJhbWJpZW50VGVtcGVyYXR1cmVDZWxzaXVzIjoyMS41fX19fQ==",
+            "messageId": "synthetic-message-id",
+            "publishTime": "2026-01-01T12:00:01Z",
+            "attributes": {
+              "example": "synthetic"
+            }
+          },
+          "deliveryAttempt": 1
         }
       },
       "PullRequest": {
@@ -265,7 +446,10 @@
         "additionalProperties": false,
         "required": [
           "maxMessages"
-        ]
+        ],
+        "example": {
+          "maxMessages": 10
+        }
       },
       "PullResponse": {
         "type": "object",
@@ -279,6 +463,22 @@
         },
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "receivedMessages": [
+            {
+              "ackId": "synthetic-ack-id",
+              "message": {
+                "data": "eyJldmVudElkIjoiZW52ZWxvcGUtZXZlbnQtZXhhbXBsZSIsInRpbWVzdGFtcCI6IjIwMjYtMDEtMDFUMTI6MDA6MDBaIiwidXNlcklkIjoic3ludGhldGljLXVzZXIiLCJyZXNvdXJjZVVwZGF0ZSI6eyJuYW1lIjoiZW50ZXJwcmlzZXMvZXhhbXBsZS1lbnRlcnByaXNlL2RldmljZXMvZXhhbXBsZS10aGVybW9zdGF0IiwidHJhaXRzIjp7InNkbS5kZXZpY2VzLnRyYWl0cy5UZW1wZXJhdHVyZSI6eyJhbWJpZW50VGVtcGVyYXR1cmVDZWxzaXVzIjoyMS41fX19fQ==",
+                "messageId": "synthetic-message-id",
+                "publishTime": "2026-01-01T12:00:01Z",
+                "attributes": {
+                  "example": "synthetic"
+                }
+              },
+              "deliveryAttempt": 1
+            }
+          ]
         }
       },
       "AcknowledgeRequest": {
@@ -294,7 +494,12 @@
         "additionalProperties": false,
         "required": [
           "ackIds"
-        ]
+        ],
+        "example": {
+          "ackIds": [
+            "synthetic-ack-id"
+          ]
+        }
       },
       "ModifyAckDeadlineRequest": {
         "type": "object",
@@ -316,7 +521,13 @@
         "required": [
           "ackIds",
           "ackDeadlineSeconds"
-        ]
+        ],
+        "example": {
+          "ackIds": [
+            "synthetic-ack-id"
+          ],
+          "ackDeadlineSeconds": 60
+        }
       },
       "PushEnvelope": {
         "type": "object",
@@ -337,14 +548,27 @@
         "required": [
           "message",
           "subscription"
-        ]
+        ],
+        "example": {
+          "message": {
+            "data": "eyJldmVudElkIjoiZW52ZWxvcGUtZXZlbnQtZXhhbXBsZSIsInRpbWVzdGFtcCI6IjIwMjYtMDEtMDFUMTI6MDA6MDBaIiwidXNlcklkIjoic3ludGhldGljLXVzZXIiLCJyZXNvdXJjZVVwZGF0ZSI6eyJuYW1lIjoiZW50ZXJwcmlzZXMvZXhhbXBsZS1lbnRlcnByaXNlL2RldmljZXMvZXhhbXBsZS10aGVybW9zdGF0IiwidHJhaXRzIjp7InNkbS5kZXZpY2VzLnRyYWl0cy5UZW1wZXJhdHVyZSI6eyJhbWJpZW50VGVtcGVyYXR1cmVDZWxzaXVzIjoyMS41fX19fQ==",
+            "messageId": "synthetic-message-id",
+            "publishTime": "2026-01-01T12:00:01Z",
+            "attributes": {
+              "example": "synthetic"
+            }
+          },
+          "subscription": "projects/example-cloud-project/subscriptions/example-subscription",
+          "deliveryAttempt": 1
+        }
       },
       "EmptyResponse": {
         "type": "object",
         "properties": {},
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
-        }
+        },
+        "example": {}
       }
     },
     "securitySchemes": {

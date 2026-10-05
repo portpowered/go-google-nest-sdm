@@ -173,8 +173,8 @@ func newTestApplication(
 	output := &bytes.Buffer{}
 	lookup := func(key string) string {
 		return map[string]string{
-			"SDM_ACCESS_TOKEN": syntheticAccessToken, "SDM_CLIENT_ID": "synthetic-client",
-			"SDM_CLIENT_SECRET": "synthetic-secret", "SDM_AUTHORIZATION_CODE": "synthetic-code",
+			"SDM_ACCESS_TOKEN": syntheticAccessToken, "SDM_CLIENT_ID": syntheticClientID,
+			"SDM_CLIENT_SECRET": syntheticClientSecret, "SDM_AUTHORIZATION_CODE": syntheticCode,
 			"SDM_REFRESH_TOKEN": syntheticRefreshToken, "SDM_REDIRECT_URI": "https://example.invalid/callback",
 		}[key]
 	}
@@ -185,7 +185,8 @@ func newTestApplication(
 		}
 	})
 
-	return application{client: client, in: strings.NewReader(input), out: output, lookup: lookup}, output
+	return application{client: client, in: strings.NewReader(input), out: output, lookup: lookup,
+		progress: nil, login: loginDependencies{listen: nil, openBrowser: nil}}, output
 }
 
 func TestListDevicesPairedReplay(t *testing.T) {

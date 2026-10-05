@@ -7,11 +7,48 @@ import (
 	"fmt"
 )
 
+// Defines values for OAuthAccessType.
+const (
+	Offline OAuthAccessType = "offline"
+)
+
 // Defines values for OAuthGrantType.
 const (
 	AuthorizationCode OAuthGrantType = "authorization_code"
 	RefreshToken      OAuthGrantType = "refresh_token"
 )
+
+// Defines values for OAuthPKCEMethod.
+const (
+	S256 OAuthPKCEMethod = "S256"
+)
+
+// Defines values for OAuthPrompt.
+const (
+	Consent OAuthPrompt = "consent"
+)
+
+// Defines values for OAuthResponseType.
+const (
+	Code OAuthResponseType = "code"
+)
+
+// Defines values for OAuthScope.
+const (
+	HttpswwwGoogleapisComauthsdmService OAuthScope = "https://www.googleapis.com/auth/sdm.service"
+)
+
+// OAuthAccessType defines model for OAuthAccessType.
+type OAuthAccessType string
+
+// OAuthAuthorizationCallback Exactly one code or error is returned; state must match the authorization session. Other provider query values remain extensible.
+type OAuthAuthorizationCallback struct {
+	Code                 *string                `json:"code,omitempty"`
+	Error                *string                `json:"error,omitempty"`
+	ErrorDescription     *string                `json:"error_description,omitempty"`
+	State                string                 `json:"state"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
 
 // OAuthErrorCode Open OAuth token error code.
 type OAuthErrorCode string
@@ -26,6 +63,18 @@ type OAuthErrorResponse struct {
 
 // OAuthGrantType defines model for OAuthGrantType.
 type OAuthGrantType string
+
+// OAuthPKCEMethod defines model for OAuthPKCEMethod.
+type OAuthPKCEMethod string
+
+// OAuthPrompt defines model for OAuthPrompt.
+type OAuthPrompt string
+
+// OAuthResponseType defines model for OAuthResponseType.
+type OAuthResponseType string
+
+// OAuthScope defines model for OAuthScope.
+type OAuthScope string
 
 // OAuthTokenRequest defines model for OAuthTokenRequest.
 type OAuthTokenRequest struct {
@@ -54,8 +103,132 @@ type OAuthTokenResponse struct {
 	AdditionalProperties  map[string]json.RawMessage `json:"-"`
 }
 
+// PCMConsentParams defines parameters for PCMConsent.
+type PCMConsentParams struct {
+	RedirectUri         string            `form:"redirect_uri" json:"redirect_uri"`
+	ClientId            string            `form:"client_id" json:"client_id"`
+	ResponseType        OAuthResponseType `form:"response_type" json:"response_type"`
+	Scope               OAuthScope        `form:"scope" json:"scope"`
+	AccessType          OAuthAccessType   `form:"access_type" json:"access_type"`
+	Prompt              OAuthPrompt       `form:"prompt" json:"prompt"`
+	State               string            `form:"state" json:"state"`
+	CodeChallenge       string            `form:"code_challenge" json:"code_challenge"`
+	CodeChallengeMethod OAuthPKCEMethod   `form:"code_challenge_method" json:"code_challenge_method"`
+}
+
 // OAuthTokenFormdataRequestBody defines body for OAuthToken for application/x-www-form-urlencoded ContentType.
 type OAuthTokenFormdataRequestBody = OAuthTokenRequest
+
+// Getter for additional properties for OAuthAuthorizationCallback. Returns the specified
+// element and whether it was found
+func (a OAuthAuthorizationCallback) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for OAuthAuthorizationCallback
+func (a *OAuthAuthorizationCallback) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for OAuthAuthorizationCallback to handle AdditionalProperties
+func (a *OAuthAuthorizationCallback) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["code"]; found {
+		err = json.Unmarshal(raw, &a.Code)
+		if err != nil {
+			return fmt.Errorf("error reading 'code': %w", err)
+		}
+		delete(object, "code")
+	}
+
+	if raw, found := object["error"]; found {
+		err = json.Unmarshal(raw, &a.Error)
+		if err != nil {
+			return fmt.Errorf("error reading 'error': %w", err)
+		}
+		delete(object, "error")
+	}
+
+	if raw, found := object["error_description"]; found {
+		err = json.Unmarshal(raw, &a.ErrorDescription)
+		if err != nil {
+			return fmt.Errorf("error reading 'error_description': %w", err)
+		}
+		delete(object, "error_description")
+	}
+
+	if raw, found := object["state"]; found {
+		err = json.Unmarshal(raw, &a.State)
+		if err != nil {
+			return fmt.Errorf("error reading 'state': %w", err)
+		}
+		delete(object, "state")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for OAuthAuthorizationCallback to handle AdditionalProperties
+func (a OAuthAuthorizationCallback) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Code != nil {
+		object["code"], err = json.Marshal(a.Code)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'code': %w", err)
+		}
+	}
+
+	if a.Error != nil {
+		object["error"], err = json.Marshal(a.Error)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'error': %w", err)
+		}
+	}
+
+	if a.ErrorDescription != nil {
+		object["error_description"], err = json.Marshal(a.ErrorDescription)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'error_description': %w", err)
+		}
+	}
+
+	object["state"], err = json.Marshal(a.State)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'state': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
 
 // Getter for additional properties for OAuthErrorResponse. Returns the specified
 // element and whether it was found

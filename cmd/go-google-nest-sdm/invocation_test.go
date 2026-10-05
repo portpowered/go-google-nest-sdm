@@ -73,7 +73,7 @@ func TestAuthExportIsExplicitAndReusable(t *testing.T) {
 	}
 
 	account, err := readCredentials("-", strings.NewReader(output.String()), func(string) string { return "" })
-	if err != nil || account.AccessToken != syntheticAccessToken || account.ClientSecret != "synthetic-secret" {
+	if err != nil || account.AccessToken != syntheticAccessToken || account.ClientSecret != syntheticClientSecret {
 		t.Fatalf("exported credentials: %+v, %v", account, err)
 	}
 }

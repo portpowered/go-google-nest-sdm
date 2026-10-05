@@ -105,6 +105,10 @@
         },
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "width": 1280,
+          "height": 960
         }
       },
       "VideoResolution": {
@@ -123,6 +127,10 @@
         },
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
+        },
+        "example": {
+          "width": 1920,
+          "height": 1080
         }
       },
       "StructureInfo": {
@@ -135,7 +143,10 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware StructureInfo trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware StructureInfo trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "customName": "Example home"
+        }
       },
       "RoomInfo": {
         "type": "object",
@@ -147,7 +158,10 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware RoomInfo trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware RoomInfo trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "customName": "Living room"
+        }
       },
       "Connectivity": {
         "type": "object",
@@ -159,7 +173,10 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware Connectivity trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware Connectivity trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "status": "ONLINE"
+        }
       },
       "Fan": {
         "type": "object",
@@ -175,7 +192,11 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware Fan trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware Fan trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "timerMode": "ON",
+          "timerTimeout": "2026-01-01T12:15:00Z"
+        }
       },
       "Humidity": {
         "type": "object",
@@ -189,7 +210,10 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware Humidity trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware Humidity trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "ambientHumidityPercent": 45
+        }
       },
       "Info": {
         "type": "object",
@@ -201,7 +225,10 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware Info trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware Info trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "customName": "Living room thermostat"
+        }
       },
       "Settings": {
         "type": "object",
@@ -213,7 +240,10 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware Settings trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware Settings trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "temperatureScale": "CELSIUS"
+        }
       },
       "Temperature": {
         "type": "object",
@@ -227,7 +257,10 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware Temperature trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware Temperature trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "ambientTemperatureCelsius": 21.5
+        }
       },
       "ThermostatEco": {
         "type": "object",
@@ -253,7 +286,16 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware ThermostatEco trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware ThermostatEco trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "availableModes": [
+            "MANUAL_ECO",
+            "OFF"
+          ],
+          "mode": "OFF",
+          "heatCelsius": 18,
+          "coolCelsius": 27
+        }
       },
       "ThermostatHvac": {
         "type": "object",
@@ -265,7 +307,10 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware ThermostatHvac trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware ThermostatHvac trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "status": "HEATING"
+        }
       },
       "ThermostatMode": {
         "type": "object",
@@ -283,7 +328,16 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware ThermostatMode trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware ThermostatMode trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "availableModes": [
+            "HEAT",
+            "COOL",
+            "HEATCOOL",
+            "OFF"
+          ],
+          "mode": "HEAT"
+        }
       },
       "ThermostatTemperatureSetpoint": {
         "type": "object",
@@ -300,7 +354,11 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware ThermostatTemperatureSetpoint trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware ThermostatTemperatureSetpoint trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "heatCelsius": 20,
+          "coolCelsius": 25
+        }
       },
       "CameraClipPreview": {
         "type": "object",
@@ -308,7 +366,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware CameraClipPreview trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware CameraClipPreview trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {}
       },
       "CameraEventImage": {
         "type": "object",
@@ -316,7 +375,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware CameraEventImage trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware CameraEventImage trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {}
       },
       "CameraImage": {
         "type": "object",
@@ -328,7 +388,13 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware CameraImage trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware CameraImage trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "maxImageResolution": {
+            "width": 1280,
+            "height": 960
+          }
+        }
       },
       "CameraLiveStream": {
         "type": "object",
@@ -358,7 +424,22 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware CameraLiveStream trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware CameraLiveStream trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {
+          "maxVideoResolution": {
+            "width": 1920,
+            "height": 1080
+          },
+          "videoCodecs": [
+            "H264"
+          ],
+          "audioCodecs": [
+            "OPUS"
+          ],
+          "supportedProtocols": [
+            "WEB_RTC"
+          ]
+        }
       },
       "CameraMotion": {
         "type": "object",
@@ -366,7 +447,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware CameraMotion trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware CameraMotion trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {}
       },
       "CameraPerson": {
         "type": "object",
@@ -374,7 +456,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware CameraPerson trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware CameraPerson trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {}
       },
       "CameraSound": {
         "type": "object",
@@ -382,7 +465,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware CameraSound trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware CameraSound trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {}
       },
       "DoorbellChime": {
         "type": "object",
@@ -390,7 +474,8 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Presence-aware DoorbellChime trait fields; event updates may contain only changed fields. Unknown fields are retained."
+        "description": "Presence-aware DoorbellChime trait fields; event updates may contain only changed fields. Unknown fields are retained.",
+        "example": {}
       },
       "Traits": {
         "type": "object",
@@ -479,7 +564,21 @@
         "additionalProperties": {
           "x-go-type": "json.RawMessage"
         },
-        "description": "Known trait keys with capability-marker presence and unknown future trait values preserved."
+        "description": "Known trait keys with capability-marker presence and unknown future trait values preserved.",
+        "example": {
+          "sdm.devices.traits.Temperature": {
+            "ambientTemperatureCelsius": 21.5
+          },
+          "sdm.devices.traits.ThermostatMode": {
+            "availableModes": [
+              "HEAT",
+              "COOL",
+              "HEATCOOL",
+              "OFF"
+            ],
+            "mode": "HEAT"
+          }
+        }
       }
     }
   }
