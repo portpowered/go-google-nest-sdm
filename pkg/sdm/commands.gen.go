@@ -51,7 +51,7 @@ type CameraEventImageGenerateImageParams struct {
 	EventId CameraEventID `json:"eventId"`
 }
 
-// CameraEventImageGenerateImageResults Acknowledgement result for CameraEventImage.GenerateImage; physical action may complete later.
+// CameraEventImageGenerateImageResults Image URL and event token returned by CameraEventImage.GenerateImage. Download the image from url using token; this event token is distinct from the account OAuth access token.
 type CameraEventImageGenerateImageResults struct {
 	Token                string                     `json:"token"`
 	Url                  string                     `json:"url"`
@@ -64,7 +64,7 @@ type CameraLiveStreamExtendRtspStreamParams struct {
 	StreamExtensionToken StreamExtensionToken `json:"streamExtensionToken"`
 }
 
-// CameraLiveStreamExtendRtspStreamResults Acknowledgement result for CameraLiveStream.ExtendRtspStream; physical action may complete later.
+// CameraLiveStreamExtendRtspStreamResults Updated RTSP streamToken and streamExtensionToken, plus expiration time expiresAt. Use the returned extension token for subsequent extension or stop commands.
 type CameraLiveStreamExtendRtspStreamResults struct {
 	ExpiresAt time.Time `json:"expiresAt"`
 
@@ -82,7 +82,7 @@ type CameraLiveStreamExtendWebRtcStreamParams struct {
 	MediaSessionId MediaSessionID `json:"mediaSessionId"`
 }
 
-// CameraLiveStreamExtendWebRtcStreamResults Acknowledgement result for CameraLiveStream.ExtendWebRtcStream; physical action may complete later.
+// CameraLiveStreamExtendWebRtcStreamResults WebRTC mediaSessionId and updated expiration time expiresAt. Retain the returned session identifier for subsequent extension or stop commands.
 type CameraLiveStreamExtendWebRtcStreamResults struct {
 	ExpiresAt time.Time `json:"expiresAt"`
 
@@ -94,7 +94,7 @@ type CameraLiveStreamExtendWebRtcStreamResults struct {
 // CameraLiveStreamGenerateRtspStreamParams Inputs for CameraLiveStream.GenerateRtspStream.
 type CameraLiveStreamGenerateRtspStreamParams = struct{}
 
-// CameraLiveStreamGenerateRtspStreamResults Acknowledgement result for CameraLiveStream.GenerateRtspStream; physical action may complete later.
+// CameraLiveStreamGenerateRtspStreamResults RTSP playback URL in streamUrls.rtspUrl, current streamToken, streamExtensionToken for extension or stop commands, and expiration time expiresAt.
 type CameraLiveStreamGenerateRtspStreamResults struct {
 	ExpiresAt time.Time `json:"expiresAt"`
 
@@ -112,7 +112,7 @@ type CameraLiveStreamGenerateWebRtcStreamParams struct {
 	OfferSdp string `json:"offerSdp"`
 }
 
-// CameraLiveStreamGenerateWebRtcStreamResults Acknowledgement result for CameraLiveStream.GenerateWebRtcStream; physical action may complete later.
+// CameraLiveStreamGenerateWebRtcStreamResults WebRTC answerSdp for the caller's offer, mediaSessionId for extension or stop commands, and session expiration time expiresAt.
 type CameraLiveStreamGenerateWebRtcStreamResults struct {
 	AnswerSdp string    `json:"answerSdp"`
 	ExpiresAt time.Time `json:"expiresAt"`
