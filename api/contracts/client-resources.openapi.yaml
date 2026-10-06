@@ -3,6 +3,24 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "components": {
     "schemas": {
+      "AccountIdentity": {
+        "additionalProperties": false,
+        "description": "Opaque account identity from the authenticated SDM userId response header. Bind event ownership to this value; never infer it from an incoming event.",
+        "example": {
+          "userId": "synthetic-authorized-user"
+        },
+        "properties": {
+          "userId": {
+            "minLength": 1,
+            "pattern": "^[^\\x00-\\x20\\x7f,]+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId"
+        ],
+        "type": "object"
+      },
       "AckDeadlineRequest": {
         "additionalProperties": false,
         "properties": {
@@ -63,6 +81,10 @@
       "CompleteAuthorizationResult": {
         "additionalProperties": false,
         "properties": {
+          "accountIdentity": {
+            "$ref": "#/components/schemas/AccountIdentity",
+            "description": "Present when the successful authenticated device-list response includes an unambiguous userId header. Absence does not establish event ownership."
+          },
           "credentials": {
             "$ref": "#/components/schemas/Credentials"
           },
@@ -538,6 +560,10 @@
       "ListDevicesResult": {
         "additionalProperties": false,
         "properties": {
+          "accountIdentity": {
+            "$ref": "#/components/schemas/AccountIdentity",
+            "description": "Present when the successful authenticated device-list response includes an unambiguous userId header. Absence does not establish event ownership."
+          },
           "devices": {
             "items": {
               "$ref": "#/components/schemas/Device"

@@ -11,6 +11,9 @@ import (
 	"github.com/portpowered/go-google-nest-sdm/internal/contracts"
 )
 
+const resourcesDocument = "openapi.yaml"
+const listDevicesResponseSchema = "ListDevicesResponse"
+
 type schemaFixture struct {
 	name      string
 	document  string
@@ -22,9 +25,11 @@ func TestSyntheticFixtureSchemas(t *testing.T) {
 	t.Parallel()
 
 	cases := []schemaFixture{
-		{name: "rest-resources", document: "openapi.yaml", requests: nil,
+		{name: "account-identity", document: resourcesDocument, requests: nil,
+			responses: []string{listDevicesResponseSchema, listDevicesResponseSchema, listDevicesResponseSchema}},
+		{name: "rest-resources", document: resourcesDocument, requests: nil,
 			responses: []string{
-				"ListDevicesResponse", "Device", "ListStructuresResponse", "Structure", "ListRoomsResponse", "Room",
+				listDevicesResponseSchema, "Device", "ListStructuresResponse", "Structure", "ListRoomsResponse", "Room",
 			}},
 		{name: "pubsub-lifecycle", document: "pubsub.openapi.yaml",
 			requests:  []string{"PullRequest", "ModifyAckDeadlineRequest", "AcknowledgeRequest"},
@@ -68,8 +73,8 @@ func TestSyntheticFixtureSchemas(t *testing.T) {
 		}
 
 		for _, paired := range recorded.Exchanges {
-			validateFixturePayload(t, "openapi.yaml", "ExecuteCommandRequest", []byte(paired.Request.Body))
-			validateFixturePayload(t, "openapi.yaml", "ExecuteCommandResponse", []byte(paired.Response.Body))
+			validateFixturePayload(t, resourcesDocument, "ExecuteCommandRequest", []byte(paired.Request.Body))
+			validateFixturePayload(t, resourcesDocument, "ExecuteCommandResponse", []byte(paired.Response.Body))
 
 			var request map[string]json.RawMessage
 

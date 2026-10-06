@@ -96,10 +96,11 @@ func TestConsentAndCompletion(t *testing.T) {
 				t.Fatal("incorrect initial discovery")
 			}
 
-			return sdm.ListDevicesResult{Devices: []sdm.Device{{
-				Name: "enterprises/device-access-project/devices/one", ParentRelations: nil,
-				Traits: nil, Type: nil, AdditionalProperties: nil,
-			}}}, nil
+			return sdm.ListDevicesResult{
+				AccountIdentity: &sdm.AccountIdentity{UserId: "authorized-account"}, Devices: []sdm.Device{{
+					Name: "enterprises/device-access-project/devices/one", ParentRelations: nil,
+					Traits: nil, Type: nil, AdditionalProperties: nil,
+				}}}, nil
 		},
 	}
 
@@ -115,6 +116,10 @@ func TestConsentAndCompletion(t *testing.T) {
 	result, err := attempt.Complete(context.Background(), sdm.CompleteAuthorizationRequest{CallbackURL: callback(attempt)})
 	if err != nil || calls != 2 || len(result.Devices) != 1 || result.Credentials.AccessToken != syntheticToken {
 		t.Fatalf("%+v %v calls=%d", result, err, calls)
+	}
+
+	if result.AccountIdentity == nil || result.AccountIdentity.UserId != "authorized-account" {
+		t.Fatal("completion lost authenticated account identity")
 	}
 
 	if attempt.verifier != "" || attempt.request.ClientSecret != "" {

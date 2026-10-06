@@ -196,6 +196,6 @@ func failureClient(kind string, cancel context.CancelFunc, calls *int) stubClien
 
 			cancel()
 
-			return sdm.ListDevicesResult{Devices: nil}, nil
+			return sdm.ListDevicesResult{Devices: nil, AccountIdentity: nil}, nil
 		}}
 }

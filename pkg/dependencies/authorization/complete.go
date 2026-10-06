@@ -84,7 +84,9 @@ func (attempt *session) completeExchange(ctx context.Context, config sdm.OpenAut
 		return sdm.CompleteAuthorizationResult{}, contextFailure("AuthorizeAccount", err)
 	}
 
-	return sdm.CompleteAuthorizationResult{Credentials: token.Credentials, Devices: devices.Devices}, nil
+	return sdm.CompleteAuthorizationResult{
+		Credentials: token.Credentials, Devices: devices.Devices, AccountIdentity: devices.AccountIdentity,
+	}, nil
 }
 
 func failure(operation string, kind sdm.ErrorKind, cause error) error {

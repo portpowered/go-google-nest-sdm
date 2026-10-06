@@ -16,7 +16,7 @@ const maxResponseBytes = 8 << 20
 
 func (client *Client) exchange(
 	ctx context.Context, operation, method, endpoint, token, contentType string,
-	body io.Reader, result any,
+	body io.Reader, result any, responseHeaders ...*http.Header,
 ) error {
 	if ctx == nil {
 		return fail(operation, ErrorInvalidRequest, nil)
@@ -87,7 +87,16 @@ func (client *Client) exchange(
 		return fail(operation, ErrorInvalidResponse, err)
 	}
 
-	return decodeJSON(operation, payload, result)
+	err = decodeJSON(operation, payload, result)
+	if err != nil {
+		return err
+	}
+
+	if len(responseHeaders) != 0 && responseHeaders[0] != nil {
+		*responseHeaders[0] = response.Header.Clone()
+	}
+
+	return nil
 }
 
 func classifyCause(err error) ErrorKind {

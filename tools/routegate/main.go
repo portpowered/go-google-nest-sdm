@@ -325,7 +325,7 @@ func receiverField(expression ast.Expr, function *ast.FuncDecl, fields ...string
 }
 
 func verifyRoute(function *ast.FuncDecl, call *ast.CallExpr, imports map[string]string) error {
-	if len(call.Args) != exchangeArguments {
+	if len(call.Args) != exchangeArguments && !responseHeaderArgument(function, call, imports) {
 		return fmt.Errorf("%w: unrecognized exchange signature", errRouteInvalid)
 	}
 
@@ -334,6 +334,39 @@ func verifyRoute(function *ast.FuncDecl, call *ast.CallExpr, imports map[string]
 	}
 
 	return verifyRouteArguments(function, call, imports)
+}
+
+// responseHeaderArgument permits only an additional local response-header
+// destination. It does not alter the audited request or decoded payload positions.
+func responseHeaderArgument(function *ast.FuncDecl, call *ast.CallExpr, imports map[string]string) bool {
+	if len(call.Args) != exchangeArguments+1 || call.Ellipsis.IsValid() {
+		return false
+	}
+
+	address, recognized := call.Args[exchangeArguments].(*ast.UnaryExpr)
+	if !recognized || address.Op != token.AND {
+		return false
+	}
+
+	identifier, recognized := address.X.(*ast.Ident)
+	if !recognized || identifier.Obj == nil {
+		return false
+	}
+
+	declaration, recognized := identifier.Obj.Decl.(*ast.ValueSpec)
+	if !recognized || function.Body == nil || declaration.Pos() < function.Body.Pos() ||
+		declaration.End() > function.Body.End() {
+		return false
+	}
+
+	selector, recognized := declaration.Type.(*ast.SelectorExpr)
+	if !recognized || selector.Sel.Name != "Header" {
+		return false
+	}
+
+	owner, recognized := selector.X.(*ast.Ident)
+
+	return recognized && owner.Obj == nil && imports[owner.Name] == httpImport
 }
 
 func schemaContentType(expression ast.Expr, imports map[string]string) bool {

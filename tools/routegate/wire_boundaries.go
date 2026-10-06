@@ -306,7 +306,8 @@ func (state *wireValueAudit) verifiedProviderCall(call *ast.CallExpr, selector *
 func (state *wireValueAudit) collectProviderResults() {
 	ast.Inspect(state.file, func(node ast.Node) bool {
 		call, recognized := node.(*ast.CallExpr)
-		if !recognized || (len(call.Args) != exchangeArguments && len(call.Args) != exchangeArguments-1) {
+		if !recognized || (len(call.Args) != exchangeArguments && len(call.Args) != exchangeArguments-1 &&
+			len(call.Args) != exchangeArguments+1) {
 			return true
 		}
 
@@ -330,7 +331,12 @@ func (state *wireValueAudit) collectProviderResults() {
 				return true
 			}
 
-			address, recognized := call.Args[len(call.Args)-1].(*ast.UnaryExpr)
+			resultIndex := exchangeArguments - 1
+			if selector.Sel.Name == jsonExchangeHelper {
+				resultIndex--
+			}
+
+			address, recognized := call.Args[resultIndex].(*ast.UnaryExpr)
 			if !recognized || address.Op != token.AND {
 				return true
 			}
