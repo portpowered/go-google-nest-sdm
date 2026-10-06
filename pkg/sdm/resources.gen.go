@@ -200,7 +200,9 @@ type GetDeviceRequest struct {
 
 // GetDeviceResult defines model for GetDeviceResult.
 type GetDeviceResult struct {
-	Device Device `json:"device"`
+	// AccountIdentity Opaque account identity from the authenticated SDM userId response header. Bind event ownership to this value; never infer it from an incoming event.
+	AccountIdentity *AccountIdentity `json:"accountIdentity,omitempty"`
+	Device          Device           `json:"device"`
 }
 
 // GetRoomRequest defines model for GetRoomRequest.
@@ -269,7 +271,9 @@ type ListStructuresRequest struct {
 
 // ListStructuresResult defines model for ListStructuresResult.
 type ListStructuresResult struct {
-	Structures []Structure `json:"structures"`
+	// AccountIdentity Opaque account identity from the authenticated SDM userId response header. Bind event ownership to this value; never infer it from an incoming event.
+	AccountIdentity *AccountIdentity `json:"accountIdentity,omitempty"`
+	Structures      []Structure      `json:"structures"`
 }
 
 // OpenAuthorizationSessionRequest Account linking through Device Access Partner Connections Manager. The caller owns the HTTP callback endpoint and browser. Register the exact redirect URI in the OAuth client.
