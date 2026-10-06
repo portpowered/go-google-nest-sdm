@@ -2,12 +2,50 @@
 
 ## Resource response identity update
 
-`GetDevice` and `ListStructures` now project the same optional authenticated
-identity metadata as `ListDevices`. The shared transport helper retains response
-headers locally and validates each resource body before interpreting identity.
-Missing metadata remains absent; malformed metadata produces a typed failure.
-This update has no live-device acceptance evidence yet. Required full checks and
-two independent reviews of the final commit remain pending.
+Two non-implementing reviewers independently approve source candidate
+`be9abe20738088882dd5ea3486cfe2ef5414d375` for
+[PR #5](https://github.com/portpowered/go-google-nest-sdm/pull/5).
+Reviewer 1 (`event_api_contract`) verified committed blobs and independently
+passed typed identity, strict paired replay, occupied-slot cancellation, fixture
+schemas, contract inventory and route gates. Reviewer 2 (`host_service`)
+independently passed the focused transport/replay race tests and traced the
+schemas, generated projections, conversion and documentation. Neither edited
+implementation files.
+
+The exact candidate passed local `make lint` and `make check`: zero lint issues,
+all module, schema, source, compatibility, race and generation gates, with
+1083/1083 non-generated statements covered. The
+[remote documentation build](https://github.com/portpowered/go-google-nest-sdm/actions/runs/37436529603)
+passed its generated-site navigation and coverage gates; PR deployment was
+skipped. The [platform verification run](https://github.com/portpowered/go-google-nest-sdm/actions/runs/37436529409)
+was still running when these source reviews were recorded. A documentation
+amendment requires exact-commit review before merge.
+
+| Checklist item | Reviewer 1 | Reviewer 2 | Evidence and remaining limits |
+| --- | --- | --- | --- |
+| 1. Consumer independence | Pass | Pass | Contracts and transport contain no consumer adapters. |
+| 2. Customer documentation | Pass | Pass | Optional metadata, failures and live availability limits are explicit. |
+| 3. Reports and badges | Open | Open | Publication destinations for this update remain unverified. |
+| 4. Generated contracts | Local pass | Local pass | Canonical projections, generated fields and inventory agree. |
+| 5. Blocking checks | Local pass | Local pass | Full local checks pass; exact remote platform run remains pending. |
+| 6. Coverage and fixtures | Local pass | Local pass | 1083/1083 statements; labeled synthetic fixtures. |
+| 7. Boundaries and inventory | Pass | Pass | Resource fields have schema owners and real adapter uses. |
+| 8. Functional options | Pass | Pass | Constructor behavior remains unchanged. |
+| 9. Ownership | Pass | Pass | Per-response identity; valid-to-missing replay and deterministic waiter cleanup. |
+| 10. Transport injection | Pass | Pass | Strict replay exercises the public client through its injected transport. |
+| 11. Credential operations | Pass | Pass | Credentials and renewal remain caller-owned. |
+| 12. Published guides | Open | Open | Remote build passed; publication and actual rendered inspection remain open. |
+| 13. Editorial review | Source pass | Source pass | Changed source docs reviewed; rendered-page review remains open. |
+| 14. Independent review | Source approved | Source approved | Final documentation amendment and remote checks need verification. |
+| 15. Paired replay | Pass | Pass | Six strict exchanges cover both methods, absence and typed ambiguity rejection. |
+| 16. Standalone CLI | Local pass | Local pass | Module/consumer checks pass; matching published installation remains open. |
+
+`GetDevice` and `ListStructures` now expose the same optional authenticated
+identity metadata as `ListDevices`. Resource bodies are decoded before identity
+validation; absence remains nil and ambiguity returns the correct typed
+operation error. The response header belongs only to that call. These offline
+checks do not establish that a live provider supplies a header or that a
+physical camera event reaches an application.
 
 ## Previous account identity update
 
