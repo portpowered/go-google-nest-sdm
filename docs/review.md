@@ -1,5 +1,79 @@
 # Independent standards review
 
+## Current account identity update
+
+Two non-implementing reviewers independently approve the runtime and source candidate
+`edbdea89375911c4b4d5da3fce296fb6bf6356c7` for [PR #4](https://github.com/portpowered/go-google-nest-sdm/pull/4).
+The account identity belongs to each authenticated ListDevices response; absent or
+ambiguous headers cannot retain a previous account. Strict paired replay verifies
+valid identity, subsequent absence, and typed rejection of ambiguous identity.
+The exact, narrow `dupword` exception preserves positional nil arguments in a
+negative source-gate probe and is approved by both reviewers.
+
+Both independently confirmed the exact SHA for the [six OS/Go verification jobs
+and compatibility check](https://github.com/portpowered/go-google-nest-sdm/actions/runs/37398108263)
+and [documentation build](https://github.com/portpowered/go-google-nest-sdm/actions/runs/37398108106).
+Complete local `make lint` and `make check` passed at that candidate. Non-generated
+coverage is unit **1057/1077 (98.1%)**, paired replay **517/1077 (48.0%)**, and
+combined **1077/1077 (100%)**, with unchanged exclusions.
+
+### Reviewer A: independent runtime and generated-contract audit
+
+Reviewer A did not implement or edit the candidate. Independent replay, schema and
+example race checks passed in 1.600s; strict UTF-8 decoding of the event guide
+passed. The complete verdict follows.
+
+| Item | Verdict and evidence |
+| --- | --- |
+| 1 | Pass: SDK remains independent of consuming application adapters. |
+| 2 | Source/build pass: identity provenance, absence and authorization limitations are documented. |
+| 3 | Open: matching release, badges and publication verification remain required. |
+| 4 | Pass: schema, generated projection, header constant, inventory and negative source gates align. |
+| 5 | Pass: exact-candidate six-platform CI, compatibility and full local checks. |
+| 6 | Pass within offline scope: measured combined 1077/1077; fixture provenance is synthetic. |
+| 7 | Pass: generated public model, transport conversion and separate consumer boundaries. |
+| 8 | Pass: request-time credentials and identity; no account state in constructor options. |
+| 9 | Pass: same-client concurrency and failure isolation preserve account ownership. |
+| 10 | Pass: actual HTTP edge uses the replaceable strict replay transport. |
+| 11 | Pass: credential completion explicitly propagates authenticated account identity. |
+| 12 | Build pass; matching deployed Pages remains open. |
+| 13 | Changed source and UTF-8 pass; complete fresh rendered/publication review remains open. |
+| 14 | This independent audit is complete and consolidated here; final release acceptance remains open. |
+| 15 | Pass: complete three-exchange request matching, header projection and transcript cleanup. |
+| 16 | Local gates pass; matching published CLI installation remains open. |
+
+### Reviewer B: independent host-consumer and replay audit
+
+Reviewer B did not implement or edit the candidate. Independent replay and schema
+race checks passed in 1.385s. The prior paired-replay finding is resolved; no
+production, security, API or source-gate finding remains.
+
+| Item | Verdict and evidence |
+| --- | --- |
+| 1 | Pass: provider-specific SDK has no host adapter dependency. |
+| 2 | Source/build pass: customer guidance matches the exported account-identity contract. |
+| 3 | Open: fresh publication and badge verification. |
+| 4 | Pass: canonical schema and generated models/contracts/header inventory remain aligned. |
+| 5 | Pass: independently verified exact SHA for all six matrix jobs, compatibility and docs build. |
+| 6 | Pass within offline scope: independently confirmed unit/replay/combined totals; synthetic fixture qualification only. |
+| 7 | Pass: public generated projection and responsibility-grouped model ownership. |
+| 8 | Pass: immutable functional options; credentials and identity remain per request. |
+| 9 | Pass: no shared account state; concurrent and failure-isolation regressions remain intact. |
+| 10 | Pass: existing injected HTTP seam and strict replay matcher. |
+| 11 | Pass: caller owns credentials, storage and renewal; completion preserves identity. |
+| 12 | Build pass; matching deployed Pages remains open. |
+| 13 | Changed source passes; fresh live rendered verification remains open. |
+| 14 | This second independent audit is complete and consolidated here; final release acceptance remains open. |
+| 15 | Pass: exact three exchanges, complete consumption, absence isolation and typed ambiguous-header rejection. |
+| 16 | Local SDK/CLI/consumer gates pass; matching published installation remains open. |
+
+Publication, deployed documentation and published installation have separate open
+acceptance gates. These code reviews do not claim a live Google account, physical
+Nest device or deployed Port OS event flow has been qualified.
+
+## Historical interactive authorization review
+
+
 Two non-implementing reviewers approve the runtime implementation at `0bd6a72879a3362dbdbf305c57ad15b51fdd7a5a` against the current parent template `0c1afcd63d500c649b2567809d89c2ba61fcd48e`, its linked verification/client-design/website guidance, the repository standards and comparison plan. Their separately authored all-sixteen-item reviews follow. The copied template matches the parent except for intentional footer links.
 
 Full local `make lint check`, all six OS/Go [CI matrix jobs and compatibility](https://github.com/portpowered/go-google-nest-sdm/actions/runs/37235374005), and the [documentation build](https://github.com/portpowered/go-google-nest-sdm/actions/runs/37235373982) pass. Combined non-generated SDK coverage is **100%, 1059/1059 statements** with unchanged exclusions. Both reviewers inspected actual rendered references and guides, including typed command fields, complete request snippets and ten complete event examples.
