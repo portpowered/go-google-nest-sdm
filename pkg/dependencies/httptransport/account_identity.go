@@ -11,7 +11,7 @@ import (
 
 // accountIdentity only accepts an unambiguous identity from the authenticated
 // response. Missing metadata remains compatible with discovery-only callers.
-func accountIdentity(headers http.Header) (*sdm.AccountIdentity, error) {
+func accountIdentity(headers http.Header, operation string) (*sdm.AccountIdentity, error) {
 	var values []string
 
 	for key, entries := range headers {
@@ -27,7 +27,7 @@ func accountIdentity(headers http.Header) (*sdm.AccountIdentity, error) {
 
 	if len(values) != 1 || values[0] == "" || !utf8.ValidString(values[0]) ||
 		strings.ContainsFunc(values[0], invalidIdentityCharacter) {
-		return nil, fail("ListDevices", ErrorInvalidResponse, nil)
+		return nil, fail(operation, ErrorInvalidResponse, nil)
 	}
 
 	return &sdm.AccountIdentity{UserId: values[0]}, nil

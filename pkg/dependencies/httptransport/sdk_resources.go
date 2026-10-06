@@ -50,7 +50,7 @@ func (client *sdkClient) ListDevices(
 		return sdm.ListDevicesResult{}, publicError(err)
 	}
 
-	identity, err := accountIdentity(headers)
+	identity, err := accountIdentity(headers, "ListDevices")
 	if err != nil {
 		return sdm.ListDevicesResult{}, publicError(err)
 	}
@@ -59,8 +59,7 @@ func (client *sdkClient) ListDevices(
 }
 
 func (client *sdkClient) GetDevice(ctx context.Context, request sdm.GetDeviceRequest) (sdm.GetDeviceResult, error) {
-	payload,
-		err := client.resource(
+	payload, headers, err := client.resource(
 		ctx,
 		request.Auth.AccessToken,
 		request.Name,
@@ -79,14 +78,18 @@ func (client *sdkClient) GetDevice(ctx context.Context, request sdm.GetDeviceReq
 		return sdm.GetDeviceResult{}, publicDecodeError("GetDevice", err)
 	}
 
-	return sdm.GetDeviceResult{Device: value}, nil
+	identity, err := accountIdentity(headers, "GetDevice")
+	if err != nil {
+		return sdm.GetDeviceResult{}, publicError(err)
+	}
+
+	return sdm.GetDeviceResult{Device: value, AccountIdentity: identity}, nil
 }
 func (client *sdkClient) ListStructures(
 	ctx context.Context,
 	request sdm.ListStructuresRequest,
 ) (sdm.ListStructuresResult, error) {
-	payload,
-		err := client.resource(
+	payload, headers, err := client.resource(
 		ctx,
 		request.Auth.AccessToken,
 		request.Parent,
@@ -104,15 +107,19 @@ func (client *sdkClient) ListStructures(
 		return sdm.ListStructuresResult{}, err
 	}
 
-	return sdm.ListStructuresResult{Structures: values}, nil
+	identity, err := accountIdentity(headers, "ListStructures")
+	if err != nil {
+		return sdm.ListStructuresResult{}, publicError(err)
+	}
+
+	return sdm.ListStructuresResult{Structures: values, AccountIdentity: identity}, nil
 }
 
 func (client *sdkClient) GetStructure(
 	ctx context.Context,
 	request sdm.GetStructureRequest,
 ) (sdm.GetStructureResult, error) {
-	payload,
-		err := client.resource(
+	payload, _, err := client.resource(
 		ctx,
 		request.Auth.AccessToken,
 		request.Name,
@@ -134,8 +141,7 @@ func (client *sdkClient) GetStructure(
 	return sdm.GetStructureResult{Structure: value}, nil
 }
 func (client *sdkClient) ListRooms(ctx context.Context, request sdm.ListRoomsRequest) (sdm.ListRoomsResult, error) {
-	payload,
-		err := client.resource(
+	payload, _, err := client.resource(
 		ctx,
 		request.Auth.AccessToken,
 		request.Parent,
@@ -158,8 +164,7 @@ func (client *sdkClient) ListRooms(ctx context.Context, request sdm.ListRoomsReq
 }
 
 func (client *sdkClient) GetRoom(ctx context.Context, request sdm.GetRoomRequest) (sdm.GetRoomResult, error) {
-	payload,
-		err := client.resource(
+	payload, _, err := client.resource(
 		ctx,
 		request.Auth.AccessToken,
 		request.Name,
@@ -185,25 +190,24 @@ func (client *sdkClient) GetRoom(ctx context.Context, request sdm.GetRoomRequest
 //nolint:unparam // Schema-generated method remains paired with its route at every call site.
 func (client *sdkClient) resource(
 	ctx context.Context,
-	token,
-	name,
-	operation,
-	method,
-	template string,
+	token, name, operation, method, template string,
 	collections ...string,
-) (json.RawMessage, error) {
+) (json.RawMessage, http.Header, error) {
 	path, err := resourcePath(name, template, collections...)
 	if err != nil {
-		return nil, publicError(err)
+		return nil, nil, publicError(err)
 	}
 
-	var payload json.RawMessage
-
-	err = client.transport.exchange(
-		ctx, operation, method, client.transport.sdmBaseURL+path, token, "", nil, &payload,
+	var (
+		payload json.RawMessage
+		headers http.Header
 	)
 
-	return payload, publicError(err)
+	err = client.transport.exchange(
+		ctx, operation, method, client.transport.sdmBaseURL+path, token, "", nil, &payload, &headers,
+	)
+
+	return payload, headers, publicError(err)
 }
 
 func decodeResourceList[Resource any](

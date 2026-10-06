@@ -46,6 +46,8 @@ func main() {
 }
 ```
 
+`ListDevices`, `GetDevice` and `ListStructures` return optional `AccountIdentity` metadata from the successful authenticated response. A missing `userId` header leaves this field nil. Duplicate, empty or malformed identities return a typed invalid-response error after body validation. The identity is local to that call; the client never caches it or copies it from a previous response. Header availability on each route is provider-dependent, and the synthetic tests do not prove that a live account will supply it.
+
 The following fragments use `ctx`, `auth`, `name` (a returned device name), `enterprise`, `structureName`, `roomName` and caller-owned credentials. Handle each returned error before using its result or sending a dependent command.
 
 | Authentication | Inline example |

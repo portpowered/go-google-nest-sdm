@@ -180,6 +180,10 @@
         "properties": {
           "device": {
             "$ref": "#/components/schemas/Device"
+          },
+          "accountIdentity": {
+            "$ref": "#/components/schemas/AccountIdentity",
+            "description": "Present when the successful authenticated device response includes an unambiguous userId header. Absence does not establish event ownership."
           }
         },
         "additionalProperties": false,
@@ -211,6 +215,10 @@
             "items": {
               "$ref": "#/components/schemas/Structure"
             }
+          },
+          "accountIdentity": {
+            "$ref": "#/components/schemas/AccountIdentity",
+            "description": "Present when the successful authenticated structure-list response includes an unambiguous userId header. Absence does not establish event ownership."
           }
         },
         "additionalProperties": false,

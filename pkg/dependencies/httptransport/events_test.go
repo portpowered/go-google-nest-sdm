@@ -322,3 +322,41 @@ func TestPullFailureIsNotRetried(t *testing.T) {
 		t.Fatalf("pull failure %v calls %d", err, calls.Load())
 	}
 }
+
+func TestCanceledNextWaiterWhileAnotherPullOwnsSlot(t *testing.T) {
+	t.Parallel()
+
+	started := make(chan struct{})
+	session := openTestSession(t, eventDoer(func(request *http.Request) (*http.Response, error) {
+		close(started)
+		<-request.Context().Done()
+
+		return nil, fmt.Errorf("blocked pull: %w", request.Context().Err())
+	}))
+	first := make(chan error, 1)
+
+	go func() {
+		_, err := session.Next(t.Context())
+		first <- err
+	}()
+
+	<-started
+
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+
+	_, err := session.Next(ctx)
+	if !errors.Is(err, context.Canceled) {
+		t.Fatal("queued canceled caller acquired occupied slot")
+	}
+
+	err = session.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = <-first
+	if !errors.Is(err, context.Canceled) {
+		t.Fatal("close did not cancel slot owner")
+	}
+}

@@ -13,6 +13,8 @@ import (
 
 const resourcesDocument = "openapi.yaml"
 const listDevicesResponseSchema = "ListDevicesResponse"
+const deviceResponseSchema = "Device"
+const structuresResponseSchema = "ListStructuresResponse"
 
 type schemaFixture struct {
 	name      string
@@ -25,11 +27,16 @@ func TestSyntheticFixtureSchemas(t *testing.T) {
 	t.Parallel()
 
 	cases := []schemaFixture{
+		{name: "resource-account-identity", document: resourcesDocument, requests: nil,
+			responses: []string{
+				deviceResponseSchema, deviceResponseSchema, deviceResponseSchema,
+				structuresResponseSchema, structuresResponseSchema, structuresResponseSchema,
+			}},
 		{name: "account-identity", document: resourcesDocument, requests: nil,
 			responses: []string{listDevicesResponseSchema, listDevicesResponseSchema, listDevicesResponseSchema}},
 		{name: "rest-resources", document: resourcesDocument, requests: nil,
 			responses: []string{
-				listDevicesResponseSchema, "Device", "ListStructuresResponse", "Structure", "ListRoomsResponse", "Room",
+				listDevicesResponseSchema, deviceResponseSchema, structuresResponseSchema, "Structure", "ListRoomsResponse", "Room",
 			}},
 		{name: "pubsub-lifecycle", document: "pubsub.openapi.yaml",
 			requests:  []string{"PullRequest", "ModifyAckDeadlineRequest", "AcknowledgeRequest"},

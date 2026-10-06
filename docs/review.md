@@ -1,6 +1,15 @@
 # Independent standards review
 
-## Current account identity update
+## Resource response identity update
+
+`GetDevice` and `ListStructures` now project the same optional authenticated
+identity metadata as `ListDevices`. The shared transport helper retains response
+headers locally and validates each resource body before interpreting identity.
+Missing metadata remains absent; malformed metadata produces a typed failure.
+This update has no live-device acceptance evidence yet. Required full checks and
+two independent reviews of the final commit remain pending.
+
+## Previous account identity update
 
 Two non-implementing reviewers independently approve the runtime and source candidate
 `edbdea89375911c4b4d5da3fce296fb6bf6356c7` for [PR #4](https://github.com/portpowered/go-google-nest-sdm/pull/4).

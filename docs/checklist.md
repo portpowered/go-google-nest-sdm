@@ -1,13 +1,13 @@
 # Library acceptance checklist
 
-This checklist applies the current parent [template library standards](standards/template.md) and [repository standards](standards/library.md) to the authenticated account identity update. Independent code approval and passing checks are recorded separately from pending publication and deployment acceptance. Historical v0.1.0 installation and deployment evidence does not establish acceptance of this update. See [contributor verification](contributing.md) and [independent review](review.md).
+This checklist applies the current parent [template library standards](standards/template.md) and [repository standards](standards/library.md) to the resource response identity update. Independent code approval and passing checks are recorded separately from pending publication and deployment acceptance. Historical v0.1.0 installation and deployment evidence does not establish acceptance of this update. See [contributor verification](contributing.md) and [independent review](review.md).
 
 - [ ] **1. Consumer independence.** SDK, examples and guides contain no consuming application adapters.
 - [ ] **2. Customer documentation.** Authentication, supported operations, typed errors, injection and ownership match the exported API; reference and synthetic behavior are clearly identified.
 - [ ] **3. Reports and badges.** README repository values are correct; Go, CI, coverage, release, reference, license and documentation destinations are active and verified.
 - [ ] **4. Generated contract coverage.** Every outbound endpoint, method, parameter, header, channel, known nested payload, identifier and production wire model has a schema owner, generated declaration and actual use. Generation drift and negative source-gate controls pass. Dependency traffic is inventoried separately.
 - [ ] **5. Blocking checks.** Offline build, all-linter, race, replay and every module gate pass. An independent reviewer confirms passing CI at the exact commit and reviews every narrow exception.
-- [ ] **6. Coverage and fixtures.** Paired synthetic fixtures cover supported success and failures. Public, transport, replay and combined non-generated coverage are measured separately; combined coverage is 100% (1077/1077 statements), enforced by CI. Exclusions and uncovered behavior are reported.
+- [ ] **6. Coverage and fixtures.** Paired synthetic fixtures cover supported success and failures. Public, transport, replay and combined non-generated coverage are measured separately; combined coverage is 100%, enforced by CI. Exclusions and uncovered behavior are reported.
 - [ ] **7. Package boundaries and model inventory.** Public SDK, generated models and transport packages follow the template. Every model inventory entry is independently traced to schema, generator and conversion; a separate consumer module verifies imports.
 - [ ] **8. Functional options.** Constructors provide sensible defaults, validate options and hold no account credentials.
 - [ ] **9. Ownership.** Client remains stateless per account; explicit sessions expose their lifetime, cancellation, errors and idempotent close.
