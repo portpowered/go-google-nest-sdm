@@ -29,7 +29,7 @@ func TestOperationExampleInventory(t *testing.T) {
 	t.Parallel()
 
 	documents := []string{
-		"openapi.yaml", "external/oauth.openapi.yaml", "external/pubsub.openapi.yaml", "external/media.openapi.yaml",
+		resourcesDocument, "external/oauth.openapi.yaml", "external/pubsub.openapi.yaml", "external/media.openapi.yaml",
 	}
 	for _, filename := range documents {
 		t.Run(filename, func(t *testing.T) {
