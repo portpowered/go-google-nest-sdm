@@ -3,6 +3,7 @@ package httptransport
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 	"net/url"
 
 	"github.com/portpowered/go-google-nest-sdm/internal/protocol"
@@ -24,7 +25,10 @@ func (client *sdkClient) ListDevices(
 		path += "?" + query.Encode()
 	}
 
-	var payload json.RawMessage
+	var (
+		payload json.RawMessage
+		headers http.Header
+	)
 
 	err = client.transport.exchange(
 		ctx,
@@ -35,6 +39,7 @@ func (client *sdkClient) ListDevices(
 		"",
 		nil,
 		&payload,
+		&headers,
 	)
 	if err != nil {
 		return sdm.ListDevicesResult{}, publicError(err)
@@ -45,7 +50,12 @@ func (client *sdkClient) ListDevices(
 		return sdm.ListDevicesResult{}, publicError(err)
 	}
 
-	return sdm.ListDevicesResult{Devices: values}, nil
+	identity, err := accountIdentity(headers)
+	if err != nil {
+		return sdm.ListDevicesResult{}, publicError(err)
+	}
+
+	return sdm.ListDevicesResult{Devices: values, AccountIdentity: identity}, nil
 }
 
 func (client *sdkClient) GetDevice(ctx context.Context, request sdm.GetDeviceRequest) (sdm.GetDeviceResult, error) {

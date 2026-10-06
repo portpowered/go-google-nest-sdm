@@ -17,6 +17,11 @@ const (
 	ReconcileUnsupported ReconcileDisposition = "UNSUPPORTED"
 )
 
+// AccountIdentity Opaque account identity from the authenticated SDM userId response header. Bind event ownership to this value; never infer it from an incoming event.
+type AccountIdentity struct {
+	UserId string `json:"userId"`
+}
+
 // AckDeadlineRequest defines model for AckDeadlineRequest.
 type AckDeadlineRequest struct {
 	Seconds int `json:"seconds"`
@@ -41,7 +46,9 @@ type CompleteAuthorizationRequest struct {
 
 // CompleteAuthorizationResult defines model for CompleteAuthorizationResult.
 type CompleteAuthorizationResult struct {
-	Credentials Credentials `json:"credentials"`
+	// AccountIdentity Opaque account identity from the authenticated SDM userId response header. Bind event ownership to this value; never infer it from an incoming event.
+	AccountIdentity *AccountIdentity `json:"accountIdentity,omitempty"`
+	Credentials     Credentials      `json:"credentials"`
 
 	// Devices Initial devices.list result that completes account authorization and enables events.
 	Devices []Device `json:"devices"`
@@ -238,7 +245,9 @@ type ListDevicesRequest struct {
 
 // ListDevicesResult defines model for ListDevicesResult.
 type ListDevicesResult struct {
-	Devices []Device `json:"devices"`
+	// AccountIdentity Opaque account identity from the authenticated SDM userId response header. Bind event ownership to this value; never infer it from an incoming event.
+	AccountIdentity *AccountIdentity `json:"accountIdentity,omitempty"`
+	Devices         []Device         `json:"devices"`
 }
 
 // ListRoomsRequest defines model for ListRoomsRequest.

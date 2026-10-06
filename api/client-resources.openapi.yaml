@@ -148,6 +148,10 @@
             "items": {
               "$ref": "#/components/schemas/Device"
             }
+          },
+          "accountIdentity": {
+            "$ref": "#/components/schemas/AccountIdentity",
+            "description": "Present when the successful authenticated device-list response includes an unambiguous userId header. Absence does not establish event ownership."
           }
         },
         "additionalProperties": false,
@@ -1068,7 +1072,29 @@
               "$ref": "#/components/schemas/Device"
             },
             "description": "Initial devices.list result that completes account authorization and enables events."
+          },
+          "accountIdentity": {
+            "$ref": "#/components/schemas/AccountIdentity",
+            "description": "Present when the successful authenticated device-list response includes an unambiguous userId header. Absence does not establish event ownership."
           }
+        }
+      },
+      "AccountIdentity": {
+        "type": "object",
+        "description": "Opaque account identity from the authenticated SDM userId response header. Bind event ownership to this value; never infer it from an incoming event.",
+        "additionalProperties": false,
+        "required": [
+          "userId"
+        ],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[^\\x00-\\x20\\x7f,]+$"
+          }
+        },
+        "example": {
+          "userId": "synthetic-authorized-user"
         }
       }
     }
